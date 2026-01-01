@@ -1,3 +1,7 @@
+server:
+  servlet:
+    context-path: /dirty-code
+
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/dirtycode
