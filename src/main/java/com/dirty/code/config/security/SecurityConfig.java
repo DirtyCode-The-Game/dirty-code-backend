@@ -25,7 +25,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/h2-console/**").permitAll()
                 .requestMatchers("/auth/token/**").permitAll()
-                .requestMatchers("/gmail/auth").permitAll()
+                .requestMatchers("/gmail/auth-page").permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(new FirebaseTokenFilter(userService), UsernamePasswordAuthenticationFilter.class)
