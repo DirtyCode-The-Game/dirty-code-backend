@@ -1,0 +1,28 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/dirtycode
+    driver-class-name: org.postgresql.Driver
+    username: root
+    password: root
+  jpa:
+    hibernate:
+      ddl-auto: none
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  flyway:
+    enabled: true
+
+firebase:
+  type: ${FIREBASE_TYPE}
+  project-id: ${FIREBASE_PROJECT_ID}
+  private-key-id: ${FIREBASE_PRIVATE_KEY_ID}
+  private-key: ${FIREBASE_PRIVATE_KEY}
+  client-email: ${FIREBASE_CLIENT_EMAIL}
+  client-id: ${FIREBASE_CLIENT_ID}
+  auth-uri: ${FIREBASE_AUTH_URI}
+  token-uri: ${FIREBASE_TOKEN_URI}
+  auth-provider-x509-cert-url: ${FIREBASE_AUTH_PROVIDER_X509_CERT_URL}
+  client-x509-cert-url: ${FIREBASE_CLIENT_X509_CERT_URL}
+  universe-domain: ${FIREBASE_UNIVERSE_DOMAIN}
+
+gcp:
+  client-id: ${GCP_CLIENT_ID}
