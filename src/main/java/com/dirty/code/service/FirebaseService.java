@@ -49,7 +49,7 @@ public class FirebaseService {
         }
     }
 
-    public String createFirebaseIdToken(String firebaseUid, GoogleIdToken.Payload googlePayload) {
+    public FirebaseExchangeTokenResponse createFirebaseIdToken(String firebaseUid, GoogleIdToken.Payload googlePayload) {
         log.info("Creating Firebase ID token for UID: {}", firebaseUid);
         String customToken = createFirebaseCustomToken(firebaseUid, googlePayload);
         
@@ -59,7 +59,7 @@ public class FirebaseService {
         );
         
         log.info("Successfully created Firebase ID token for UID: {}", firebaseUid);
-        return response.getIdToken();
+        return response;
     }
 
     private String createFirebaseCustomToken(String firebaseUid, GoogleIdToken.Payload googlePayload) {

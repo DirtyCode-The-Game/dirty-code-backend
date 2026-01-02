@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface FirebaseAuthClient {
 
     @PostMapping("/accounts:signInWithCustomToken")
-    FirebaseExchangeTokenResponse exchangeCustomToken(
-            @RequestParam("key") String apiKey,
-            @RequestBody FirebaseExchangeTokenRequest request
-    );
+    FirebaseExchangeTokenResponse exchangeCustomToken(@RequestParam("key") String apiKey, @RequestBody FirebaseExchangeTokenRequest request);
+    
 }

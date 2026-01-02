@@ -6,18 +6,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.UUID;
-
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserResponseDTO {
-    private UUID id;
-    private String uid;
+public class AvatarCreateRequestDTO {
     private String name;
-    private String email;
-    private String photoUrl;
-    private AvatarResponseDTO activeAvatar;
+    private Integer stamina;
+    private Integer str;
+    private Integer karma;
+    private Integer intelligence;
 }

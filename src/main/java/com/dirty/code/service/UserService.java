@@ -1,17 +1,17 @@
 package com.dirty.code.service;
 
 import com.dirty.code.controller.UserController;
+import com.dirty.code.dto.AvatarResponseDTO;
 import com.dirty.code.dto.UserResponseDTO;
+import com.dirty.code.exception.ResourceNotFoundException;
 import com.dirty.code.repository.UserRepository;
+import com.dirty.code.repository.model.Avatar;
 import com.dirty.code.repository.model.User;
 import com.google.firebase.auth.UserRecord;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -21,18 +21,40 @@ public class UserService implements UserController {
     private final UserRepository userRepository;
 
     @Override
-    public List<UserResponseDTO> getAllUsers() {
-        log.info("Fetching all users");
-        List<UserResponseDTO> users = userRepository.findAll().stream()
-                .map(user -> UserResponseDTO.builder()
-                        .uid(user.getUid())
-                        .name(user.getName())
-                        .email(user.getEmail())
-                        .photoUrl(user.getPhotoUrl())
-                        .build())
-                .collect(Collectors.toList());
-        log.info("Found {} users", users.size());
-        return users;
+    public UserResponseDTO getMe(String uid) {
+        log.info("Fetching current user info for UID: {}", uid);
+        return userRepository.findByFirebaseUid(uid)
+                .map(this::mapToResponseDTO)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with UID: " + uid));
+    }
+
+    private UserResponseDTO mapToResponseDTO(User user) {
+        Avatar activeAvatar = user.getAvatars() != null ? user.getAvatars().stream()
+                .filter(a -> Boolean.TRUE.equals(a.getActive()))
+                .findFirst()
+                .orElse(null) : null;
+
+        AvatarResponseDTO avatarDTO = null;
+        if (activeAvatar != null) {
+            avatarDTO = AvatarResponseDTO.builder()
+                    .id(activeAvatar.getId())
+                    .name(activeAvatar.getName())
+                    .stamina(activeAvatar.getStamina())
+                    .str(activeAvatar.getStr())
+                    .karma(activeAvatar.getKarma())
+                    .intelligence(activeAvatar.getIntelligence())
+                    .active(activeAvatar.getActive())
+                    .build();
+        }
+
+        return UserResponseDTO.builder()
+                .id(user.getId())
+                .uid(user.getFirebaseUid())
+                .name(user.getName())
+                .email(user.getEmail())
+                .photoUrl(user.getPhotoUrl())
+                .activeAvatar(avatarDTO)
+                .build();
     }
 
     @Transactional
@@ -49,13 +71,13 @@ public class UserService implements UserController {
 
     public boolean existsByUid(String uid) {
         log.info("Checking existence of user with UID: {}", uid);
-        boolean exists = userRepository.existsById(uid);
+        boolean exists = userRepository.existsByFirebaseUid(uid);
         log.info("User with UID: {} exists: {}", uid, exists);
         return exists;
     }
 
     private void saveOrUpdateUser(String uid, String email, String name, String picture) {
-        userRepository.findById(uid)
+        userRepository.findByFirebaseUid(uid)
                 .map(existingUser -> {
                     log.info("Updating existing user with UID: {}", uid);
                     existingUser.setName(name);
@@ -66,7 +88,7 @@ public class UserService implements UserController {
                 .orElseGet(() -> {
                     log.info("Creating new user with UID: {}", uid);
                     User newUser = User.builder()
-                            .uid(uid)
+                            .firebaseUid(uid)
                             .name(name)
                             .email(email)
                             .photoUrl(picture)

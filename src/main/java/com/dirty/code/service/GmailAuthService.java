@@ -1,8 +1,8 @@
 package com.dirty.code.service;
 
-import com.dirty.code.dto.AuthResponseDTO;
 import com.dirty.code.controller.GmailAuthController;
 import com.dirty.code.integrations.GoogleOAuthTokenClient;
+import com.dirty.code.integrations.domain.FirebaseExchangeTokenResponse;
 import com.dirty.code.integrations.domain.GoogleTokenRequest;
 import com.dirty.code.integrations.domain.GoogleTokenResponse;
 import com.dirty.code.utils.GoogleTokenUtils;
@@ -61,8 +61,7 @@ public class GmailAuthService implements GmailAuthController {
         UserRecord firebaseUser = firebaseService.getOrCreateFirebaseUser(firebaseUid, googlePayload);
         userService.saveOrUpdateUser(firebaseUser);
 
-        String firebaseToken = firebaseService.createFirebaseIdToken(firebaseUid, googlePayload);
-
-        return new RedirectView(frontendLoginUrl + firebaseToken);
+        FirebaseExchangeTokenResponse firebaseToken = firebaseService.createFirebaseIdToken(firebaseUid, googlePayload);
+        return new RedirectView(String.format(frontendLoginUrl, firebaseToken.getIdToken(), firebaseToken.getRefreshToken()));
     }
 }

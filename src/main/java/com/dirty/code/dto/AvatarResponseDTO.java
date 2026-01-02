@@ -13,11 +13,12 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserResponseDTO {
+public class AvatarResponseDTO {
     private UUID id;
-    private String uid;
     private String name;
-    private String email;
-    private String photoUrl;
-    private AvatarResponseDTO activeAvatar;
+    private Integer stamina;
+    private Integer str;
+    private Integer karma;
+    private Integer intelligence;
+    private Boolean active;
 }
