@@ -4,39 +4,41 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
 
 import jakarta.annotation.PostConstruct;
 import java.io.IOException;
-import java.io.InputStream;
 
 @Configuration
 @RequiredArgsConstructor
+@Slf4j
 public class FirebaseConfig {
 
     private final FirebaseProperties firebaseProperties;
 
     @PostConstruct
     public void initialize() {
+        log.info("Initializing Firebase Application");
         try {
             if (FirebaseApp.getApps().isEmpty()) {
                 String privateKeyFormatted = firebaseProperties.getPrivateKey().replace("\\n", "\n");
 
                 String credentialsJson = String.format(
-                        "{\n" +
-                        "  \"type\": \"%s\",\n" +
-                        "  \"project_id\": \"%s\",\n" +
-                        "  \"private_key_id\": \"%s\",\n" +
-                        "  \"private_key\": \"%s\",\n" +
-                        "  \"client_email\": \"%s\",\n" +
-                        "  \"client_id\": \"%s\",\n" +
-                        "  \"auth_uri\": \"%s\",\n" +
-                        "  \"token_uri\": \"%s\",\n" +
-                        "  \"auth_provider_x509_cert_url\": \"%s\",\n" +
-                        "  \"client_x509_cert_url\": \"%s\",\n" +
-                        "  \"universe_domain\": \"%s\"\n" +
-                        "}",
+                        """
+                                {
+                                  "type": "%s",
+                                  "project_id": "%s",
+                                  "private_key_id": "%s",
+                                  "private_key": "%s",
+                                  "client_email": "%s",
+                                  "client_id": "%s",
+                                  "auth_uri": "%s",
+                                  "token_uri": "%s",
+                                  "auth_provider_x509_cert_url": "%s",
+                                  "client_x509_cert_url": "%s",
+                                  "universe_domain": "%s"
+                                }""",
                         firebaseProperties.getType(), 
                         firebaseProperties.getProjectId(), 
                         firebaseProperties.getPrivateKeyId(), 
@@ -57,10 +59,13 @@ public class FirebaseConfig {
                             .build();
 
                     FirebaseApp.initializeApp(options);
+                    log.info("Firebase Application initialized successfully for project: {}", firebaseProperties.getProjectId());
                 }
+            } else {
+                log.info("Firebase Application already initialized");
             }
         } catch (IOException e) {
-            System.err.println("Erro ao inicializar Firebase: " + e.getMessage());
+            log.error("Error initializing Firebase", e);
         }
     }
 }

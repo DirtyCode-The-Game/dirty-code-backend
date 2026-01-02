@@ -1,103 +1,84 @@
-# Dirty Code Backend
+# Dirty Code - Backend
 
-Aplicação Spring Boot para gerenciamento de exemplos, configurada para suportar múltiplos ambientes de banco de dados.
+Este projeto é o backend para o jogo "Dirty Code", desenvolvido com Spring Boot. Ele gerencia autenticação, usuários e integrações com Firebase e Google Cloud.
 
-## Como Executar a Aplicação
+## 🗄️ Bancos de Dados
 
-### 1. Usando H2 (Banco em Memória - Padrão)
-Este é o modo padrão, ideal para desenvolvimento rápido e testes. Não requer instalação de banco de dados externo.
+O projeto utiliza dois tipos principais de armazenamento:
 
-**Comando:**
-```powershell
-./gradlew bootRun
-```
+### 1. Banco de Dados Relacional (SQL)
 
-**Links Úteis:**
-*   **API (Listar Exemplos):** [http://localhost:8080/examples](http://localhost:8080/examples)
-*   **Console do H2:** [http://localhost:8080/h2-console](http://localhost:8080/h2-console)
-    *   **JDBC URL:** `jdbc:h2:mem:dirtycode`
-    *   **Usuário:** `sa`
-    *   **Senha:** (vazio)
+O sistema suporta dois perfis de banco de dados, configurados via perfis do Spring:
+
+#### A. H2 Database (Desenvolvimento Local)
+- **Arquivo**: `application.yml` (Perfil padrão)
+- **Tipo**: Banco de dados em memória (modo PostgreSQL).
+- **Utilização**: Ideal para desenvolvimento rápido e testes locais.
+- **Console**: Acessível em `/dirty-code/h2-console`.
+- **Configuração**:
+  - **URL**: `jdbc:h2:mem:dirtycode`
+  - **Username**: `sa`
+  - **Password**: (vazio)
+
+#### B. PostgreSQL (QA/Produção)
+- **Arquivo**: `application-qa.yml` (Ativado com `-Dspring.profiles.active=qa`)
+- **Tipo**: Banco de dados relacional persistente.
+- **Utilização**: Ambiente de homologação e testes integrados.
+- **Configuração padrão**:
+  - **URL**: `jdbc:postgresql://localhost:5432/dirtycode`
+  - **Username**: `root`
+  - **Password**: `root`
+
+> **Nota**: As migrações de schema para ambos os bancos são gerenciadas automaticamente pelo Flyway (diretório `src/main/resources/db/migration`).
+
+### 2. Firebase (NoSQL/Auth)
+- **Utilização**: Gerenciamento de autenticação e tokens.
+- **Integração**: Utiliza o Firebase Admin SDK para validar tokens e criar tokens customizados.
 
 ---
 
-### 2. Usando PostgreSQL (Profile QA)
-Utilizado para simular o ambiente de produção ou QA com um banco de dados persistente.
+## 🚀 Endpoints
 
-**Pré-requisitos:**
-*   PostgreSQL instalado e rodando localmente.
-*   Banco de dados chamado `dirtycode` criado.
+A URL base para todos os endpoints é: `http://localhost:8080/dirty-code`
 
-**Comando:**
-```powershell
-./gradlew bootRun -Dspring.profiles.active=qa
-```
-
-**Links Úteis:**
-*   **API (Listar Exemplos):** [http://localhost:8080/examples](http://localhost:8080/examples)
-
----
-
-## Principais Endpoints (CRUD)
+### 🔑 Autenticação (Públicos)
 
 | Método | Endpoint | Descrição |
 | :--- | :--- | :--- |
-| `GET` | `/examples` | Lista todos os registros |
-| `GET` | `/examples/{id}` | Busca um registro por ID |
-| `POST` | `/examples` | Cria um novo registro |
-| `PUT` | `/examples/{id}` | Atualiza um registro existente |
-| `DELETE` | `/examples/{id}` | Remove um registro |
-
-### Exemplo de criação (CURL):
-```bash
-curl -X POST http://localhost:8080/examples \
-     -H "Content-Type: application/json" \
-     -d '{"name": "Exemplo", "description": "Descrição via README"}'
-```
-
-## Tecnologias Utilizadas
-*   Java 25
-*   Spring Boot
-*   Spring Data JPA
-*   Flyway (Migrações de Banco)
-*   H2 / PostgreSQL
-*   Lombok
-*   Firebase Admin SDK (Autenticação)
+| `GET` | `/v1/gmail/auth-page` | Redireciona para a página de login do Google. |
+| `GET` | `/v1/gmail/call-back` | Callback do Google OAuth2. Recebe o parâmetro `code`. |
+| `POST` | `/auth/token/{uid}` | Gera um token customizado do Firebase para um UID específico. |
 
 ---
 
-## Autenticação (Firebase)
+## 🛠️ Como Utilizar
 
-A aplicação utiliza o Firebase para autenticação. Os endpoints (exceto `/h2-console`) exigem um **ID Token** válido enviado no cabeçalho `Authorization`.
+### 1. Autenticação
+A maioria dos endpoints requer um token de autenticação do Firebase no cabeçalho da requisição:
 
-**Restrição de Domínio:** Atualmente, o sistema aceita apenas autenticação de contas com domínio **@gmail.com**. Tentativas de acesso com outros domínios resultarão em `401 Unauthorized`.
-
-### Como testar um endpoint protegido:
-
-1.  **Obter o ID Token (ou Custom Token):**
-    *   **ID Token:** Obtido no frontend após login Google.
-    *   **Custom Token:** Pode ser gerado pelo backend (útil quando o backend é o autenticador):
-        ```bash
-        curl -X POST http://localhost:8080/auth/token/<UID_DO_USUARIO>
-        ```
-        O `customToken` retornado deve ser usado no frontend com `signInWithCustomToken()`.
-
-2.  **Chamada via CURL:**
-
-```bash
-curl -X GET http://localhost:8080/auth/me \
-     -H "Authorization: Bearer <SEU_FIREBASE_ID_TOKEN>"
+```http
+Authorization: Bearer <seu_firebase_token>
 ```
 
-> **Como obter a API_KEY:**
-> 1. Vá para o [Console do Firebase](https://console.firebase.google.com/).
-> 2. Selecione o projeto **DirtyCode The Game**.
-> 3. Clique no ícone de engrenagem (Configurações do projeto) no menu lateral esquerdo.
-> 4. Na aba **Geral**, você encontrará a **Chave de API da Web**.
+Para obter um token em desenvolvimento:
+1. Acesse `/v1/gmail/auth-page`.
+2. Após o login, você receberá um código que será processado pelo `/v1/gmail/call-back`.
 
-> **Nota:** Se você deseja simular um login via REST API para obter um token (necessário `API_KEY` do Firebase):
-> ```bash
-> curl -X POST "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=[API_KEY]" \
->      -H "Content-Type: application/json" \
->      -d '{"email":"test@example.com","password":"password","returnSecureToken":true}'
-> ```
+### 2. Cabeçalhos (Headers)
+Para requisições `POST` e `PUT`, certifique-se de enviar o cabeçalho:
+```http
+Content-Type: application/json
+```
+
+### 3. Requisitos
+- **Java 25**
+- Variáveis de ambiente configuradas (ver `application.yml` para as chaves do Firebase e GCP necessárias).
+
+---
+
+## 🏗️ Estrutura de Pastas Principal
+- `controller/`: Camada de exposição da API.
+- `service/`: Regras de negócio.
+- `repository/`: Acesso aos dados (JPA).
+- `dto/`: Objetos de transferência de dados.
+- `config/`: Configurações de segurança e beans do sistema.

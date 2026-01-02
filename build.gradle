@@ -1,32 +1,66 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.4.1'
+    id 'org.springframework.boot' version '4.0.1'
     id 'io.spring.dependency-management' version '1.1.7'
+}
+
+ext {
+    set('springCloudVersion', '2025.1.0')
+    set('firebaseAdminVersion', '9.5.0')
+    set('guavaVersion', '33.4.0-jre')
+    set('dotenvVersion', '3.0.0')
+    set('lombokVersion', '1.18.42')
+    set('feignFormVersion', '3.8.0')
 }
 
 group = 'com.dirty.code'
 version = '1.0-SNAPSHOT'
 
 java {
-    sourceCompatibility = '17'
+    sourceCompatibility = '25'
 }
 
 repositories {
     mavenCentral()
 }
 
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
 dependencies {
+    // Spring Boot Starters
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.flywaydb:flyway-core'
-    implementation 'org.flywaydb:flyway-database-postgresql'
-    implementation 'com.google.firebase:firebase-admin:9.4.2'
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
     implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'io.github.cdimascio:dotenv-java:3.0.0'
+
+    // Database & Migration
+    implementation 'org.flywaydb:flyway-core'
+    implementation 'org.springframework.boot:spring-boot-starter-flyway'
+    implementation 'org.flywaydb:flyway-database-postgresql'
     runtimeOnly 'org.postgresql:postgresql'
     runtimeOnly 'com.h2database:h2'
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
+    implementation 'org.springframework.boot:spring-boot-h2console'
+
+    // Cloud & Feign
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+    implementation "io.github.openfeign.form:feign-form-spring:${feignFormVersion}"
+
+    // Firebase & Google
+    implementation "com.google.firebase:firebase-admin:${firebaseAdminVersion}"
+    implementation "com.google.guava:guava:${guavaVersion}"
+
+    // Utils
+    implementation "io.github.cdimascio:dotenv-java:${dotenvVersion}"
+
+    // Lombok
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+
+    // Testing
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

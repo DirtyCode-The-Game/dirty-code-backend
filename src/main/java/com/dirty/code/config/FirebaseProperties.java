@@ -19,4 +19,10 @@ public class FirebaseProperties {
     private String authProviderX509CertUrl;
     private String clientX509CertUrl;
     private String universeDomain;
+    private String apiKey;
+    private String authDomain;
+    private String storageBucket;
+    private String messagingSenderId;
+    private String appId;
+    private String measurementId;
 }

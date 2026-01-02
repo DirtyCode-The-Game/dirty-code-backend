@@ -20,18 +20,18 @@ public class SecurityConfig {
     private final UserService userService;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) {
         http
-            .csrf(AbstractHttpConfigurer::disable)
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/h2-console/**").permitAll()
-                .requestMatchers("/auth/token/**").permitAll()
-                .requestMatchers("/v1/gmail/auth-page").permitAll()
-                .anyRequest().authenticated()
-            )
-            .addFilterBefore(new FirebaseTokenFilter(userService), UsernamePasswordAuthenticationFilter.class)
-            .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)); // Para o H2 console
+                .csrf(AbstractHttpConfigurer::disable)
+                .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/auth/token/**").permitAll()
+                        .requestMatchers("/h2-console/**").permitAll()
+                        .requestMatchers("/v1/gmail/**").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .addFilterBefore(new FirebaseTokenFilter(userService), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
