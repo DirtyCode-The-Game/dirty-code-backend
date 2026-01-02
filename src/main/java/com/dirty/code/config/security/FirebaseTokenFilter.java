@@ -11,10 +11,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Collections;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -28,10 +29,10 @@ public class FirebaseTokenFilter extends OncePerRequestFilter {
 
         String header = request.getHeader("Authorization");
 
-        if (header != null && header.startsWith("Bearer ")) {
+        if (header != null && header.toLowerCase().startsWith("bearer ")) {
             String token = header.substring(7);
             try {
-                log.debug("Authenticating request with Firebase token");
+                log.info("Authenticating request with Firebase token");
                 FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(token);
                 String uid = decodedToken.getUid();
 
@@ -42,12 +43,12 @@ public class FirebaseTokenFilter extends OncePerRequestFilter {
                 }
 
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        uid, null, new ArrayList<>());
+                        uid, null, Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-                log.debug("Successfully authenticated UID: {}", uid);
+                log.info("Successfully authenticated UID: {}", uid);
 
             } catch (Exception e) {
-                log.error("Error verifying Firebase token", e);
+                log.error("Error verifying Firebase token: {}", e.getMessage());
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }

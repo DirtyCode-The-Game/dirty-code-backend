@@ -49,6 +49,28 @@ A URL base para todos os endpoints é: `http://localhost:8080/dirty-code`
 | `GET` | `/v1/gmail/call-back` | Callback do Google OAuth2. Recebe o parâmetro `code`. |
 | `POST` | `/auth/token/{uid}` | Gera um token customizado do Firebase para um UID específico. |
 
+### 💬 Chat (Global)
+
+O Chat Global funciona via WebSocket para recebimento de mensagens em tempo real e HTTP para envio.
+
+#### WebSocket (Receber Mensagens)
+- **Endpoint**: `/ws-chat`
+- **Protocolo**: STOMP (com suporte a SockJS)
+- **Tópico de Inscrição**: `/topic/messages`
+- **Comportamento**: Ao se inscrever, o cliente recebe as últimas 1000 mensagens. Novas mensagens são enviadas para este mesmo tópico.
+
+#### HTTP (Enviar Mensagem)
+| Método | Endpoint | Descrição |
+| :--- | :--- | :--- |
+| `POST` | `/api/chat` | Envia uma nova mensagem para o chat global. |
+
+**Corpo da Requisição (POST /api/chat):**
+```json
+{
+  "message": "Sua mensagem aqui"
+}
+```
+
 ---
 
 ## 🛠️ Como Utilizar

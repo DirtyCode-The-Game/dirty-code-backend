@@ -3,6 +3,7 @@ package com.dirty.code.service;
 import com.dirty.code.controller.AvatarController;
 import com.dirty.code.dto.AvatarCreateRequestDTO;
 import com.dirty.code.dto.AvatarResponseDTO;
+import com.dirty.code.exception.BusinessException;
 import com.dirty.code.exception.ResourceNotFoundException;
 import com.dirty.code.repository.AvatarRepository;
 import com.dirty.code.repository.UserRepository;
@@ -25,6 +26,10 @@ public class AvatarService implements AvatarController {
     @Transactional
     public AvatarResponseDTO createAvatar(String uid, AvatarCreateRequestDTO request) {
         log.info("Creating avatar for user UID: {}", uid);
+
+        if (avatarRepository.existsByNameAndActiveTrue(request.getName())) {
+            throw new BusinessException("Avatar name already exists and is active: " + request.getName());
+        }
 
         User user = userRepository.findByFirebaseUid(uid)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with UID: " + uid));
