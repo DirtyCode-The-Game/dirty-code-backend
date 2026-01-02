@@ -1,9 +1,9 @@
 package com.dirty.code.service;
 
 import com.dirty.code.config.FirebaseProperties;
-import com.dirty.code.integrations.firebase.FirebaseAuthClient;
-import com.dirty.code.integrations.firebase.FirebaseExchangeTokenRequest;
-import com.dirty.code.integrations.firebase.FirebaseExchangeTokenResponse;
+import com.dirty.code.integrations.FirebaseAuthClient;
+import com.dirty.code.integrations.domain.FirebaseExchangeTokenRequest;
+import com.dirty.code.integrations.domain.FirebaseExchangeTokenResponse;
 import com.dirty.code.utils.GoogleTokenUtils;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.firebase.auth.FirebaseAuth;

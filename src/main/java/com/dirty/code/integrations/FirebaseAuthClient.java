@@ -1,5 +1,7 @@
-package com.dirty.code.integrations.firebase;
+package com.dirty.code.integrations;
 
+import com.dirty.code.integrations.domain.FirebaseExchangeTokenRequest;
+import com.dirty.code.integrations.domain.FirebaseExchangeTokenResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

@@ -1,4 +1,4 @@
-package com.dirty.code.integrations.firebase;
+package com.dirty.code.integrations.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
