@@ -28,6 +28,9 @@ public class GmailAuthService implements GmailAuthController {
     @Value("${gcp.redirect-uri}")
     private String redirectUri;
 
+    @Value("${FRONTEND_LOGIN_URL}")
+    private String frontendLoginUrl;
+
     private final GoogleOAuthTokenClient googleOAuthTokenClient;
     private final UserService userService;
     private final GcpService gcpService;
@@ -42,7 +45,7 @@ public class GmailAuthService implements GmailAuthController {
     }
 
     @Override
-    public AuthResponseDTO gmailCallBack(String code) {
+    public RedirectView gmailCallBack(String code) {
         log.info("Processing Gmail callback");
         GoogleTokenResponse tokenResponse = googleOAuthTokenClient.exchangeCode(GoogleTokenRequest.builder()
                 .code(code)
@@ -60,14 +63,6 @@ public class GmailAuthService implements GmailAuthController {
 
         String firebaseToken = firebaseService.createFirebaseIdToken(firebaseUid, googlePayload);
 
-        AuthResponseDTO authResponseDTO = new AuthResponseDTO(
-                firebaseUid,
-                GoogleTokenUtils.getName(googlePayload),
-                GoogleTokenUtils.getEmail(googlePayload),
-                GoogleTokenUtils.getPicture(googlePayload),
-                firebaseToken
-        );
-        log.info("Gmail callback processed successfully for UID: {}", firebaseUid);
-        return authResponseDTO;
+        return new RedirectView(frontendLoginUrl + firebaseToken);
     }
 }

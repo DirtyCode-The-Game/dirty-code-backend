@@ -15,6 +15,6 @@ public interface GmailAuthController {
     RedirectView redirectToGoogle();
 
     @GetMapping("/call-back")
-    AuthResponseDTO gmailCallBack(@RequestParam(required = false) String code);
+    RedirectView gmailCallBack(@RequestParam(required = false) String code);
 
 }
