@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @Builder
@@ -13,8 +15,5 @@ import lombok.Setter;
 @AllArgsConstructor
 public class AvatarCreateRequestDTO {
     private String name;
-    private Integer stamina;
-    private Integer str;
-    private Integer karma;
-    private Integer intelligence;
+    private String picture;
 }
