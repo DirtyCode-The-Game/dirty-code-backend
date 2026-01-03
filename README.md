@@ -2,7 +2,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Java-25-orange" alt="Java 25">
-  <img src="https://img.shields.io/badge/Spring%20Boot-3.4.1-brightgreen" alt="Spring Boot">
+  <img src="https://img.shields.io/badge/Spring%20Boot-4.0.1-brightgreen" alt="Spring Boot">
   <img src="https://img.shields.io/badge/Next.js-15-black" alt="Next.js">
 </p>
 
