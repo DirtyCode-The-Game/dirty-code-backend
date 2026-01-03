@@ -36,15 +36,7 @@ public class UserService implements UserController {
 
         AvatarResponseDTO avatarDTO = null;
         if (activeAvatar != null) {
-            avatarDTO = AvatarResponseDTO.builder()
-                    .id(activeAvatar.getId())
-                    .name(activeAvatar.getName())
-                    .stamina(activeAvatar.getStamina())
-                    .str(activeAvatar.getStr())
-                    .karma(activeAvatar.getKarma())
-                    .intelligence(activeAvatar.getIntelligence())
-                    .active(activeAvatar.getActive())
-                    .build();
+            avatarDTO = AvatarResponseDTO.fromAvatar(activeAvatar);
         }
 
         return UserResponseDTO.builder()

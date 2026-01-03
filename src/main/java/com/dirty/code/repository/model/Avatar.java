@@ -14,6 +14,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Entity
@@ -29,13 +30,25 @@ public class Avatar extends BaseModel {
     private UUID id;
 
     private String name;
+    private String picture;
+
+    private Integer level;
+    private Integer experience;
+
     private Integer stamina;
-    private Integer str;
-    private Integer karma;
-    private Integer intelligence;
+    private Integer life;
+    private BigDecimal money;
+
+    private Integer availablePoints; // Pontos para distribuir
+    private Integer intelligence; // Inteligência
+    private Integer charisma; // Carisma
+    private Integer streetIntelligence; // Malandragem
+    private Integer stealth; // Discrição
+
     private Boolean active;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
 }
