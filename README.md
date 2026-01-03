@@ -1,6 +1,6 @@
 # Dirty Code - Backend
 
-Este projeto é o backend para o jogo "Dirty Code", desenvolvido com Spring Boot. Ele gerencia autenticação, usuários e integrações com Firebase e Google Cloud.
+yrdyr Este projeto é o backend para o jogo "Dirty Code", desenvolvido com Spring Boot. Ele gerencia autenticação, usuários e integrações com Firebase e Google Cloud.
 
 ## 🗄️ Bancos de Dados
 
