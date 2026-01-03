@@ -1,109 +1,77 @@
-# Dirty Code - Backend
+# Dirty Code - The Game
 
-Este projeto é o backend para o jogo "Dirty Code", desenvolvido com Spring Boot. Ele gerencia autenticação, usuários e integrações com Firebase e Google Cloud.
+<p align="center">
+  <img src="https://img.shields.io/badge/Java-25-orange" alt="Java 25">
+  <img src="https://img.shields.io/badge/Spring%20Boot-3.4.1-brightgreen" alt="Spring Boot">
+  <img src="https://img.shields.io/badge/Next.js-15-black" alt="Next.js">
+</p>
 
-## 🗄️ Bancos de Dados
+## 🚀 Como participar do projeto
 
-O projeto utiliza dois tipos principais de armazenamento:
+Para contribuir com o Dirty Code, siga rigorosamente as regras abaixo:
 
-### 1. Banco de Dados Relacional (SQL)
+### 🌿 Padronização de Branchs
+- Toda branch deve seguir o padrão: `DCTG-NumeroDaTask` (Exemplo: `DCTG-42`).
+- Branches devem ser abertas a partir da `DEVELOP`.
 
-O sistema suporta dois perfis de banco de dados, configurados via perfis do Spring:
+### 🔃 Pull Requests (PR)
+- PRs devem ser abertos **sempre** apontando para a branch `DEVELOP`.
+- PRs devem ser pequenos e focados em uma única tarefa/funcionalidade.
+- PRs no backend **devem** conter logs seguindo o padrão já estabelecido no projeto.
+- Não serão mergeados códigos sem uma tarefa prevista no board. Caso encontre um bug, crie a tarefa antes de corrigi-lo.
 
-#### A. H2 Database (Desenvolvimento Local)
-- **Arquivo**: `application.yml` (Perfil padrão)
-- **Tipo**: Banco de dados em memória (modo PostgreSQL).
-- **Utilização**: Ideal para desenvolvimento rápido e testes locais.
-- **Console**: Acessível em `/dirty-code/h2-console`.
-- **Configuração**:
-  - **URL**: `jdbc:h2:mem:dirtycode`
-  - **Username**: `sa`
-  - **Password**: (vazio)
-
-#### B. PostgreSQL (QA/Produção)
-- **Arquivo**: `application-qa.yml` (Ativado com `-Dspring.profiles.active=qa`)
-- **Tipo**: Banco de dados relacional persistente.
-- **Utilização**: Ambiente de homologação e testes integrados.
-- **Configuração padrão**:
-  - **URL**: `jdbc:postgresql://localhost:5432/dirtycode`
-  - **Username**: `root`
-  - **Password**: `root`
-
-> **Nota**: As migrações de schema para ambos os bancos são gerenciadas automaticamente pelo Flyway (diretório `src/main/resources/db/migration`).
-
-### 2. Firebase (NoSQL/Auth)
-- **Utilização**: Gerenciamento de autenticação e tokens.
-- **Integração**: Utiliza o Firebase Admin SDK para validar tokens e criar tokens customizados.
+### 🛡️ Merges e Administração
+- Usuários não administradores **não estão autorizados** a realizar o MERGE.
+- O merge deve ser feito exclusivamente por um **ADMIN**.
 
 ---
 
-## 🚀 Endpoints
+## 💻 Configuração do Ambiente
 
-A URL base para todos os endpoints é: `http://localhost:8080/dirty-code`
+O projeto é composto por um Backend (Spring Boot) e um Frontend (Next.js).
 
-### 🔑 Autenticação (Públicos)
+### ☕ Backend
 
-| Método | Endpoint | Descrição |
-| :--- | :--- | :--- |
-| `GET` | `/v1/gmail/auth-page` | Redireciona para a página de login do Google. |
-| `GET` | `/v1/gmail/call-back` | Callback do Google OAuth2. Recebe o parâmetro `code`. |
-| `POST` | `/auth/token/{uid}` | Gera um token customizado do Firebase para um UID específico. |
+#### Perfis de Ambiente
+- **Padrão (Offline/Local)**: Utiliza banco de dados H2 (em memória) e não requer integrações externas (Firebase/Google). Ideal para novos desenvolvedores.
+- **DEV / QA**: Perfis que utilizam integrações reais.
+  - **Atenção**: Arquivos `.env` ou configurações destes perfis contêm chaves sensíveis e **não são compartilhados** por segurança. O uso é restrito a admins ou pessoas autorizadas.
 
-### 💬 Chat (Global)
+#### Como subir o Backend:
+1. Certifique-se de ter o **Java 25** instalado.
+2. Execute o comando: `./gradlew bootRun`
+3. O backend estará disponível em `http://localhost:8080/dirty-code`
+4. Console do H2: `http://localhost:8080/dirty-code/h2-console` (JDBC URL: `jdbc:h2:mem:dirtycode`)
 
-O Chat Global funciona via WebSocket para recebimento de mensagens em tempo real e HTTP para envio.
+### 🌐 Frontend
 
-#### WebSocket (Receber Mensagens)
-- **Endpoint**: `/ws-chat`
-- **Protocolo**: STOMP (com suporte a SockJS)
-- **Tópico de Inscrição**: `/topic/messages`
-- **Comportamento**: Ao se inscrever, o cliente recebe as últimas 1000 mensagens. Novas mensagens são enviadas para este mesmo tópico.
-
-#### HTTP (Enviar Mensagem)
-| Método | Endpoint | Descrição |
-| :--- | :--- | :--- |
-| `POST` | `/api/chat` | Envia uma nova mensagem para o chat global. |
-
-**Corpo da Requisição (POST /api/chat):**
-```json
-{
-  "message": "Sua mensagem aqui"
-}
-```
+#### Como subir o Frontend:
+1. Acesse a pasta do frontend: `cd ../dirty-code-frontend`
+2. Instale as dependências: `npm install`
+3. Inicie o servidor: `npm run dev`
+4. O frontend estará disponível em `http://localhost:3000`
 
 ---
 
-## 🛠️ Como Utilizar
+## 🛠️ Endpoints Principais
 
-### 1. Autenticação
-A maioria dos endpoints requer um token de autenticação do Firebase no cabeçalho da requisição:
+Abaixo estão os endpoints mais utilizados de forma enxuta:
 
-```http
-Authorization: Bearer <seu_firebase_token>
-```
+### Autenticação (Gmail/Google)
+- `GET /v1/gmail/auth-page`: Inicia o fluxo de login (redireciona para Google ou Mock no modo offline).
+- `GET /v1/gmail/call-back`: Callback do Google para processamento do token.
 
-Para obter um token em desenvolvimento:
-1. Acesse `/v1/gmail/auth-page`.
-2. Após o login, você receberá um código que será processado pelo `/v1/gmail/call-back`.
+### Usuário
+- `GET /v1/users`: Retorna as informações do usuário logado (BFF/Contexto).
 
-### 2. Cabeçalhos (Headers)
-Para requisições `POST` e `PUT`, certifique-se de enviar o cabeçalho:
-```http
-Content-Type: application/json
-```
+### Avatares
+- `POST /v1/avatars`: Cria um novo avatar para o usuário logado.
+- `PUT /v1/avatars`: Atualiza as estatísticas ou informações do avatar ativo.
+- `GET /v1/avatars/me`: Busca o avatar ativo do usuário.
 
-### 3. Requisitos
-- **Java 25**
-- **Integrações (Opcional)**: Por padrão, o projeto sobe em modo "Offline" (sem Firebase/Google). Para habilitar as integrações, altere `firebase.enabled: true` no `application.yml` ou use o perfil `qa`.
-
-### 4. Modo Offline (Desenvolvimento)
-No modo offline, o login via `/v1/gmail/auth-page` redireciona automaticamente para um usuário mock. Qualquer string enviada no cabeçalho `Authorization: Bearer <token>` será tratada como o UID do usuário.
+### Chat
+- `POST /v1/chat/new-message`: Envia uma nova mensagem para o chat global.
+- `WS /ws-chat`: Endpoint WebSocket para mensagens em tempo real.
 
 ---
-
-## 🏗️ Estrutura de Pastas Principal
-- `controller/`: Camada de exposição da API.
-- `service/`: Regras de negócio.
-- `repository/`: Acesso aos dados (JPA).
-- `dto/`: Objetos de transferência de dados.
-- `config/`: Configurações de segurança e beans do sistema.
+*Dirty Code - Onde o código é sujo, mas a diversão é limpa.*
