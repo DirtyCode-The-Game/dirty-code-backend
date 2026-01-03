@@ -68,7 +68,8 @@ public class UserService implements UserController {
         return exists;
     }
 
-    private void saveOrUpdateUser(String uid, String email, String name, String picture) {
+    @Transactional
+    public void saveOrUpdateUser(String uid, String email, String name, String picture) {
         userRepository.findByFirebaseUid(uid)
                 .map(existingUser -> {
                     log.info("Updating existing user with UID: {}", uid);

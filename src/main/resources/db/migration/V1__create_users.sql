@@ -28,3 +28,7 @@ CREATE TABLE avatars (
     updated_at TIMESTAMP,
     CONSTRAINT fk_avatars_user FOREIGN KEY (user_id) REFERENCES users(id)
 );
+
+
+INSERT INTO users (id, firebase_uid, name, email, photo_url, created_at, updated_at)
+VALUES ('00000000-0000-0000-0000-000000000000', 'mock-token-123', 'Mock User', 'mock-user@example.com', 'http://example.com/photo.jpg', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);

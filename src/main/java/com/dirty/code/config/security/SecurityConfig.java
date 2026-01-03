@@ -1,5 +1,6 @@
 package com.dirty.code.config.security;
 
+import com.dirty.code.config.FirebaseProperties;
 import com.dirty.code.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -23,6 +24,7 @@ import java.util.List;
 public class SecurityConfig {
 
     private final UserService userService;
+    private final FirebaseProperties firebaseProperties;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http){
@@ -38,7 +40,7 @@ public class SecurityConfig {
                         .requestMatchers("/ws-chat/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(new FirebaseTokenFilter(userService), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new FirebaseTokenFilter(userService, firebaseProperties), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

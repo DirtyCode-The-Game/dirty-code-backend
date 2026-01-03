@@ -1,5 +1,6 @@
 package com.dirty.code.config.security;
 
+import com.dirty.code.config.FirebaseProperties;
 import com.dirty.code.service.UserService;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseToken;
@@ -22,6 +23,7 @@ import java.util.Collections;
 public class FirebaseTokenFilter extends OncePerRequestFilter {
 
     private final UserService userService;
+    private final FirebaseProperties firebaseProperties;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -32,9 +34,15 @@ public class FirebaseTokenFilter extends OncePerRequestFilter {
         if (header != null && header.toLowerCase().startsWith("bearer ")) {
             String token = header.substring(7);
             try {
-                log.info("Authenticating request with Firebase token");
-                FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(token);
-                String uid = decodedToken.getUid();
+                String uid;
+                if (firebaseProperties.isEnabled()) {
+                    log.info("Authenticating request with Firebase token");
+                    FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(token);
+                    uid = decodedToken.getUid();
+                } else {
+                    log.info("Offline mode: using token as UID");
+                    uid = token;
+                }
 
                 if (!userService.existsByUid(uid)) {
                     log.warn("User with UID: {} not found in local database. Rejecting request.", uid);

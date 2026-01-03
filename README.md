@@ -1,7 +1,6 @@
 # Dirty Code - Backend
 
 Este projeto é o backend para o jogo "Dirty Code", desenvolvido com Spring Boot. Ele gerencia autenticação, usuários e integrações com Firebase e Google Cloud.
->>>>>>> origin/main
 
 ## 🗄️ Bancos de Dados
 
@@ -95,7 +94,10 @@ Content-Type: application/json
 
 ### 3. Requisitos
 - **Java 25**
-- Variáveis de ambiente configuradas (ver `application.yml` para as chaves do Firebase e GCP necessárias).
+- **Integrações (Opcional)**: Por padrão, o projeto sobe em modo "Offline" (sem Firebase/Google). Para habilitar as integrações, altere `firebase.enabled: true` no `application.yml` ou use o perfil `qa`.
+
+### 4. Modo Offline (Desenvolvimento)
+No modo offline, o login via `/v1/gmail/auth-page` redireciona automaticamente para um usuário mock. Qualquer string enviada no cabeçalho `Authorization: Bearer <token>` será tratada como o UID do usuário.
 
 ---
 

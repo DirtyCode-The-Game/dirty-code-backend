@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConfigurationProperties(prefix = "firebase")
 public class FirebaseProperties {
+    private boolean enabled;
     private String type;
     private String projectId;
     private String privateKeyId;

@@ -1,5 +1,6 @@
 package com.dirty.code.service;
 
+import com.dirty.code.config.FirebaseProperties;
 import com.dirty.code.controller.GmailAuthController;
 import com.dirty.code.integrations.GoogleOAuthTokenClient;
 import com.dirty.code.integrations.domain.FirebaseExchangeTokenResponse;
@@ -28,16 +29,21 @@ public class GmailAuthService implements GmailAuthController {
     @Value("${gcp.redirect-uri}")
     private String redirectUri;
 
-    @Value("${FRONTEND_LOGIN_URL}")
+    @Value("${app.frontend.login-url}")
     private String frontendLoginUrl;
 
     private final GoogleOAuthTokenClient googleOAuthTokenClient;
     private final UserService userService;
     private final GcpService gcpService;
     private final FirebaseService firebaseService;
+    private final FirebaseProperties firebaseProperties;
 
     @Override
     public RedirectView redirectToGoogle() {
+        if (!firebaseProperties.isEnabled()) {
+            log.info("Offline mode: Redirecting directly to callback with mock code");
+            return new RedirectView("/dirty-code/v1/gmail/call-back?code=mock-code");
+        }
         log.info("Redirecting to Google login page");
         RedirectView redirectView = new RedirectView(gcpService.getGoogleAuthUrl());
         log.info("Redirect URL prepared");
@@ -47,21 +53,32 @@ public class GmailAuthService implements GmailAuthController {
     @Override
     public RedirectView gmailCallBack(String code) {
         log.info("Processing Gmail callback");
-        GoogleTokenResponse tokenResponse = googleOAuthTokenClient.exchangeCode(GoogleTokenRequest.builder()
-                .code(code)
-                .clientId(clientId)
-                .clientSecret(clientSecret)
-                .redirectUri(redirectUri)
-                .build());
+        String firebaseUid;
+        GoogleIdToken.Payload googlePayload;
 
-        GoogleIdToken.Payload googlePayload = gcpService.verifyGoogleIdToken(tokenResponse.getIdToken());
-        String firebaseUid = GoogleTokenUtils.getFirebaseUid(googlePayload);
-        log.info("Processing callback for user: {}", googlePayload.getEmail());
+        if (firebaseProperties.isEnabled()) {
+            GoogleTokenResponse tokenResponse = googleOAuthTokenClient.exchangeCode(GoogleTokenRequest.builder()
+                    .code(code)
+                    .clientId(clientId)
+                    .clientSecret(clientSecret)
+                    .redirectUri(redirectUri)
+                    .build());
 
-        UserRecord firebaseUser = firebaseService.getOrCreateFirebaseUser(firebaseUid, googlePayload);
-        userService.saveOrUpdateUser(firebaseUser);
+            googlePayload = gcpService.verifyGoogleIdToken(tokenResponse.getIdToken());
+            firebaseUid = GoogleTokenUtils.getFirebaseUid(googlePayload);
+            log.info("Processing callback for user: {}", googlePayload.getEmail());
 
-        FirebaseExchangeTokenResponse firebaseToken = firebaseService.createFirebaseIdToken(firebaseUid, googlePayload);
-        return new RedirectView(String.format(frontendLoginUrl, firebaseToken.getIdToken(), firebaseToken.getRefreshToken()));
+            UserRecord firebaseUser = firebaseService.getOrCreateFirebaseUser(firebaseUid, googlePayload);
+            userService.saveOrUpdateUser(firebaseUser);
+
+            FirebaseExchangeTokenResponse firebaseToken = firebaseService.createFirebaseIdToken(firebaseUid, googlePayload);
+            return new RedirectView(String.format(frontendLoginUrl, firebaseToken.getIdToken(), firebaseToken.getRefreshToken()));
+        } else {
+            log.info("Offline mode: Creating mock user and tokens");
+            firebaseUid = "mock-token-123";
+            userService.saveOrUpdateUser(firebaseUid, "mock-user@example.com", "Mock User", "http://example.com/photo.jpg");
+            
+            return new RedirectView(String.format(frontendLoginUrl, "mock-token-123", "mock-token-123"));
+        }
     }
 }

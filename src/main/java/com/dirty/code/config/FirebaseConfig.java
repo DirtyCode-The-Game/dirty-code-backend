@@ -5,14 +5,15 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
-
 import jakarta.annotation.PostConstruct;
 import java.io.IOException;
 
 @Configuration
 @RequiredArgsConstructor
 @Slf4j
+@ConditionalOnProperty(prefix = "firebase", name = "enabled", havingValue = "true")
 public class FirebaseConfig {
 
     private final FirebaseProperties firebaseProperties;

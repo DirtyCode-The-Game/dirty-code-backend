@@ -16,7 +16,12 @@ spring:
     enabled: true
     locations: classpath:db/migration
 
+app:
+  frontend:
+    login-url: ${FRONTEND_LOGIN_URL:http://localhost:3000/api/login?token=%s&refreshToken=%s}
+
 firebase:
+  enabled: true
   type: ${FIREBASE_TYPE}
   project-id: ${FIREBASE_PROJECT_ID}
   private-key-id: ${FIREBASE_PRIVATE_KEY_ID}
