@@ -8,6 +8,12 @@ spring:
     driver-class-name: org.postgresql.Driver
     username: ${DATABASE_USER}
     password: ${DATABASE_PASS}
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 1
+      idle-timeout: 30000
+      connection-timeout: 30000
+      max-lifetime: 1800000
   jpa:
     hibernate:
       ddl-auto: none
@@ -33,5 +39,5 @@ firebase:
 gcp:
   client-id: ${GCP_CLIENT_ID}
   client-secret: ${GCP_CLIENT_SECRET}
-  escaped-redirect-uri: http%3A%2F%2Flocalhost%3A8080%2Fdirty-code%2Fv1%2Fgmail%2Fcall-back
-  redirect-uri: "http://localhost:8080/dirty-code/v1/gmail/call-back"
+  escaped-redirect-uri: ${ESCAPED_REDIRECT_URL}
+  redirect-uri: ${REDIRECT_URL}
