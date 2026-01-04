@@ -39,5 +39,4 @@ firebase:
 gcp:
   client-id: ${GCP_CLIENT_ID}
   client-secret: ${GCP_CLIENT_SECRET}
-  escaped-redirect-uri: ${ESCAPED_REDIRECT_URL}
   redirect-uri: ${REDIRECT_URL}

@@ -52,7 +52,7 @@ public class GmailAuthService implements GmailAuthController {
 
     @Override
     public RedirectView gmailCallBack(String code) {
-        log.info("Processing Gmail callback");
+        log.info("Processing Gmail callback, code: {}", code);
         String firebaseUid;
         GoogleIdToken.Payload googlePayload;
 
