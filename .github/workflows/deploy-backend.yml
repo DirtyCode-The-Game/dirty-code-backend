@@ -47,7 +47,7 @@ jobs:
         docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest .
         docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
 
-    - name: Run DigitalOcean Registry Garbage Collection
+    - name: Run DigitalOcean Garbage Collection
       run: |
         echo "🧹 Iniciando Garbage Collection no Container Registry..."
         doctl registry garbage-collection start \
