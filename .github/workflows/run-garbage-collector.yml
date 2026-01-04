@@ -1,0 +1,35 @@
+name: DigitalOcean Registry Garbage Collector
+
+on:
+  workflow_dispatch: # botão manual no GitHub
+
+jobs:
+  garbage-collector:
+    name: Run Garbage Collection
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Login to DigitalOcean Container Registry
+        run: doctl registry login --expiry-seconds 600
+
+      - name: Run Garbage Collection
+        run: |
+          echo "🧹 Iniciando Garbage Collection no DigitalOcean Container Registry..."
+          doctl registry garbage-collection start \
+            --include-untagged-manifests \
+            --force
+
+      - name: Success Notification
+        if: success()
+        run: |
+          echo "✅ Garbage Collection iniciada com sucesso!"
+
+      - name: Failure Notification
+        if: failure()
+        run: |
+          echo "❌ Falha ao iniciar Garbage Collection"
