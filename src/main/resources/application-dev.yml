@@ -1,45 +1,49 @@
-  server:
-    servlet:
-      context-path: /dirty-code
+server:
+  servlet:
+    context-path: /dirty-code
 
-  spring:
-    datasource:
-      url: jdbc:h2:mem:dirtycode;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH
-      driverClassName: org.h2.Driver
-      username: sa
-      password: ""
-    jpa:
-      database-platform: org.hibernate.dialect.H2Dialect
-      hibernate:
-        ddl-auto: none
-    h2:
-      console:
-        enabled: true
-        path: /h2-console
-    flyway:
+spring:
+  datasource:
+    url: jdbc:h2:mem:dirtycode;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH
+    driverClassName: org.h2.Driver
+    username: sa
+    password: ""
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: none
+  h2:
+    console:
       enabled: true
-
-  firebase:
+      path: /h2-console
+  flyway:
     enabled: true
-    type: ${FIREBASE_TYPE}
-    project-id: ${FIREBASE_PROJECT_ID}
-    private-key-id: ${FIREBASE_PRIVATE_KEY_ID}
-    private-key: ${FIREBASE_PRIVATE_KEY}
-    client-email: ${FIREBASE_CLIENT_EMAIL}
-    client-id: ${FIREBASE_CLIENT_ID}
-    auth-uri: ${FIREBASE_AUTH_URI}
-    token-uri: ${FIREBASE_TOKEN_URI}
-    auth-provider-x509-cert-url: ${FIREBASE_AUTH_PROVIDER_X509_CERT_URL}
-    client-x509-cert-url: ${FIREBASE_CLIENT_X509_CERT_URL}
-    universe-domain: ${FIREBASE_UNIVERSE_DOMAIN}
-    api-key: ${FIREBASE_API_KEY}
-    auth-domain: ${FIREBASE_AUTH_DOMAIN}
-    storage-bucket: ${FIREBASE_STORAGE_BUCKET}
-    messaging-sender-id: ${FIREBASE_MESSAGING_SENDER_ID}
-    app-id: ${FIREBASE_APP_ID}
-    measurement-id: ${FIREBASE_MEASUREMENT_ID}
 
-  gcp:
-    client-id: ${GCP_CLIENT_ID}
-    client-secret: ${GCP_CLIENT_SECRET}
-    redirect-uri: "http://localhost:8080/dirty-code/v1/gmail/call-back"
+app:
+  frontend:
+    login-url: http://localhost:3000/api/login?token=%s&refreshToken=%s
+
+firebase:
+  enabled: true
+  type: ${FIREBASE_TYPE}
+  project-id: ${FIREBASE_PROJECT_ID}
+  private-key-id: ${FIREBASE_PRIVATE_KEY_ID}
+  private-key: ${FIREBASE_PRIVATE_KEY}
+  client-email: ${FIREBASE_CLIENT_EMAIL}
+  client-id: ${FIREBASE_CLIENT_ID}
+  auth-uri: ${FIREBASE_AUTH_URI}
+  token-uri: ${FIREBASE_TOKEN_URI}
+  auth-provider-x509-cert-url: ${FIREBASE_AUTH_PROVIDER_X509_CERT_URL}
+  client-x509-cert-url: ${FIREBASE_CLIENT_X509_CERT_URL}
+  universe-domain: ${FIREBASE_UNIVERSE_DOMAIN}
+  api-key: ${FIREBASE_API_KEY}
+  auth-domain: ${FIREBASE_AUTH_DOMAIN}
+  storage-bucket: ${FIREBASE_STORAGE_BUCKET}
+  messaging-sender-id: ${FIREBASE_MESSAGING_SENDER_ID}
+  app-id: ${FIREBASE_APP_ID}
+  measurement-id: ${FIREBASE_MEASUREMENT_ID}
+
+gcp:
+  client-id: ${GCP_CLIENT_ID}
+  client-secret: ${GCP_CLIENT_SECRET}
+  redirect-uri: "http://localhost:8080/dirty-code/v1/gmail/call-back"
