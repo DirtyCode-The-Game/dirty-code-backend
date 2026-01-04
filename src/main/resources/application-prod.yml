@@ -17,6 +17,7 @@ spring:
     locations: classpath:db/migration
 
 firebase:
+  enabled: true
   type: ${FIREBASE_TYPE}
   project-id: ${FIREBASE_PROJECT_ID}
   private-key-id: ${FIREBASE_PRIVATE_KEY_ID}
