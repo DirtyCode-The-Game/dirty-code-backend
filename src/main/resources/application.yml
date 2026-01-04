@@ -19,6 +19,15 @@ spring:
   flyway:
     enabled: true
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: always
+
 app:
   frontend:
     login-url: http://localhost:3000/api/login?token=%s&refreshToken=%s
