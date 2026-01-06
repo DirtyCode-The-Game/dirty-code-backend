@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
@@ -80,9 +82,12 @@ public class ChatService implements ChatController {
                         () -> name.set(userPlaceholderNames.computeIfAbsent(uid, _ -> getRandomPlaceholderName())));
 
 
+        LocalDateTime datetimeNow = LocalDateTime.now(ZoneId.of("America/Sao_Paulo"));
+        String timestamp = String.format("%d:%d", datetimeNow.getHour(), datetimeNow.getMinute());
         ChatMessageDTO chatMessage = ChatMessageDTO.builder()
                 .avatarName(name.get())
                 .message(request.getMessage())
+                .timestamp(timestamp)
                 .build();
 
         addMessage(chatMessage);
