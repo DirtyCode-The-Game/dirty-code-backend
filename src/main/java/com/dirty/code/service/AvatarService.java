@@ -72,7 +72,7 @@ public class AvatarService implements AvatarController {
         // Use current values if request values are null
         int currentInt = avatar.getIntelligence();
         int currentCha = avatar.getCharisma();
-        int currentStr = avatar.getStreetIntelligence();
+        int currentStr = avatar.getStrength();
         int currentSte = avatar.getStealth();
         int currentAvailable = avatar.getAvailablePoints();
 
@@ -96,7 +96,7 @@ public class AvatarService implements AvatarController {
 
         avatar.setIntelligence(newInt);
         avatar.setCharisma(newCha);
-        avatar.setStreetIntelligence(newStr);
+        avatar.setStrength(newStr);
         avatar.setStealth(newSte);
         avatar.setAvailablePoints(currentAvailable - cost);
 
