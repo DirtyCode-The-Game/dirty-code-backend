@@ -30,7 +30,7 @@ public class AvatarResponseDTO {
     private Integer availablePoints; // Pontos para distribuir
     private Integer intelligence; // Inteligência
     private Integer charisma; // Carisma
-    private Integer streetIntelligence; // Malandragem
+    private Integer strength; // Força
     private Integer stealth; // Discrição
 
     private Boolean active;
@@ -50,7 +50,7 @@ public class AvatarResponseDTO {
                 .availablePoints(avatar.getAvailablePoints())
                 .intelligence(avatar.getIntelligence())
                 .charisma(avatar.getCharisma())
-                .streetIntelligence(avatar.getStreetIntelligence())
+                .strength(avatar.getStrength())
                 .stealth(avatar.getStealth())
 
                 .active(avatar.getActive())

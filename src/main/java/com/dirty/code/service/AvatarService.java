@@ -47,7 +47,6 @@ public class AvatarService implements AvatarController {
                 .availablePoints(0)
                 .intelligence(0)
                 .charisma(0)
-                .streetIntelligence(0)
                 .stealth(0)
                 .active(true)
                 .user(user)

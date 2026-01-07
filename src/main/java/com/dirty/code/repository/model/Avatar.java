@@ -1,6 +1,5 @@
 package com.dirty.code.repository.model;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -42,7 +41,7 @@ public class Avatar extends BaseModel {
     private Integer availablePoints; // Pontos para distribuir
     private Integer intelligence; // Inteligência
     private Integer charisma; // Carisma
-    private Integer streetIntelligence; // Malandragem
+    private Integer strength; // força
     private Integer stealth; // Discrição
 
     private Boolean active;
