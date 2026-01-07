@@ -83,7 +83,7 @@ public class ChatService implements ChatController {
 
 
         LocalDateTime datetimeNow = LocalDateTime.now(ZoneId.of("America/Sao_Paulo"));
-        String timestamp = String.format("%d:%d", datetimeNow.getHour(), datetimeNow.getMinute());
+        String timestamp = String.format("%02d:%02d", datetimeNow.getHour(), datetimeNow.getMinute());
         ChatMessageDTO chatMessage = ChatMessageDTO.builder()
                 .avatarName(name.get())
                 .message(request.getMessage())
