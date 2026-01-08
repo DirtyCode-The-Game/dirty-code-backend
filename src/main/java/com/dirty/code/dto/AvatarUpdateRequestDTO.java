@@ -16,6 +16,6 @@ public class AvatarUpdateRequestDTO {
     private String picture;
     private Integer intelligence;
     private Integer charisma;
-    private Integer streetIntelligence;
+    private Integer strength;
     private Integer stealth;
 }

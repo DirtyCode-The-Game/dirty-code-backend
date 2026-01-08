@@ -78,7 +78,7 @@ public class AvatarService implements AvatarController {
 
         int newInt = request.getIntelligence();
         int newCha = request.getCharisma();
-        int newStr = request.getStreetIntelligence();
+        int newStr = request.getStrength();
         int newSte = request.getStealth();
 
         // Ensure stats are not being decreased
