@@ -12,4 +12,5 @@ import lombok.NoArgsConstructor;
 public class ChatMessageDTO {
     private String avatarName;
     private String message;
+    private String timestamp;
 }
