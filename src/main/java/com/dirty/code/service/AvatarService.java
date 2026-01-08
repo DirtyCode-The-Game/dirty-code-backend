@@ -1,6 +1,8 @@
 package com.dirty.code.service;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,9 +20,6 @@ import com.dirty.code.repository.model.User;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -54,6 +53,7 @@ public class AvatarService implements AvatarController {
                 .intelligence(0)
                 .charisma(0)
                 .stealth(0)
+                .strength(0)
                 .active(true)
                 .user(user)
                 .build();
@@ -73,16 +73,16 @@ public class AvatarService implements AvatarController {
                 .orElseThrow(() -> new ResourceNotFoundException("Active avatar not found for user UID: " + uid));
 
         // Use current values if request values are null
-        int currentInt = avatar.getIntelligence();
-        int currentCha = avatar.getCharisma();
-        int currentStr = avatar.getStrength();
-        int currentSte = avatar.getStealth();
-        int currentAvailable = avatar.getAvailablePoints();
+        int currentInt = avatar.getIntelligence() != null ? avatar.getIntelligence() : 0;
+        int currentCha = avatar.getCharisma() != null ? avatar.getCharisma() : 0;
+        int currentStr = avatar.getStrength() != null ? avatar.getStrength() : 0;
+        int currentSte = avatar.getStealth() != null ? avatar.getStealth() : 0;
+        int currentAvailable = avatar.getAvailablePoints() != null ? avatar.getAvailablePoints() : 0;
 
-        int newInt = request.getIntelligence();
-        int newCha = request.getCharisma();
-        int newStr = request.getStrength();
-        int newSte = request.getStealth();
+        int newInt = request.getIntelligence() != null ? request.getIntelligence() : currentInt;
+        int newCha = request.getCharisma() != null ? request.getCharisma() : currentCha;
+        int newStr = request.getStrength() != null ? request.getStrength() : currentStr;
+        int newSte = request.getStealth() != null ? request.getStealth() : currentSte;
 
         // Ensure stats are not being decreased
         if (newInt < currentInt || newCha < currentCha || newStr < currentStr || newSte < currentSte) {
