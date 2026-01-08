@@ -1,6 +1,9 @@
 package com.dirty.code.controller;
 
+import java.util.List;
+
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,4 +23,8 @@ public interface AvatarController {
 
     @PutMapping
     AvatarResponseDTO updateAvatar(@AuthenticationPrincipal String uid, @RequestBody AvatarUpdateRequestDTO request);
+
+
+    @GetMapping("/ranking")
+    List<AvatarResponseDTO> getRanking();
 }

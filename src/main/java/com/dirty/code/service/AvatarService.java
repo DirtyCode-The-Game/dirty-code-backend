@@ -19,6 +19,9 @@ import com.dirty.code.repository.model.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -115,5 +118,15 @@ public class AvatarService implements AvatarController {
         log.info("Avatar updated with ID: {}", savedAvatar.getId());
 
         return AvatarResponseDTO.fromAvatar(savedAvatar);
+    }
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<AvatarResponseDTO> getRanking() {
+        return avatarRepository.findTop10ByActiveTrueOrderByLevelDescExperienceDesc()
+                .stream()
+                .map(AvatarResponseDTO::fromAvatar)
+                .collect(Collectors.toList());
     }
 }
