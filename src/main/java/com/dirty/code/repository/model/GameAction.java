@@ -70,4 +70,7 @@ public class GameAction extends BaseModel {
 
     @Column(name = "action_image")
     private String actionImage;
+
+    @Column(name = "failure_chance")
+    private Double failureChance;
 }

@@ -1,5 +1,6 @@
 package com.dirty.code.controller;
 
+import com.dirty.code.dto.ActionResultDTO;
 import com.dirty.code.dto.AvatarResponseDTO;
 import com.dirty.code.dto.GameActionDTO;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -15,5 +16,5 @@ public interface GameActionController {
     List<GameActionDTO> getActionsByType(@PathVariable String type);
 
     @PostMapping("/{actionId}/perform")
-    AvatarResponseDTO performAction(@AuthenticationPrincipal String uid, @PathVariable UUID actionId);
+    ActionResultDTO performAction(@AuthenticationPrincipal String uid, @PathVariable UUID actionId);
 }

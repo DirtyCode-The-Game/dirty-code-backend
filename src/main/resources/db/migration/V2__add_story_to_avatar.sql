@@ -1,1 +1,0 @@
-ALTER TABLE avatars ADD COLUMN story VARCHAR(200);

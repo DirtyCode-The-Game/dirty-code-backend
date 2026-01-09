@@ -31,4 +31,5 @@ public class GameActionDTO {
     private Double lostHpFailureVariation;
     private String textFile;
     private String actionImage;
+    private Double failureChance;
 }
