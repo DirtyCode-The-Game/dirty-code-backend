@@ -25,10 +25,11 @@ public class GameFormulas {
     }
 
     public static double calculateFailureChance(
+            double baseFailureChance,
             int reqStrength, int reqIntelligence, int reqCharisma, int reqStealth,
             int avatarStrength, int avatarIntelligence, int avatarCharisma, int avatarStealth) {
 
-        double chance = 20.0;
+        double chance = baseFailureChance * 100;
 
         // Strength
         chance += calculateAttributeImpact(reqStrength, avatarStrength);
@@ -39,7 +40,7 @@ public class GameFormulas {
         // Stealth
         chance += calculateAttributeImpact(reqStealth, avatarStealth);
 
-        return Math.max(0, Math.min(100, chance));
+        return Math.max(0, Math.min(100, chance)) / 100.0;
     }
 
     private static double calculateAttributeImpact(int required, int actual) {
@@ -52,6 +53,6 @@ public class GameFormulas {
     }
 
     public static boolean isFailure(double failureChance) {
-        return RANDOM.nextDouble() * 100 < failureChance;
+        return RANDOM.nextDouble() < failureChance;
     }
 }

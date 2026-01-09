@@ -13,7 +13,7 @@ import java.util.UUID;
 @RequestMapping("/v1/actions")
 public interface GameActionController {
     @GetMapping("/type/{type}")
-    List<GameActionDTO> getActionsByType(@PathVariable String type);
+    List<GameActionDTO> getActionsByType(@AuthenticationPrincipal String uid, @PathVariable String type);
 
     @PostMapping("/{actionId}/perform")
     ActionResultDTO performAction(@AuthenticationPrincipal String uid, @PathVariable UUID actionId);

@@ -30,9 +30,27 @@ public class GameActionService implements GameActionController {
     private final AvatarRepository avatarRepository;
 
     @Override
-    public List<GameActionDTO> getActionsByType(String type) {
+    public List<GameActionDTO> getActionsByType(String uid, String type) {
+        Avatar avatar = avatarRepository.findByUserFirebaseUidAndActiveTrue(uid)
+                .orElseThrow(() -> new ResourceNotFoundException("Active avatar not found for user: " + uid));
+
         return gameActionRepository.findByType(type).stream()
-                .map(this::convertToDTO)
+                .map(action -> {
+                    GameActionDTO dto = convertToDTO(action);
+                    double failureChance = GameFormulas.calculateFailureChance(
+                            action.getFailureChance() != null ? action.getFailureChance() : 0.0,
+                            action.getRequiredStrength() != null ? action.getRequiredStrength() : 0,
+                            action.getRequiredIntelligence() != null ? action.getRequiredIntelligence() : 0,
+                            action.getRequiredCharisma() != null ? action.getRequiredCharisma() : 0,
+                            action.getRequiredStealth() != null ? action.getRequiredStealth() : 0,
+                            avatar.getStrength() != null ? avatar.getStrength() : 0,
+                            avatar.getIntelligence() != null ? avatar.getIntelligence() : 0,
+                            avatar.getCharisma() != null ? avatar.getCharisma() : 0,
+                            avatar.getStealth() != null ? avatar.getStealth() : 0
+                    );
+                    dto.setFailureChance(failureChance);
+                    return dto;
+                })
                 .collect(Collectors.toList());
     }
 
@@ -52,6 +70,7 @@ public class GameActionService implements GameActionController {
         avatar.setStamina(Math.min(100, Math.max(0, avatar.getStamina() + action.getStamina())));
 
         double failureChance = GameFormulas.calculateFailureChance(
+                action.getFailureChance() != null ? action.getFailureChance() : 0.0,
                 action.getRequiredStrength() != null ? action.getRequiredStrength() : 0,
                 action.getRequiredIntelligence() != null ? action.getRequiredIntelligence() : 0,
                 action.getRequiredCharisma() != null ? action.getRequiredCharisma() : 0,
