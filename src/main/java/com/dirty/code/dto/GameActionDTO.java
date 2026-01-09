@@ -18,6 +18,8 @@ public class GameActionDTO {
     private String title;
     private String description;
     private Integer stamina;
+    private Integer hp;
+    private Double hpVariation;
     private BigDecimal money;
     private Double moneyVariation;
     private Integer xp;

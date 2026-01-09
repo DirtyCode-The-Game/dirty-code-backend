@@ -24,6 +24,14 @@ public class GameFormulas {
         return (int) Math.round(baseAmount + (baseAmount * randomFactor * variation));
     }
 
+    public static int calculateHpVariation(int baseAmount, Double variation) {
+        if (variation == null || variation <= 0) {
+            return baseAmount;
+        }
+        double randomFactor = (RANDOM.nextDouble() * 2 - 1); // random(-1, 1)
+        return (int) Math.round(baseAmount + (baseAmount * randomFactor * variation));
+    }
+
     public static double calculateFailureChance(
             double baseFailureChance,
             int reqStrength, int reqIntelligence, int reqCharisma, int reqStealth,

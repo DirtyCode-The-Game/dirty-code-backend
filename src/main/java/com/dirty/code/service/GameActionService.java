@@ -69,6 +69,11 @@ public class GameActionService implements GameActionController {
 
         avatar.setStamina(Math.min(100, Math.max(0, avatar.getStamina() + action.getStamina())));
 
+        if (action.getHp() != null) {
+            int hpToAdd = GameFormulas.calculateHpVariation(action.getHp(), action.getHpVariation());
+            avatar.setLife(Math.max(0, avatar.getLife() + hpToAdd));
+        }
+
         double failureChance = GameFormulas.calculateFailureChance(
                 action.getFailureChance() != null ? action.getFailureChance() : 0.0,
                 action.getRequiredStrength() != null ? action.getRequiredStrength() : 0,
@@ -108,23 +113,6 @@ public class GameActionService implements GameActionController {
             // TODO: Implement leveling logic
         }
 
-        // Apply attributes if provided
-        if (action.getRequiredStrength() != null) {
-            avatar.setStrength(avatar.getStrength() + action.getRequiredStrength());
-        }
-        
-        if (action.getRequiredIntelligence() != null) {
-            avatar.setIntelligence(avatar.getIntelligence() + action.getRequiredIntelligence());
-        }
-
-        if (action.getRequiredCharisma() != null) {
-            avatar.setCharisma(avatar.getCharisma() + action.getRequiredCharisma());
-        }
-
-        if (action.getRequiredStealth() != null) {
-            avatar.setStealth(avatar.getStealth() + action.getRequiredStealth());
-        }
-
         Avatar updatedAvatar = avatarRepository.save(avatar);
         return ActionResultDTO.builder()
                 .success(true)
@@ -139,6 +127,8 @@ public class GameActionService implements GameActionController {
                 .title(action.getTitle())
                 .description(action.getDescription())
                 .stamina(action.getStamina())
+                .hp(action.getHp())
+                .hpVariation(action.getHpVariation())
                 .money(action.getMoney())
                 .moneyVariation(action.getMoneyVariation())
                 .xp(action.getXp())

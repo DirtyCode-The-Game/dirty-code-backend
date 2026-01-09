@@ -33,6 +33,11 @@ public class GameAction extends BaseModel {
     private String description;
 
     private Integer stamina;
+    
+    private Integer hp;
+    
+    @Column(name = "hp_variation")
+    private Double hpVariation;
 
     private BigDecimal money;
 
