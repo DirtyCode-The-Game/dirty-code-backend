@@ -56,7 +56,9 @@ INSERT INTO actions (id, type, title, description, stamina, money, money_variati
 VALUES 
 ('11111111-1111-1111-1111-111111111111', 'hacking', 'Urubu do Pix', 'Me mande 10 dinheiros que eu te devolvo 1000 em 24h', -25, 50, 0.5, 20, 0.5, 2, 3, 4, 1, true, 0, 0, 'urubu_do_pix.json', 'urubu_do_pix.jpg', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 ('22222222-2222-2222-2222-222222222222', 'training', 'Video do deschampo', 'Blalbalbalbla', -10, -10, 0.0, 10, 0.5, 0, 0, 0, 0, false, 0, 0, NULL, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('33333333-3333-3333-3333-333333333333', 'work', 'Ajustar canais de tv do pai', 'O pai esta desesperado, a tv não esta funcionando', -10, 10, 0.5, 10, 0.5, 0, 0, 0, 0, false, 5, 0.2, 'tv_do_pai.json', 'tv_do_pai.jpg', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+('33333333-3333-3333-3333-333333333333', 'work', 'Ajustar canais de tv do pai', 'O pai esta desesperado, a tv não esta funcionando', -10, 10, 0.5, 10, 0.5, 0, 0, 0, 0, false, 5, 0.2, 'tv_do_pai.json', 'tv_do_pai.jpg', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('44444444-4444-4444-4444-444444444444', 'market', 'Café de Máquina', 'Aquele café preto barato, doce e feito ontem.', 15, -5, 0.0, 0, 0.0, 0, 0, 0, 0, false, 0, 0.0, 'coffee_cup.json', 'coffee_cup.png', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('55555555-5555-5555-5555-555555555555', 'market', 'Energético Genérico', 'Gosto de câncer com gás.', 30, -20, 0.0, 0, 0.0, 0, 0, 0, 0, false, 0, 0.0, 'energy_drink.json', 'energy_drink.png', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 
 INSERT INTO users (id, firebase_uid, name, email, photo_url, created_at, updated_at)
