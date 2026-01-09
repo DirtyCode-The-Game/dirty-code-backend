@@ -45,6 +45,7 @@ public class AvatarService implements AvatarController {
         Avatar avatar = Avatar.builder()
                 .name(request.getName())
                 .picture(request.getPicture())
+                .story(request.getStory())
                 .level(0)
                 .experience(0)
                 .stamina(100)
@@ -53,6 +54,7 @@ public class AvatarService implements AvatarController {
                 .availablePoints(0)
                 .intelligence(0)
                 .charisma(0)
+                .strength(0)
                 .stealth(0)
                 .active(true)
                 .user(user)
@@ -103,15 +105,8 @@ public class AvatarService implements AvatarController {
         avatar.setStealth(newSte);
         avatar.setAvailablePoints(currentAvailable - cost);
 
-        if (request.getName() != null && !request.getName().equals(avatar.getName())) {
-            if (avatarRepository.existsByNameAndActiveTrue(request.getName())) {
-                throw new BusinessException("Avatar name already exists: " + request.getName());
-            }
-            avatar.setName(request.getName());
-        }
-
-        if (request.getPicture() != null) {
-            avatar.setPicture(request.getPicture());
+        if (request.getStory() != null) {
+            avatar.setStory(request.getStory());
         }
 
         Avatar savedAvatar = avatarRepository.save(avatar);

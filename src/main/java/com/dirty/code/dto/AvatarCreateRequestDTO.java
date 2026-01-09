@@ -16,4 +16,5 @@ import java.math.BigDecimal;
 public class AvatarCreateRequestDTO {
     private String name;
     private String picture;
+    private String story;
 }

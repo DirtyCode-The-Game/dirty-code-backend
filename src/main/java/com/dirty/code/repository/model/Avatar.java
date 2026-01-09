@@ -30,6 +30,7 @@ public class Avatar extends BaseModel {
 
     private String name;
     private String picture;
+    private String story;
 
     private Integer level;
     private Integer experience;

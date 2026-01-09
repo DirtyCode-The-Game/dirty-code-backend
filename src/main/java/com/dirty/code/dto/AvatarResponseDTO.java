@@ -19,6 +19,7 @@ public class AvatarResponseDTO {
     private UUID id;
     private String name;
     private String picture;
+    private String story;
 
     private Integer level;
     private Integer experience;
@@ -40,6 +41,7 @@ public class AvatarResponseDTO {
                 .id(avatar.getId())
                 .name(avatar.getName())
                 .picture(avatar.getPicture())
+                .story(avatar.getStory())
                 .level(avatar.getLevel())
                 .experience(avatar.getExperience())
 

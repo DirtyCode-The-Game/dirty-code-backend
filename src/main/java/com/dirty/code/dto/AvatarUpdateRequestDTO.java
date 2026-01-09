@@ -14,6 +14,7 @@ import lombok.Setter;
 public class AvatarUpdateRequestDTO {
     private String name;
     private String picture;
+    private String story;
     private Integer intelligence;
     private Integer charisma;
     private Integer strength;
