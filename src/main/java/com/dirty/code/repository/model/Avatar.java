@@ -1,5 +1,10 @@
 package com.dirty.code.repository.model;
 
+import java.math.BigDecimal;
+import java.util.UUID;
+
+import com.dirty.code.utils.GameFormulas;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -12,9 +17,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-import java.math.BigDecimal;
-import java.util.UUID;
 
 @Entity
 @Table(name = "avatars")
@@ -34,6 +36,7 @@ public class Avatar extends BaseModel {
 
     private Integer level;
     private Integer experience;
+    private Integer nextLevelExperience;
 
     private Integer stamina;
     private Integer life;
@@ -50,5 +53,15 @@ public class Avatar extends BaseModel {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    public void increaseExperience(int xpToAdd) {
+        this.experience += xpToAdd;
+
+        while (this.experience >= this.nextLevelExperience) {
+            this.level++;
+            this.availablePoints++;
+            this.nextLevelExperience = GameFormulas.calculateNextLevelExperience(this.nextLevelExperience);
+        }
+    }
 
 }

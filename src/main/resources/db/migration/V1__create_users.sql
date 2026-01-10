@@ -16,6 +16,7 @@ CREATE TABLE avatars (
     story VARCHAR(200),
     level INTEGER,
     experience INTEGER,
+    next_level_experience INTEGER,
     stamina INTEGER,
     life INTEGER,
     money DECIMAL(19, 2),
@@ -55,16 +56,6 @@ CREATE TABLE actions (
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP
 );
-
-INSERT INTO actions (id, type, title, description, stamina, hp, hp_variation, money, money_variation, xp, xp_variation, required_strength, required_intelligence, required_charisma, required_stealth, can_be_arrested, lost_hp_failure, lost_hp_failure_variation, text_file, action_image, failure_chance, created_at, updated_at)
-VALUES 
-('11111111-1111-1111-1111-111111111111', 'hacking', 'Urubu do Pix', 'Me mande 10 dinheiros que eu te devolvo 1000 em 24h.', -25, 0, 0.0, 50, 0.5, 20, 0.5, 2, 3, 4, 1, true, 0, 0, 'urubu_do_pix.json', 'urubu_do_pix.jpg', 0.2,CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('22222222-2222-2222-2222-222222222222', 'training', 'Video do Deschampo', 'DESCHAMPO malemá explica algo de TI, no fim do vídeo você entendeu nada e já quer lançar o BookFace 2.', -10, 0, 0.0, -10, 0.0, 10, 0.5, 0, 0, 0, 0, false, 0, 0, 'deschampo.json', 'deschampo.jpg', 0, CURRENT_TIMESTAMP,CURRENT_TIMESTAMP),
-('33333333-3333-3333-3333-333333333333', 'work', 'Ajustar canais de tv do pai', 'O pai esta desesperado, a tv não esta funcionando.', -10, 0, 0.0, 10, 0.5, 10, 0.5, 0, 0, 0, 0, false, 5, 0.2, 'tv_do_pai.json', 'tv_do_pai.jpg', 0.2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('44444444-4444-4444-4444-444444444444', 'market', 'Café Cafú', 'Tem mais galho, casca e pedra que cafe nessa bosta.', 5, -5, 0.5, -5, 0.0, 0, 0, 0, 0, 0,0, false, 0, 0, 'cafe_cafu.json', 'cafe_cafu.jpg', 0,CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('55555555-5555-5555-5555-555555555555', 'market', 'AAS Infatil', 'É docinho...', 0, +5, 0.5, -15, 0.0, 0, 0, 0, 0, 0,0, false, 0, 0, 'aas_infantil.json', 'aas_infantil.jpg', 0,CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-    
-
 
 INSERT INTO users (id, firebase_uid, name, email, photo_url, created_at, updated_at)
 VALUES ('00000000-0000-0000-0000-000000000000', 'mock-token-123', 'Mock User', 'mock-user@example.com', 'http://example.com/photo.jpg', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);

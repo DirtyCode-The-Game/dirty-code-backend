@@ -109,8 +109,7 @@ public class GameActionService implements GameActionController {
 
         if (action.getXp() != null) {
             int xpToAdd = GameFormulas.calculateXpVariation(action.getXp(), action.getXpVariation());
-            avatar.setExperience(avatar.getExperience() + xpToAdd);
-            // TODO: Implement leveling logic
+            avatar.increaseExperience(xpToAdd);
         }
 
         Avatar updatedAvatar = avatarRepository.save(avatar);

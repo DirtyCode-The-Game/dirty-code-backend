@@ -1,6 +1,8 @@
 package com.dirty.code.service;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,9 +20,6 @@ import com.dirty.code.repository.model.User;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -48,6 +47,7 @@ public class AvatarService implements AvatarController {
                 .story(request.getStory())
                 .level(0)
                 .experience(0)
+                .nextLevelExperience(com.dirty.code.utils.GameFormulas.getBaseExperience())
                 .stamina(100)
                 .life(100)
                 .money(BigDecimal.valueOf(500))

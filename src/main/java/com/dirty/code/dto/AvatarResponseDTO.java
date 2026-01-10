@@ -1,14 +1,15 @@
 package com.dirty.code.dto;
 
+import java.math.BigDecimal;
+import java.util.UUID;
+
 import com.dirty.code.repository.model.Avatar;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.math.BigDecimal;
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -23,6 +24,7 @@ public class AvatarResponseDTO {
 
     private Integer level;
     private Integer experience;
+    private Integer nextLevelExperience;
 
     private Integer stamina;
     private Integer life;
@@ -44,6 +46,7 @@ public class AvatarResponseDTO {
                 .story(avatar.getStory())
                 .level(avatar.getLevel())
                 .experience(avatar.getExperience())
+                .nextLevelExperience(avatar.getNextLevelExperience())
 
                 .stamina(avatar.getStamina())
                 .life(avatar.getLife())

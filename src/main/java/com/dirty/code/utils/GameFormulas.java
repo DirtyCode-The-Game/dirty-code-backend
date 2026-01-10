@@ -7,6 +7,16 @@ public class GameFormulas {
 
     private static final Random RANDOM = new Random();
 
+    private static final int BASE_EXPERIENCE = 100;
+
+    public static int getBaseExperience() {
+        return BASE_EXPERIENCE;
+    }
+
+    public static int calculateNextLevelExperience(int currentNextLevelExperience) {
+        return (int) (currentNextLevelExperience * 4);
+    }
+
     public static BigDecimal calculateMoneyVariation(BigDecimal baseAmount, Double variation) {
         if (variation == null || variation <= 0) {
             return baseAmount;
