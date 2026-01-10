@@ -1,8 +1,6 @@
 name: Deploy Backend to Digital Ocean
 
 on:
-  push:
-    branches: [ main ]
   workflow_dispatch: # Permite execução manual
 
 env:
