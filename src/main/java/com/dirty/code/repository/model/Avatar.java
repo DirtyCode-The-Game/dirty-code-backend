@@ -1,6 +1,7 @@
 package com.dirty.code.repository.model;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import com.dirty.code.utils.GameFormulas;
@@ -49,6 +50,9 @@ public class Avatar extends BaseModel {
     private Integer stealth; // Discrição
 
     private Boolean active;
+
+    private LocalDateTime timeout; // When the timeout expires (null if not timed out)
+    private String timeoutType; // Type of timeout: "HOSPITAL" or "JAIL"
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

@@ -1,6 +1,7 @@
 package com.dirty.code.service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -123,5 +124,36 @@ public class AvatarService implements AvatarController {
                 .stream()
                 .map(AvatarResponseDTO::fromAvatar)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Checks if avatar has an expired timeout and automatically clears it,
+     * restoring the avatar to normal state (HP=100, stamina=100).
+     * 
+     * @param avatar The avatar to check and potentially restore
+     * @return true if timeout was cleared, false if no timeout or not expired
+     */
+    @Transactional
+    public boolean clearExpiredTimeout(Avatar avatar) {
+        if (avatar == null || avatar.getTimeout() == null) {
+            return false;
+        }
+
+        if (LocalDateTime.now().isAfter(avatar.getTimeout())) {
+            log.info("Auto-clearing expired timeout for avatar {}: type={}, expired at={}", 
+                    avatar.getName(), avatar.getTimeoutType(), avatar.getTimeout());
+            
+            avatar.setTimeout(null);
+            avatar.setTimeoutType(null);
+            avatar.setLife(100);
+            avatar.setStamina(100);
+            
+            avatarRepository.save(avatar);
+            log.info("Avatar {} automatically restored after timeout expiration", avatar.getName());
+            
+            return true;
+        }
+
+        return false;
     }
 }

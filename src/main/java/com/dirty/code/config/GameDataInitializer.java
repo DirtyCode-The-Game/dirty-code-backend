@@ -34,6 +34,7 @@ public class GameDataInitializer {
         createTrainingActions();
         createWorkActions();
         createMarketActions();
+        createHospitalActions();
 
         log.info("Game actions initialization completed!");
     }
@@ -125,7 +126,7 @@ public class GameDataInitializer {
                 .title("Café Cafú")
                 .description("Tem mais galho, casca e pedra que café nessa bosta.")
                 .stamina(5)
-                .hp(-1)
+                .hp(-2)
                 .hpVariation(0.5)
                 .money(BigDecimal.valueOf(-5))
                 .moneyVariation(0.0)
@@ -143,8 +144,12 @@ public class GameDataInitializer {
                 .failureChance(0.0)
                 .build());
 
+        log.info("Created market actions");
+    }
+
+    private void createHospitalActions() {
         gameActionRepository.save(GameAction.builder()
-                .type("market")
+                .type("hospital")
                 .title("AAS Infatil")
                 .description("É docinho...")
                 .stamina(0)
@@ -166,6 +171,6 @@ public class GameDataInitializer {
                 .failureChance(0.0)
                 .build());
 
-        log.info("Created market actions: Café Cafú, AAS Infatil");
+        log.info("Created hospital actions");
     }
 }

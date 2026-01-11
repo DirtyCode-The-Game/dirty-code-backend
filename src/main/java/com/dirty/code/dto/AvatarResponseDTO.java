@@ -1,6 +1,7 @@
 package com.dirty.code.dto;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import com.dirty.code.repository.model.Avatar;
@@ -38,6 +39,9 @@ public class AvatarResponseDTO {
 
     private Boolean active;
 
+    private LocalDateTime timeout; // When the timeout expires
+    private String timeoutType; // "HOSPITAL" or "JAIL"
+
     public static AvatarResponseDTO fromAvatar(Avatar avatar) {
         return AvatarResponseDTO.builder()
                 .id(avatar.getId())
@@ -59,6 +63,8 @@ public class AvatarResponseDTO {
                 .stealth(avatar.getStealth())
 
                 .active(avatar.getActive())
+                .timeout(avatar.getTimeout())
+                .timeoutType(avatar.getTimeoutType())
                 .build();
     }
 }

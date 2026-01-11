@@ -1,5 +1,8 @@
 package com.dirty.code.service;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.dirty.code.controller.UserController;
 import com.dirty.code.dto.AvatarResponseDTO;
 import com.dirty.code.dto.UserResponseDTO;
@@ -8,10 +11,9 @@ import com.dirty.code.repository.UserRepository;
 import com.dirty.code.repository.model.Avatar;
 import com.dirty.code.repository.model.User;
 import com.google.firebase.auth.UserRecord;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService implements UserController {
 
     private final UserRepository userRepository;
+    private final AvatarService avatarService;
 
     @Override
     public UserResponseDTO getMe(String uid) {
@@ -33,6 +36,11 @@ public class UserService implements UserController {
                 .filter(a -> Boolean.TRUE.equals(a.getActive()))
                 .findFirst()
                 .orElse(null) : null;
+
+        if (activeAvatar != null) {
+            // Auto-clear expired timeout (hospital/jail) if present
+            avatarService.clearExpiredTimeout(activeAvatar);
+        }
 
         AvatarResponseDTO avatarDTO = null;
         if (activeAvatar != null) {

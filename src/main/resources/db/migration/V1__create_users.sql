@@ -25,6 +25,8 @@ CREATE TABLE avatars (
     charisma INTEGER,
     strength INTEGER,
     stealth INTEGER,
+    timeout TIMESTAMP,
+    timeout_type VARCHAR(50),
     active BOOLEAN,
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP,
