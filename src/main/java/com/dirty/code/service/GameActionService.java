@@ -65,13 +65,14 @@ public class GameActionService implements GameActionController {
 
     @Transactional
     @Override
-    public ActionResultDTO performAction(String uid, UUID actionId) {
+    public ActionResultDTO performAction(String uid, UUID actionId, Integer times) {
         Avatar avatar = avatarRepository.findByUserFirebaseUidAndActiveTrue(uid)
                 .orElseThrow(() -> new ResourceNotFoundException("Active avatar not found for user: " + uid));
+
         if (avatar.getTimeout() != null) {
             if (LocalDateTime.now().isBefore(avatar.getTimeout())) {
-                throw new BusinessException("You are currently in " + avatar.getTimeoutType() + 
-                    " until " + avatar.getTimeout() + ". Please wait.");
+                throw new BusinessException("You are currently in " + avatar.getTimeoutType() +
+                        " until " + avatar.getTimeout() + ". Please wait.");
             } else {
                 avatar.setTimeout(null);
                 avatar.setTimeoutType(null);
@@ -82,81 +83,88 @@ public class GameActionService implements GameActionController {
         GameAction action = gameActionRepository.findById(actionId)
                 .orElseThrow(() -> new ResourceNotFoundException("Action not found with ID: " + actionId));
 
-        if (action.getStamina() < 0 && avatar.getStamina() < Math.abs(action.getStamina())) {
-            throw new BusinessException("Not enough stamina to perform this action.");
-        }
+        int executionCount = 0;
+        boolean overallSuccess = true;
 
-        avatar.setStamina(Math.min(100, Math.max(0, avatar.getStamina() + action.getStamina())));
-
-        if ("work".equalsIgnoreCase(action.getType())) {
-            avatar.setWork((avatar.getWork() != null ? avatar.getWork() : 0) + 1);
-        } else if ("hacking".equalsIgnoreCase(action.getType())) {
-            avatar.setHacking((avatar.getHacking() != null ? avatar.getHacking() : 0) + 1);
-        }
-
-        if (action.getHp() != null) {
-            int hpToAdd = GameFormulas.calculateHpVariation(action.getHp(), action.getHpVariation());
-            avatar.setLife(Math.min(100, Math.max(0, avatar.getLife() + hpToAdd)));
-        }
-
-        double failureChance = GameFormulas.calculateFailureChance(
-                action.getFailureChance() != null ? action.getFailureChance() : 0.0,
-                Map.of(
-                    Attribute.STRENGTH, action.getRequiredStrength() != null ? action.getRequiredStrength() : 0,
-                    Attribute.INTELLIGENCE, action.getRequiredIntelligence() != null ? action.getRequiredIntelligence() : 0,
-                    Attribute.CHARISMA, action.getRequiredCharisma() != null ? action.getRequiredCharisma() : 0,
-                    Attribute.STEALTH, action.getRequiredStealth() != null ? action.getRequiredStealth() : 0
-                ),
-                Map.of(
-                    Attribute.STRENGTH, avatar.getStrength() != null ? avatar.getStrength() : 0,
-                    Attribute.INTELLIGENCE, avatar.getIntelligence() != null ? avatar.getIntelligence() : 0,
-                    Attribute.CHARISMA, avatar.getCharisma() != null ? avatar.getCharisma() : 0,
-                    Attribute.STEALTH, avatar.getStealth() != null ? avatar.getStealth() : 0
-                )
-        );
-
-        if (GameFormulas.isFailure(failureChance)) {
-            if (action.getLostHpFailure() != null) {
-                int hpToLose = action.getLostHpFailure();
-                if (action.getLostHpFailureVariation() != null && action.getLostHpFailureVariation() > 0) {
-                    hpToLose = GameFormulas.calculateXpVariation(hpToLose, action.getLostHpFailureVariation());
+        for (int i = 0; i < (times != null ? times : 1); i++) {
+            if (action.getStamina() < 0 && avatar.getStamina() < Math.abs(action.getStamina())) {
+                if (i == 0) {
+                    throw new BusinessException("Not enough stamina to perform this action.");
                 }
-                avatar.setLife(Math.min(100, Math.max(0, avatar.getLife() - hpToLose)));
+                break;
             }
 
-            if (Boolean.TRUE.equals(action.getCanBeArrested())) {
+            executionCount++;
+            avatar.setStamina(Math.min(100, Math.max(0, avatar.getStamina() + action.getStamina())));
+
+            if ("work".equalsIgnoreCase(action.getType())) {
+                avatar.setWork((avatar.getWork() != null ? avatar.getWork() : 0) + 1);
+            } else if ("hacking".equalsIgnoreCase(action.getType())) {
+                avatar.setHacking((avatar.getHacking() != null ? avatar.getHacking() : 0) + 1);
+            }
+
+            if (action.getHp() != null) {
+                int hpToAdd = GameFormulas.calculateHpVariation(action.getHp(), action.getHpVariation());
+                avatar.setLife(Math.min(100, Math.max(0, avatar.getLife() + hpToAdd)));
+            }
+
+            double failureChance = GameFormulas.calculateFailureChance(
+                    action.getFailureChance() != null ? action.getFailureChance() : 0.0,
+                    Map.of(
+                            Attribute.STRENGTH, action.getRequiredStrength() != null ? action.getRequiredStrength() : 0,
+                            Attribute.INTELLIGENCE, action.getRequiredIntelligence() != null ? action.getRequiredIntelligence() : 0,
+                            Attribute.CHARISMA, action.getRequiredCharisma() != null ? action.getRequiredCharisma() : 0,
+                            Attribute.STEALTH, action.getRequiredStealth() != null ? action.getRequiredStealth() : 0
+                    ),
+                    Map.of(
+                            Attribute.STRENGTH, avatar.getStrength() != null ? avatar.getStrength() : 0,
+                            Attribute.INTELLIGENCE, avatar.getIntelligence() != null ? avatar.getIntelligence() : 0,
+                            Attribute.CHARISMA, avatar.getCharisma() != null ? avatar.getCharisma() : 0,
+                            Attribute.STEALTH, avatar.getStealth() != null ? avatar.getStealth() : 0
+                    )
+            );
+
+            if (GameFormulas.isFailure(failureChance)) {
+                overallSuccess = false;
+                if (action.getLostHpFailure() != null) {
+                    int hpToLose = action.getLostHpFailure();
+                    if (action.getLostHpFailureVariation() != null && action.getLostHpFailureVariation() > 0) {
+                        hpToLose = GameFormulas.calculateXpVariation(hpToLose, action.getLostHpFailureVariation());
+                    }
+                    avatar.setLife(Math.min(100, Math.max(0, avatar.getLife() - hpToLose)));
+                }
+
+                if (Boolean.TRUE.equals(action.getCanBeArrested())) {
+                    avatar.setTimeout(LocalDateTime.now().plusMinutes(5));
+                    avatar.setTimeoutType("JAIL");
+                    log.info("Avatar {} arrested and sent to jail until {}", avatar.getName(), avatar.getTimeout());
+                }
+                break;
+            }
+
+            if (action.getMoney() != null) {
+                BigDecimal moneyToAdd = GameFormulas.calculateMoneyVariation(action.getMoney(), action.getMoneyVariation());
+                avatar.setMoney(avatar.getMoney().add(moneyToAdd));
+            }
+
+            if (action.getXp() != null) {
+                int xpToAdd = GameFormulas.calculateXpVariation(action.getXp(), action.getXpVariation());
+                avatar.increaseExperience(xpToAdd);
+            }
+
+            if (avatar.getLife() <= 0) {
                 avatar.setTimeout(LocalDateTime.now().plusMinutes(5));
-                avatar.setTimeoutType("JAIL");
-                log.info("Avatar {} arrested and sent to jail until {}", avatar.getName(), avatar.getTimeout());
+                avatar.setTimeoutType("HOSPITAL");
+                log.info("Avatar {} sent to hospital until {}", avatar.getName(), avatar.getTimeout());
+                break;
             }
-
-            Avatar updatedAvatar = avatarRepository.save(avatar);
-            return ActionResultDTO.builder()
-                    .success(false)
-                    .avatar(AvatarResponseDTO.fromAvatar(updatedAvatar))
-                    .build();
-        }
-
-        if (action.getMoney() != null) {
-            BigDecimal moneyToAdd = GameFormulas.calculateMoneyVariation(action.getMoney(), action.getMoneyVariation());
-            avatar.setMoney(avatar.getMoney().add(moneyToAdd));
-        }
-
-        if (action.getXp() != null) {
-            int xpToAdd = GameFormulas.calculateXpVariation(action.getXp(), action.getXpVariation());
-            avatar.increaseExperience(xpToAdd);
-        }
-        
-        if (avatar.getLife() <= 0) {
-            avatar.setTimeout(LocalDateTime.now().plusMinutes(5));
-            avatar.setTimeoutType("HOSPITAL");
-            log.info("Avatar {} sent to hospital until {}", avatar.getName(), avatar.getTimeout());
         }
 
         Avatar updatedAvatar = avatarRepository.save(avatar);
         return ActionResultDTO.builder()
-                .success(true)
+                .success(overallSuccess)
                 .avatar(AvatarResponseDTO.fromAvatar(updatedAvatar))
+                .timesExecuted(executionCount)
                 .build();
     }
 

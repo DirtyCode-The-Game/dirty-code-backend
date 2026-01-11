@@ -22,7 +22,7 @@ public interface GameActionController {
     List<GameActionDTO> getActionsByType(@AuthenticationPrincipal String uid, @PathVariable String type);
 
     @PostMapping("/{actionId}/perform")
-    ActionResultDTO performAction(@AuthenticationPrincipal String uid, @PathVariable UUID actionId);
+    ActionResultDTO performAction(@AuthenticationPrincipal String uid, @PathVariable UUID actionId, @RequestParam(defaultValue = "1") Integer times);
 
     @PostMapping("/timeout/leave")
     ActionResultDTO leaveTimeout(@AuthenticationPrincipal String uid, @RequestParam(required = false, defaultValue = "false") boolean payForFreedom);

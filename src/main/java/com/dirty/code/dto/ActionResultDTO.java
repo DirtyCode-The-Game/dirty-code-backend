@@ -12,4 +12,5 @@ import lombok.NoArgsConstructor;
 public class ActionResultDTO {
     private boolean success;
     private AvatarResponseDTO avatar;
+    private Integer timesExecuted;
 }
