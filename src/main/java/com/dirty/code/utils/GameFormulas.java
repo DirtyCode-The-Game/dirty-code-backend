@@ -1,7 +1,10 @@
 package com.dirty.code.utils;
 
 import java.math.BigDecimal;
+import java.util.Map;
 import java.util.Random;
+
+import com.dirty.code.repository.model.Attribute;
 
 public class GameFormulas {
 
@@ -13,8 +16,26 @@ public class GameFormulas {
         return BASE_EXPERIENCE;
     }
 
-    public static int calculateNextLevelExperience(int currentNextLevelExperience) {
-        return (int) (currentNextLevelExperience * 4);
+    public static int requiredExperienceForLevel(int level) {
+        if (level <= 0) {
+            return 0;
+        }
+
+        double base = 80.0;
+        double exponentialBase = 120.0;
+        double growthRate = 1.18;
+        double quadraticFactor = 20.0;
+
+        double rawRequiredExperience =
+                base
+                        + (exponentialBase * Math.pow(growthRate, level))
+                        + (quadraticFactor * level * level);
+
+        if (rawRequiredExperience >= Integer.MAX_VALUE) {
+            return Integer.MAX_VALUE;
+        }
+
+        return (int) Math.round(rawRequiredExperience);
     }
 
     public static BigDecimal calculateMoneyVariation(BigDecimal baseAmount, Double variation) {
@@ -27,14 +48,14 @@ public class GameFormulas {
     }
 
     public static int calculateXpVariation(int baseAmount, Double variation) {
-        if (variation == null || variation <= 0) {
-            return baseAmount;
-        }
-        double randomFactor = (RANDOM.nextDouble() * 2 - 1); // random(-1, 1)
-        return (int) Math.round(baseAmount + (baseAmount * randomFactor * variation));
+        return defaultVariationCalc(baseAmount, variation);
     }
 
     public static int calculateHpVariation(int baseAmount, Double variation) {
+        return defaultVariationCalc(baseAmount, variation);
+    }
+
+    private static int defaultVariationCalc(int baseAmount, Double variation) {
         if (variation == null || variation <= 0) {
             return baseAmount;
         }
@@ -44,19 +65,16 @@ public class GameFormulas {
 
     public static double calculateFailureChance(
             double baseFailureChance,
-            int reqStrength, int reqIntelligence, int reqCharisma, int reqStealth,
-            int avatarStrength, int avatarIntelligence, int avatarCharisma, int avatarStealth) {
+            Map<Attribute, Integer> requiredAttributes,
+            Map<Attribute, Integer> avatarAttributes) {
 
         double chance = baseFailureChance * 100;
 
-        // Strength
-        chance += calculateAttributeImpact(reqStrength, avatarStrength);
-        // Intelligence
-        chance += calculateAttributeImpact(reqIntelligence, avatarIntelligence);
-        // Charisma
-        chance += calculateAttributeImpact(reqCharisma, avatarCharisma);
-        // Stealth
-        chance += calculateAttributeImpact(reqStealth, avatarStealth);
+        for (Attribute attribute : Attribute.values()) {
+            int required = requiredAttributes.getOrDefault(attribute, 0);
+            int actual = avatarAttributes.getOrDefault(attribute, 0);
+            chance += calculateAttributeImpact(required, actual);
+        }
 
         return Math.max(0, Math.min(100, chance)) / 100.0;
     }

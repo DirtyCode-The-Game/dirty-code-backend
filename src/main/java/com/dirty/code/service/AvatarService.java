@@ -16,6 +16,7 @@ import com.dirty.code.exception.BusinessException;
 import com.dirty.code.exception.ResourceNotFoundException;
 import com.dirty.code.repository.AvatarRepository;
 import com.dirty.code.repository.UserRepository;
+import com.dirty.code.repository.model.Attribute;
 import com.dirty.code.repository.model.Avatar;
 import com.dirty.code.repository.model.User;
 
@@ -48,6 +49,7 @@ public class AvatarService implements AvatarController {
                 .story(request.getStory())
                 .level(0)
                 .experience(0)
+                .totalExperience(0)
                 .nextLevelExperience(com.dirty.code.utils.GameFormulas.getBaseExperience())
                 .stamina(100)
                 .life(100)
@@ -57,6 +59,8 @@ public class AvatarService implements AvatarController {
                 .charisma(0)
                 .strength(0)
                 .stealth(0)
+                .hacking(0)
+                .work(0)
                 .active(true)
                 .user(user)
                 .build();
@@ -126,17 +130,51 @@ public class AvatarService implements AvatarController {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    @Transactional
+    public AvatarResponseDTO increaseAttribute(String uid, Attribute attribute) {
+        log.info("Increasing attribute {} for user UID: {}", attribute, uid);
+
+        Avatar avatar = avatarRepository.findByUserFirebaseUidAndActiveTrue(uid)
+                .orElseThrow(() -> new ResourceNotFoundException("Active avatar not found for user UID: " + uid));
+
+        if (avatar.getAvailablePoints() <= 0) {
+            throw new BusinessException("No available points to distribute.");
+        }
+
+        switch (attribute) {
+            case STRENGTH:
+                avatar.setStrength((avatar.getStrength() != null ? avatar.getStrength() : 0) + 1);
+                break;
+            case INTELLIGENCE:
+                avatar.setIntelligence((avatar.getIntelligence() != null ? avatar.getIntelligence() : 0) + 1);
+                break;
+            case CHARISMA:
+                avatar.setCharisma((avatar.getCharisma() != null ? avatar.getCharisma() : 0) + 1);
+                break;
+            case STEALTH:
+                avatar.setStealth((avatar.getStealth() != null ? avatar.getStealth() : 0) + 1);
+                break;
+            default:
+                throw new BusinessException("Invalid attribute: " + attribute);
+        }
+
+        avatar.setAvailablePoints(avatar.getAvailablePoints() - 1);
+        Avatar savedAvatar = avatarRepository.save(avatar);
+        
+        return AvatarResponseDTO.fromAvatar(savedAvatar);
+    }
+
     /**
      * Checks if avatar has an expired timeout and automatically clears it,
      * restoring the avatar to normal state (HP=100, stamina=100).
-     * 
+     *
      * @param avatar The avatar to check and potentially restore
-     * @return true if timeout was cleared, false if no timeout or not expired
      */
     @Transactional
-    public boolean clearExpiredTimeout(Avatar avatar) {
+    public void clearExpiredTimeout(Avatar avatar) {
         if (avatar == null || avatar.getTimeout() == null) {
-            return false;
+            return;
         }
 
         if (LocalDateTime.now().isAfter(avatar.getTimeout())) {
@@ -150,10 +188,7 @@ public class AvatarService implements AvatarController {
             
             avatarRepository.save(avatar);
             log.info("Avatar {} automatically restored after timeout expiration", avatar.getName());
-            
-            return true;
-        }
 
-        return false;
+        }
     }
 }

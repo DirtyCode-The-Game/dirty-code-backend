@@ -78,4 +78,13 @@ public class GameAction extends BaseModel {
 
     @Column(name = "failure_chance")
     private Double failureChance;
+
+    public Integer getRequiredAttributeValue(Attribute attribute) {
+        return switch (attribute) {
+            case STRENGTH -> requiredStrength != null ? requiredStrength : 0;
+            case INTELLIGENCE -> requiredIntelligence != null ? requiredIntelligence : 0;
+            case CHARISMA -> requiredCharisma != null ? requiredCharisma : 0;
+            case STEALTH -> requiredStealth != null ? requiredStealth : 0;
+        };
+    }
 }

@@ -3,6 +3,7 @@ package com.dirty.code.service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -17,6 +18,7 @@ import com.dirty.code.exception.BusinessException;
 import com.dirty.code.exception.ResourceNotFoundException;
 import com.dirty.code.repository.AvatarRepository;
 import com.dirty.code.repository.GameActionRepository;
+import com.dirty.code.repository.model.Attribute;
 import com.dirty.code.repository.model.Avatar;
 import com.dirty.code.repository.model.GameAction;
 import com.dirty.code.utils.GameFormulas;
@@ -42,14 +44,18 @@ public class GameActionService implements GameActionController {
                     GameActionDTO dto = convertToDTO(action);
                     double failureChance = GameFormulas.calculateFailureChance(
                             action.getFailureChance() != null ? action.getFailureChance() : 0.0,
-                            action.getRequiredStrength() != null ? action.getRequiredStrength() : 0,
-                            action.getRequiredIntelligence() != null ? action.getRequiredIntelligence() : 0,
-                            action.getRequiredCharisma() != null ? action.getRequiredCharisma() : 0,
-                            action.getRequiredStealth() != null ? action.getRequiredStealth() : 0,
-                            avatar.getStrength() != null ? avatar.getStrength() : 0,
-                            avatar.getIntelligence() != null ? avatar.getIntelligence() : 0,
-                            avatar.getCharisma() != null ? avatar.getCharisma() : 0,
-                            avatar.getStealth() != null ? avatar.getStealth() : 0
+                            Map.of(
+                                Attribute.STRENGTH, action.getRequiredStrength() != null ? action.getRequiredStrength() : 0,
+                                Attribute.INTELLIGENCE, action.getRequiredIntelligence() != null ? action.getRequiredIntelligence() : 0,
+                                Attribute.CHARISMA, action.getRequiredCharisma() != null ? action.getRequiredCharisma() : 0,
+                                Attribute.STEALTH, action.getRequiredStealth() != null ? action.getRequiredStealth() : 0
+                            ),
+                            Map.of(
+                                Attribute.STRENGTH, avatar.getStrength() != null ? avatar.getStrength() : 0,
+                                Attribute.INTELLIGENCE, avatar.getIntelligence() != null ? avatar.getIntelligence() : 0,
+                                Attribute.CHARISMA, avatar.getCharisma() != null ? avatar.getCharisma() : 0,
+                                Attribute.STEALTH, avatar.getStealth() != null ? avatar.getStealth() : 0
+                            )
                     );
                     dto.setFailureChance(failureChance);
                     return dto;
@@ -62,14 +68,11 @@ public class GameActionService implements GameActionController {
     public ActionResultDTO performAction(String uid, UUID actionId) {
         Avatar avatar = avatarRepository.findByUserFirebaseUidAndActiveTrue(uid)
                 .orElseThrow(() -> new ResourceNotFoundException("Active avatar not found for user: " + uid));
-
-        // Check if avatar is currently timed out
         if (avatar.getTimeout() != null) {
             if (LocalDateTime.now().isBefore(avatar.getTimeout())) {
                 throw new BusinessException("You are currently in " + avatar.getTimeoutType() + 
                     " until " + avatar.getTimeout() + ". Please wait.");
             } else {
-                // Timeout expired, clear it
                 avatar.setTimeout(null);
                 avatar.setTimeoutType(null);
                 avatarRepository.save(avatar);
@@ -85,22 +88,31 @@ public class GameActionService implements GameActionController {
 
         avatar.setStamina(Math.min(100, Math.max(0, avatar.getStamina() + action.getStamina())));
 
+        if ("work".equalsIgnoreCase(action.getType())) {
+            avatar.setWork((avatar.getWork() != null ? avatar.getWork() : 0) + 1);
+        } else if ("hacking".equalsIgnoreCase(action.getType())) {
+            avatar.setHacking((avatar.getHacking() != null ? avatar.getHacking() : 0) + 1);
+        }
+
         if (action.getHp() != null) {
             int hpToAdd = GameFormulas.calculateHpVariation(action.getHp(), action.getHpVariation());
-            // Clamp life between 0 and 100
             avatar.setLife(Math.min(100, Math.max(0, avatar.getLife() + hpToAdd)));
         }
 
         double failureChance = GameFormulas.calculateFailureChance(
                 action.getFailureChance() != null ? action.getFailureChance() : 0.0,
-                action.getRequiredStrength() != null ? action.getRequiredStrength() : 0,
-                action.getRequiredIntelligence() != null ? action.getRequiredIntelligence() : 0,
-                action.getRequiredCharisma() != null ? action.getRequiredCharisma() : 0,
-                action.getRequiredStealth() != null ? action.getRequiredStealth() : 0,
-                avatar.getStrength() != null ? avatar.getStrength() : 0,
-                avatar.getIntelligence() != null ? avatar.getIntelligence() : 0,
-                avatar.getCharisma() != null ? avatar.getCharisma() : 0,
-                avatar.getStealth() != null ? avatar.getStealth() : 0
+                Map.of(
+                    Attribute.STRENGTH, action.getRequiredStrength() != null ? action.getRequiredStrength() : 0,
+                    Attribute.INTELLIGENCE, action.getRequiredIntelligence() != null ? action.getRequiredIntelligence() : 0,
+                    Attribute.CHARISMA, action.getRequiredCharisma() != null ? action.getRequiredCharisma() : 0,
+                    Attribute.STEALTH, action.getRequiredStealth() != null ? action.getRequiredStealth() : 0
+                ),
+                Map.of(
+                    Attribute.STRENGTH, avatar.getStrength() != null ? avatar.getStrength() : 0,
+                    Attribute.INTELLIGENCE, avatar.getIntelligence() != null ? avatar.getIntelligence() : 0,
+                    Attribute.CHARISMA, avatar.getCharisma() != null ? avatar.getCharisma() : 0,
+                    Attribute.STEALTH, avatar.getStealth() != null ? avatar.getStealth() : 0
+                )
         );
 
         if (GameFormulas.isFailure(failureChance)) {
@@ -109,11 +121,9 @@ public class GameActionService implements GameActionController {
                 if (action.getLostHpFailureVariation() != null && action.getLostHpFailureVariation() > 0) {
                     hpToLose = GameFormulas.calculateXpVariation(hpToLose, action.getLostHpFailureVariation());
                 }
-                // Clamp life between 0 and 100
                 avatar.setLife(Math.min(100, Math.max(0, avatar.getLife() - hpToLose)));
             }
 
-            // Check if avatar should be arrested (sent to jail)
             if (Boolean.TRUE.equals(action.getCanBeArrested())) {
                 avatar.setTimeout(LocalDateTime.now().plusMinutes(5));
                 avatar.setTimeoutType("JAIL");
@@ -191,12 +201,9 @@ public class GameActionService implements GameActionController {
         String timeoutType = avatar.getTimeoutType();
         log.info("Avatar {} is in {} timeout until {}", avatar.getName(), timeoutType, avatar.getTimeout());
 
-        // Check if timeout has expired
         boolean timeoutExpired = LocalDateTime.now().isAfter(avatar.getTimeout());
 
         if (payForFreedom && !timeoutExpired) {
-            // User wants to pay to leave early (only if timeout not expired yet)
-            // Calculate freedom cost: 500 * level, minimum 500
             BigDecimal freedomCost = BigDecimal.valueOf(500).multiply(BigDecimal.valueOf(Math.max(1, avatar.getLevel())));
 
             if (avatar.getMoney().compareTo(freedomCost) < 0) {
@@ -205,17 +212,12 @@ public class GameActionService implements GameActionController {
                 log.warn(errorMsg);
                 throw new BusinessException(errorMsg);
             }
-
-            // Deduct money
             avatar.setMoney(avatar.getMoney().subtract(freedomCost));
             log.info("Avatar {} bought freedom from {} for {}", avatar.getName(), timeoutType, freedomCost);
         } else if (!payForFreedom && !timeoutExpired) {
-            // Free discharge requested but timeout not expired
             throw new BusinessException("You must wait for the timeout to expire or pay for freedom!");
         }
-        // If timeout expired, always allow free discharge (regardless of payForFreedom value)
 
-        // Clear timeout and restore health/stamina
         avatar.setTimeout(null);
         avatar.setTimeoutType(null);
         avatar.setLife(100);

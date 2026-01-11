@@ -25,6 +25,7 @@ public class AvatarResponseDTO {
 
     private Integer level;
     private Integer experience;
+    private Integer totalExperience;
     private Integer nextLevelExperience;
 
     private Integer stamina;
@@ -36,6 +37,9 @@ public class AvatarResponseDTO {
     private Integer charisma; // Carisma
     private Integer strength; // Força
     private Integer stealth; // Discrição
+    private Integer hacking; // Hacking
+    private Integer work; // Work
+    private String focus; // "hacking", "work" or "both"
 
     private Boolean active;
 
@@ -50,6 +54,7 @@ public class AvatarResponseDTO {
                 .story(avatar.getStory())
                 .level(avatar.getLevel())
                 .experience(avatar.getExperience())
+                .totalExperience(avatar.getTotalExperience())
                 .nextLevelExperience(avatar.getNextLevelExperience())
 
                 .stamina(avatar.getStamina())
@@ -61,10 +66,25 @@ public class AvatarResponseDTO {
                 .charisma(avatar.getCharisma())
                 .strength(avatar.getStrength())
                 .stealth(avatar.getStealth())
+                .hacking(avatar.getHacking())
+                .work(avatar.getWork())
+                .focus(calculateFocus(avatar.getWork(), avatar.getHacking()))
 
                 .active(avatar.getActive())
                 .timeout(avatar.getTimeout())
                 .timeoutType(avatar.getTimeoutType())
                 .build();
+    }
+
+    private static String calculateFocus(Integer work, Integer hacking) {
+        int w = work != null ? work : 0;
+        int h = hacking != null ? hacking : 0;
+        int diff = w - h;
+
+        if (Math.abs(diff) < 5) {
+            return "both";
+        }
+
+        return diff > 0 ? "work" : "hacking";
     }
 }

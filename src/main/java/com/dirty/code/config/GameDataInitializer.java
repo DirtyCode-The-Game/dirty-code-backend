@@ -103,7 +103,7 @@ public class GameDataInitializer {
                 .hpVariation(0.0)
                 .money(BigDecimal.valueOf(20))
                 .moneyVariation(0.5)
-                .xp(10)
+                .xp(1000)
                 .xpVariation(0.5)
                 .requiredStrength(0)
                 .requiredIntelligence(0)
