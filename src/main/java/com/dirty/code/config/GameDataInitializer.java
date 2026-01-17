@@ -5,6 +5,7 @@ import com.dirty.code.repository.model.GameAction;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -20,11 +21,29 @@ import java.util.List;
 public class GameDataInitializer {
 
     private final GameActionRepository gameActionRepository;
+    private final com.dirty.code.repository.AvatarRepository avatarRepository;
+    private final com.dirty.code.repository.UserRepository userRepository;
+
+    @Value("${firebase.enabled:false}")
+    private boolean firebaseEnabled;
 
     @PostConstruct
-    public void initializeGameActions() {
-        log.info("Initializing game actions...");
+    public void initializeGameData() {
+        log.info("Initializing game data... (Firebase enabled: {})", firebaseEnabled);
 
+        initializeGameActions();
+        
+        if (!firebaseEnabled) {
+            initializeSimulatedAvatars();
+        } else {
+            log.info("Skipping simulated avatars initialization because Firebase is enabled.");
+        }
+
+        log.info("Game data initialization completed!");
+    }
+
+    private void initializeGameActions() {
+        log.info("Initializing game actions...");
         long count = gameActionRepository.count();
         if (count > 0) {
             log.info("Deleting {} existing game actions...", count);
@@ -36,8 +55,56 @@ public class GameDataInitializer {
         createWorkActions();
         createMarketActions();
         createHospitalActions();
+    }
 
-        log.info("Game actions initialization completed!");
+    private void initializeSimulatedAvatars() {
+        log.info("Initializing simulated avatars...");
+        
+        // Check if we already have simulated avatars to avoid duplicates
+        // Using names as identifiers for simulated bots
+        String[] botNames = {"ByteSurfer", "CodeNinja", "GlitchGhost", "NullPointer", "RootOverlord"};
+        
+        for (int i = 0; i < botNames.length; i++) {
+            String name = botNames[i];
+            if (!avatarRepository.existsByNameAndActiveTrue(name)) {
+                createSimulatedAvatar(name, i + 1);
+            }
+        }
+    }
+
+    private void createSimulatedAvatar(String name, int difficultyMultiplier) {
+        String firebaseUid = "bot-uid-" + name.toLowerCase();
+        
+        com.dirty.code.repository.model.User botUser = userRepository.findByFirebaseUid(firebaseUid)
+                .orElseGet(() -> userRepository.save(com.dirty.code.repository.model.User.builder()
+                        .firebaseUid(firebaseUid)
+                        .name(name + " (Bot)")
+                        .email(name.toLowerCase() + "@dirtycode.bot")
+                        .build()));
+
+        int level = difficultyMultiplier * 5; // Levels: 5, 10, 15, 20, 25
+        int exp = 0;
+        int nextLevelExp = com.dirty.code.utils.GameFormulas.requiredExperienceForLevel(level + 1);
+
+        avatarRepository.save(com.dirty.code.repository.model.Avatar.builder()
+                .name(name)
+                .user(botUser)
+                .level(level)
+                .experience(exp)
+                .totalExperience(level * 1000) // Rough estimation
+                .nextLevelExperience(nextLevelExp)
+                .stamina(100)
+                .life(100)
+                .money(BigDecimal.valueOf(1000L * difficultyMultiplier))
+                .availablePoints(level)
+                .intelligence(level * 2)
+                .charisma(level)
+                .strength(level)
+                .stealth(level)
+                .active(true)
+                .build());
+        
+        log.info("Created simulated avatar: {}", name);
     }
 
     private void createHackingActions() {

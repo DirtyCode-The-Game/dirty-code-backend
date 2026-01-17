@@ -87,6 +87,16 @@ public class GameActionService implements GameActionController {
         boolean overallSuccess = true;
 
         for (int i = 0; i < (times != null ? times : 1); i++) {
+            if (action.getMoney() != null && action.getMoney().compareTo(BigDecimal.ZERO) < 0) {
+                BigDecimal cost = action.getMoney().abs();
+                if (avatar.getMoney().compareTo(cost) < 0) {
+                    if (i == 0) {
+                        throw new BusinessException(String.format("Not enough money. Required: %.2f, Available: %.2f", cost, avatar.getMoney()));
+                    }
+                    break;
+                }
+            }
+
             if (action.getStamina() < 0 && avatar.getStamina() < Math.abs(action.getStamina())) {
                 if (i == 0) {
                     throw new BusinessException("Not enough stamina to perform this action.");
@@ -144,7 +154,11 @@ public class GameActionService implements GameActionController {
 
             if (action.getMoney() != null) {
                 BigDecimal moneyToAdd = GameFormulas.calculateMoneyVariation(action.getMoney(), action.getMoneyVariation());
-                avatar.setMoney(avatar.getMoney().add(moneyToAdd));
+                BigDecimal newMoney = avatar.getMoney().add(moneyToAdd);
+                if (newMoney.compareTo(BigDecimal.ZERO) < 0) {
+                    newMoney = BigDecimal.ZERO;
+                }
+                avatar.setMoney(newMoney);
             }
 
             if (action.getXp() != null) {
@@ -215,12 +229,17 @@ public class GameActionService implements GameActionController {
             BigDecimal freedomCost = BigDecimal.valueOf(500).multiply(BigDecimal.valueOf(Math.max(1, avatar.getLevel())));
 
             if (avatar.getMoney().compareTo(freedomCost) < 0) {
-                String errorMsg = String.format("Not enough money to buy freedom. Required: %s, Available: %s",
+                String errorMsg = String.format("Not enough money to buy freedom. Required: %.2f, Available: %.2f",
                         freedomCost, avatar.getMoney());
                 log.warn(errorMsg);
                 throw new BusinessException(errorMsg);
             }
-            avatar.setMoney(avatar.getMoney().subtract(freedomCost));
+            
+            BigDecimal newMoney = avatar.getMoney().subtract(freedomCost);
+            if (newMoney.compareTo(BigDecimal.ZERO) < 0) {
+                newMoney = BigDecimal.ZERO;
+            }
+            avatar.setMoney(newMoney);
             log.info("Avatar {} bought freedom from {} for {}", avatar.getName(), timeoutType, freedomCost);
         } else if (!payForFreedom && !timeoutExpired) {
             throw new BusinessException("You must wait for the timeout to expire or pay for freedom!");

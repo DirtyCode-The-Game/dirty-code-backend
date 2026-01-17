@@ -37,3 +37,4 @@ bin/
 
 # keep wrapper
 !gradle/wrapper/gradle-wrapper.jar
+.junie

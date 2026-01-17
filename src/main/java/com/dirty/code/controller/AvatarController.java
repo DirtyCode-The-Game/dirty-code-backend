@@ -1,6 +1,7 @@
 package com.dirty.code.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,4 +32,7 @@ public interface AvatarController {
 
     @PostMapping("/attributes/increase")
     AvatarResponseDTO increaseAttribute(@AuthenticationPrincipal String uid, @RequestParam Attribute attribute);
+
+    @GetMapping("/check-name")
+    Map<String, Boolean> checkNameAvailability(@RequestParam String name);
 }

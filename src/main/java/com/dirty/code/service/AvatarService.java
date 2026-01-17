@@ -3,6 +3,7 @@ package com.dirty.code.service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -163,6 +164,14 @@ public class AvatarService implements AvatarController {
         Avatar savedAvatar = avatarRepository.save(avatar);
         
         return AvatarResponseDTO.fromAvatar(savedAvatar);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public java.util.Map<String, Boolean> checkNameAvailability(String name) {
+        log.info("Checking availability for avatar name: {}", name);
+        boolean exists = avatarRepository.existsByNameAndActiveTrue(name);
+        return Map.of("available", !exists);
     }
 
     /**
