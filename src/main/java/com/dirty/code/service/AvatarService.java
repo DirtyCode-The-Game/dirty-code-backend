@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -31,6 +32,15 @@ public class AvatarService implements AvatarController {
 
     private final AvatarRepository avatarRepository;
     private final UserRepository userRepository;
+
+    @Override
+    @Transactional(readOnly = true)
+    public AvatarResponseDTO getAvatar(UUID id) {
+        log.info("Fetching avatar with ID: {}", id);
+        return avatarRepository.findById(id)
+                .map(AvatarResponseDTO::fromAvatar)
+                .orElseThrow(() -> new ResourceNotFoundException("Avatar not found with ID: " + id));
+    }
 
     @Override
     @Transactional
@@ -103,6 +113,12 @@ public class AvatarService implements AvatarController {
 
         if (cost > currentAvailable) {
             throw new BusinessException("Not enough available points. Required: " + cost + ", Available: " + currentAvailable);
+        }
+
+        if (newStr > currentStr) {
+            int strGained = newStr - currentStr;
+            avatar.setLife(Math.min(100 + (newStr * 10), avatar.getLife() + (strGained * 10)));
+            avatar.setStamina(Math.min(100 + (newStr * 10), avatar.getStamina() + (strGained * 10)));
         }
 
         avatar.setIntelligence(newInt);

@@ -10,7 +10,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChatMessageDTO {
+    private String avatarId;
     private String avatarName;
     private String message;
     private String timestamp;
+    private String fullDate;
 }

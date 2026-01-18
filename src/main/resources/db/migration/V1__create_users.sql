@@ -58,6 +58,7 @@ CREATE TABLE actions (
     text_file VARCHAR(255),
     action_image VARCHAR(255),
     failure_chance DOUBLE PRECISION,
+    recommended_max_level INTEGER,
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP
 );

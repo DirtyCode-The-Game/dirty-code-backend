@@ -34,4 +34,5 @@ public class GameActionDTO {
     private String textFile;
     private String actionImage;
     private Double failureChance;
+    private Integer recommendedMaxLevel;
 }

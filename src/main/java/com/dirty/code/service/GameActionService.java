@@ -118,6 +118,10 @@ public class GameActionService implements GameActionController {
                 avatar.setLife(Math.min(100, Math.max(0, avatar.getLife() + hpToAdd)));
             }
 
+            if (checkAndHandleHospitalization(avatar)) {
+                break;
+            }
+
             double failureChance = GameFormulas.calculateFailureChance(
                     action.getFailureChance() != null ? action.getFailureChance() : 0.0,
                     Map.of(
@@ -136,18 +140,24 @@ public class GameActionService implements GameActionController {
 
             if (GameFormulas.isFailure(failureChance)) {
                 overallSuccess = false;
+                boolean isHighRisk = failureChance > 0.5;
+                int multiplier = isHighRisk ? 3 : 1;
+
                 if (action.getLostHpFailure() != null) {
                     int hpToLose = action.getLostHpFailure();
                     if (action.getLostHpFailureVariation() != null && action.getLostHpFailureVariation() > 0) {
                         hpToLose = GameFormulas.calculateXpVariation(hpToLose, action.getLostHpFailureVariation());
                     }
-                    avatar.setLife(Math.min(100, Math.max(0, avatar.getLife() - hpToLose)));
+                    avatar.setLife(Math.min(100, Math.max(0, avatar.getLife() - (hpToLose * multiplier))));
                 }
 
-                if (Boolean.TRUE.equals(action.getCanBeArrested())) {
-                    avatar.setTimeout(LocalDateTime.now().plusMinutes(5));
+                if (checkAndHandleHospitalization(avatar)) {
+                    log.info("Avatar {} died during failure and sent to hospital", avatar.getName());
+                } else if (Boolean.TRUE.equals(action.getCanBeArrested())) {
+                    int jailTimeMinutes = 5 * multiplier;
+                    avatar.setTimeout(LocalDateTime.now().plusMinutes(jailTimeMinutes));
                     avatar.setTimeoutType("JAIL");
-                    log.info("Avatar {} arrested and sent to jail until {}", avatar.getName(), avatar.getTimeout());
+                    log.info("Avatar {} arrested and sent to jail until {} (High risk: {})", avatar.getName(), avatar.getTimeout(), isHighRisk);
                 }
                 break;
             }
@@ -165,13 +175,6 @@ public class GameActionService implements GameActionController {
                 int xpToAdd = GameFormulas.calculateXpVariation(action.getXp(), action.getXpVariation());
                 avatar.increaseExperience(xpToAdd);
             }
-
-            if (avatar.getLife() <= 0) {
-                avatar.setTimeout(LocalDateTime.now().plusMinutes(5));
-                avatar.setTimeoutType("HOSPITAL");
-                log.info("Avatar {} sent to hospital until {}", avatar.getName(), avatar.getTimeout());
-                break;
-            }
         }
 
         Avatar updatedAvatar = avatarRepository.save(avatar);
@@ -180,6 +183,15 @@ public class GameActionService implements GameActionController {
                 .avatar(AvatarResponseDTO.fromAvatar(updatedAvatar))
                 .timesExecuted(executionCount)
                 .build();
+    }
+
+    private boolean checkAndHandleHospitalization(Avatar avatar) {
+        if (avatar.getLife() <= 0) {
+            avatar.setTimeout(LocalDateTime.now().plusMinutes(5));
+            avatar.setTimeoutType("HOSPITAL");
+            return true;
+        }
+        return false;
     }
 
     private GameActionDTO convertToDTO(GameAction action) {
@@ -205,6 +217,7 @@ public class GameActionService implements GameActionController {
                 .textFile(action.getTextFile())
                 .actionImage(action.getActionImage())
                 .failureChance(action.getFailureChance())
+                .recommendedMaxLevel(action.getRecommendedMaxLevel())
                 .build();
     }
 

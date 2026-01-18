@@ -20,7 +20,11 @@ import java.io.IOException;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -41,6 +45,8 @@ public class ChatService implements ChatController {
     private final List<String> placeholderNames = new ArrayList<>();
     private final Map<String, String> userPlaceholderNames = new ConcurrentHashMap<>();
     private final Map<String, Long> lastMessageTimestamps = new ConcurrentHashMap<>();
+    private final Map<String, Integer> userMessageCounts = new ConcurrentHashMap<>();
+    private String lastMessageAuthorId = null;
     private final Random random = new Random();
 
     @PostConstruct
@@ -59,39 +65,65 @@ public class ChatService implements ChatController {
         }
     }
 
+
     @Override
     public void sendMessage(Principal principal, ChatRequestDTO request) {
         String uid = principal.getName();
 
         long now = System.currentTimeMillis();
         Long lastMessageTime = lastMessageTimestamps.get(uid);
+        int currentCount = userMessageCounts.getOrDefault(uid, 0);
 
-        if (lastMessageTime != null && (now - lastMessageTime) < MESSAGE_COOLDOWN_MS) {
-            long remaining = (MESSAGE_COOLDOWN_MS - (now - lastMessageTime)) / 1000;
-            throw new BusinessException("Aguarde " + remaining + " segundos para enviar outra mensagem.");
+        if (lastMessageAuthorId != null && !lastMessageAuthorId.equals(uid)) {
+            currentCount = 0;
+        }
+
+        if (lastMessageTime != null && (now - lastMessageTime) > 30000) {
+            currentCount = 0;
+        }
+        if (currentCount >= 3) {
+            if (lastMessageTime != null && (now - lastMessageTime) < MESSAGE_COOLDOWN_MS) {
+                long remaining = (MESSAGE_COOLDOWN_MS - (now - lastMessageTime)) / 1000;
+                throw new BusinessException("Aguarde " + remaining + " segundos para enviar outra mensagem.");
+            } else {
+                currentCount = 0;
+            }
         }
 
         log.info("Sending message from user UID: {}", uid);
-
         AtomicReference<String> name = new AtomicReference<>();
+        AtomicReference<String> avatarId = new AtomicReference<>();
         avatarRepository.findByUserFirebaseUidAndActiveTrue(uid)
                 .ifPresentOrElse(e -> {
                             name.set(e.getName());
+                            avatarId.set(e.getId().toString());
                             userPlaceholderNames.remove(uid);
                         },
-                        () -> name.set(userPlaceholderNames.computeIfAbsent(uid, _ -> getRandomPlaceholderName())));
+                        () -> {
+                            name.set(userPlaceholderNames.computeIfAbsent(uid, _ -> getRandomPlaceholderName()));
+                            avatarId.set("placeholder-" + uid);
+                        });
 
 
         LocalDateTime datetimeNow = LocalDateTime.now(ZoneId.of("America/Sao_Paulo"));
         String timestamp = String.format("%02d:%02d", datetimeNow.getHour(), datetimeNow.getMinute());
+        String fullDate = String.format("%04d-%02d-%02d", datetimeNow.getYear(), datetimeNow.getMonthValue(), datetimeNow.getDayOfMonth());
+        
         ChatMessageDTO chatMessage = ChatMessageDTO.builder()
+                .avatarId(avatarId.get())
                 .avatarName(name.get())
                 .message(request.getMessage())
                 .timestamp(timestamp)
+                .fullDate(fullDate)
                 .build();
 
         addMessage(chatMessage);
+        
+        int nextCount = currentCount + 1;
+        userMessageCounts.put(uid, nextCount);
         lastMessageTimestamps.put(uid, now);
+        lastMessageAuthorId = uid;
+
         messagingTemplate.convertAndSend("/topic/global-messages", chatMessage);
     }
 
@@ -122,7 +154,7 @@ public class ChatService implements ChatController {
         return selectedName;
     }
 
-    private void addMessage(ChatMessageDTO message) {
+    public void addMessage(ChatMessageDTO message) {
         synchronized (messages) {
             if (messages.size() >= MAX_MESSAGES) {
                 messages.removeFirst();

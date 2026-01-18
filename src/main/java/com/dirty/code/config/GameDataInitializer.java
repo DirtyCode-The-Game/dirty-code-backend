@@ -21,8 +21,7 @@ import java.util.List;
 public class GameDataInitializer {
 
     private final GameActionRepository gameActionRepository;
-    private final com.dirty.code.repository.AvatarRepository avatarRepository;
-    private final com.dirty.code.repository.UserRepository userRepository;
+    private final com.dirty.code.service.SimulatedAvatarService simulatedAvatarService;
 
     @Value("${firebase.enabled:false}")
     private boolean firebaseEnabled;
@@ -34,7 +33,8 @@ public class GameDataInitializer {
         initializeGameActions();
         
         if (!firebaseEnabled) {
-            initializeSimulatedAvatars();
+            simulatedAvatarService.initializeSimulatedAvatars();
+            simulatedAvatarService.addSimulatedInitialMessages();
         } else {
             log.info("Skipping simulated avatars initialization because Firebase is enabled.");
         }
@@ -57,88 +57,111 @@ public class GameDataInitializer {
         createHospitalActions();
     }
 
-    private void initializeSimulatedAvatars() {
-        log.info("Initializing simulated avatars...");
-        
-        // Check if we already have simulated avatars to avoid duplicates
-        // Using names as identifiers for simulated bots
-        String[] botNames = {"ByteSurfer", "CodeNinja", "GlitchGhost", "NullPointer", "RootOverlord"};
-        
-        for (int i = 0; i < botNames.length; i++) {
-            String name = botNames[i];
-            if (!avatarRepository.existsByNameAndActiveTrue(name)) {
-                createSimulatedAvatar(name, i + 1);
-            }
-        }
-    }
-
-    private void createSimulatedAvatar(String name, int difficultyMultiplier) {
-        String firebaseUid = "bot-uid-" + name.toLowerCase();
-        
-        com.dirty.code.repository.model.User botUser = userRepository.findByFirebaseUid(firebaseUid)
-                .orElseGet(() -> userRepository.save(com.dirty.code.repository.model.User.builder()
-                        .firebaseUid(firebaseUid)
-                        .name(name + " (Bot)")
-                        .email(name.toLowerCase() + "@dirtycode.bot")
-                        .build()));
-
-        int level = difficultyMultiplier * 5; // Levels: 5, 10, 15, 20, 25
-        int exp = 0;
-        int nextLevelExp = com.dirty.code.utils.GameFormulas.requiredExperienceForLevel(level + 1);
-
-        avatarRepository.save(com.dirty.code.repository.model.Avatar.builder()
-                .name(name)
-                .user(botUser)
-                .level(level)
-                .experience(exp)
-                .totalExperience(level * 1000) // Rough estimation
-                .nextLevelExperience(nextLevelExp)
-                .stamina(100)
-                .life(100)
-                .money(BigDecimal.valueOf(1000L * difficultyMultiplier))
-                .availablePoints(level)
-                .intelligence(level * 2)
-                .charisma(level)
-                .strength(level)
-                .stealth(level)
-                .active(true)
-                .build());
-        
-        log.info("Created simulated avatar: {}", name);
-    }
 
     private void createHackingActions() {
-        gameActionRepository.save(GameAction.builder()
-                .type("hacking")
-                .title("Urubu do Pix")
-                .description("Me mande 10 dinheiros que eu te devolvo 1000 em 24h.")
-                .stamina(-25)
-                .hp(0)
-                .hpVariation(0.0)
-                .money(BigDecimal.valueOf(50))
-                .moneyVariation(0.5)
-                .xp(20)
-                .xpVariation(0.5)
-                .requiredStrength(2)
-                .requiredIntelligence(3)
-                .requiredCharisma(4)
-                .requiredStealth(1)
-                .canBeArrested(true)
-                .lostHpFailure(0)
-                .lostHpFailureVariation(0.0)
-                .textFile("urubu_do_pix.json")
-                .actionImage("urubu_do_pix.jpg")
-                .failureChance(0.2)
-                .build());
-
+        gameActionRepository.saveAll(List.of(
+                GameAction.builder()
+                        .type("hacking")
+                        .title("Pitbrad do CaraLivro")
+                        .description("Oi vó, aqui é o Pitbrad. Manda o Pix que perdi meu cartão aqui em Hollywood.")
+                        .stamina(-10)
+                        .hp(0)
+                        .hpVariation(0.0)
+                        .money(BigDecimal.valueOf(1000))
+                        .moneyVariation(0.5)
+                        .xp(100)
+                        .xpVariation(0.5)
+                        .requiredStrength(0)
+                        .requiredIntelligence(0)
+                        .requiredCharisma(0)
+                        .requiredStealth(0)
+                        .canBeArrested(true)
+                        .lostHpFailure(0)
+                        .lostHpFailureVariation(0.0)
+                        .textFile("pitbrad_do_caralivro.json")
+                        .actionImage("pitbrad_do_caralivro.jpg")
+                        .failureChance(0.30)
+                        .recommendedMaxLevel(10)
+                        .build(),
+                GameAction.builder()
+                        .type("hacking")
+                        .title("Vem pra Turquia sou um Sultão minha MILF gata")
+                        .description("Sou sultão. Quero me casar com você. Só preciso de um Pix simbólico pra liberar o passaporte no consulado.")
+                        .stamina(-10)
+                        .hp(0)
+                        .hpVariation(0.0)
+                        .money(BigDecimal.valueOf(3000))
+                        .moneyVariation(0.5)
+                        .xp(200)
+                        .xpVariation(0.5)
+                        .requiredStrength(0)
+                        .requiredIntelligence(1)
+                        .requiredCharisma(0)
+                        .requiredStealth(2)
+                        .canBeArrested(true)
+                        .lostHpFailure(0)
+                        .lostHpFailureVariation(0.0)
+                        .textFile("sultao_da_turquia.json")
+                        .actionImage("sultao_da_turquia.jpg")
+                        .failureChance(0.30)
+                        .recommendedMaxLevel(10)
+                        .build(),
+                GameAction.builder()
+                        .type("hacking")
+                        .title("Urubu do Pix")
+                        .description("Me mande 10 dinheiros que eu te devolvo 1000 em 24h.")
+                        .stamina(-25)
+                        .hp(0)
+                        .hpVariation(0.0)
+                        .money(BigDecimal.valueOf(5000))
+                        .moneyVariation(0.5)
+                        .xp(500)
+                        .xpVariation(0.5)
+                        .requiredStrength(0)
+                        .requiredIntelligence(0)
+                        .requiredCharisma(0)
+                        .requiredStealth(4)
+                        .canBeArrested(true)
+                        .lostHpFailure(0)
+                        .lostHpFailureVariation(0.0)
+                        .textFile("urubu_do_pix.json")
+                        .actionImage("urubu_do_pix.jpg")
+                        .failureChance(0.30)
+                        .recommendedMaxLevel(10)
+                        .build(),
+                GameAction.builder()
+                        .type("hacking")
+                        .title("Suporte do Banco via Áudio de Zap")
+                        .description("Boa tarde, aqui é do suporte. Fala sua senha em áudio pra eu ‘validar’ seu cadastro rapidinho.")
+                        .stamina(-50)
+                        .hp(0)
+                        .hpVariation(0.0)
+                        .money(BigDecimal.valueOf(7000))
+                        .moneyVariation(0.65)
+                        .xp(1000)
+                        .xpVariation(0.65)
+                        .requiredStrength(0)
+                        .requiredIntelligence(4)
+                        .requiredCharisma(1)
+                        .requiredStealth(5)
+                        .canBeArrested(true)
+                        .lostHpFailure(0)
+                        .lostHpFailureVariation(0.0)
+                        .textFile("suporte_do_banco_audio.json")
+                        .actionImage("suporte_do_banco_audio.jpg")
+                        .failureChance(0.30)
+                        .recommendedMaxLevel(10)
+                        .build()
+        ));
         log.info("Created hacking actions");
     }
+
 
     private void createTrainingActions() {
         gameActionRepository.save(GameAction.builder()
                 .type("training")
                 .title("Video do Deschampo")
-                .description("DESCHAMPO malemá explica algo de TI, no fim do vídeo você entendeu nada e já quer lançar o BookFace 2.")
+                .description("DESCHAMPO malemá explica algo de TI, no fim do vídeo você entendeu nada e já quer lançar o CaraLivro 2.")
                 .stamina(-10)
                 .hp(0)
                 .hpVariation(0.0)
@@ -179,16 +202,17 @@ public class GameDataInitializer {
                         .requiredCharisma(0)
                         .requiredStealth(0)
                         .canBeArrested(false)
-                        .lostHpFailure(3)
+                        .lostHpFailure(5)
                         .lostHpFailureVariation(0.2)
                         .textFile("tv_do_pai.json")
                         .actionImage("tv_do_pai.jpg")
                         .failureChance(0.10)
+                        .recommendedMaxLevel(10)
                         .build(),
                 GameAction.builder()
                         .type("work")
-                        .title("Recuperar senha do BookFace da mãe")
-                        .description("A mãe esqueceu a senha do BookFace de novo, como ela vai fofocar da vida da Cleude assim?")
+                        .title("Recuperar senha do CaraLivro da mãe")
+                        .description("A mãe esqueceu a senha do CaraLivro de novo, como ela vai fofocar da vida da Cleude assim?")
                         .stamina(-10)
                         .hp(0)
                         .hpVariation(0.0)
@@ -201,11 +225,12 @@ public class GameDataInitializer {
                         .requiredCharisma(1)
                         .requiredStealth(0)
                         .canBeArrested(false)
-                        .lostHpFailure(10)
+                        .lostHpFailure(20)
                         .lostHpFailureVariation(0.2)
-                        .textFile("bookface_mae.json")
-                        .actionImage("bookface_mae.jpg")
+                        .textFile("caralivro_mae.json")
+                        .actionImage("caralivro_mae.jpg")
                         .failureChance(0.20)
+                        .recommendedMaxLevel(10)
                         .build(),
                 GameAction.builder()
                         .type("work")
@@ -223,11 +248,12 @@ public class GameDataInitializer {
                         .requiredCharisma(0)
                         .requiredStealth(0)
                         .canBeArrested(false)
-                        .lostHpFailure(10)
+                        .lostHpFailure(20)
                         .lostHpFailureVariation(0.2)
                         .textFile("revolta_impressoras.json")
                         .actionImage("revolta_impressoras.jpg")
                         .failureChance(0.20)
+                        .recommendedMaxLevel(10)
                         .build(),
                 GameAction.builder()
                         .type("work")
@@ -245,11 +271,12 @@ public class GameDataInitializer {
                         .requiredCharisma(5)
                         .requiredStealth(0)
                         .canBeArrested(false)
-                        .lostHpFailure(15)
+                        .lostHpFailure(25)
                         .lostHpFailureVariation(0.2)
                         .textFile("dj.json")
                         .actionImage("dj.jpg")
                         .failureChance(0.20)
+                        .recommendedMaxLevel(10)
                         .build()
                 ));
 

@@ -52,7 +52,7 @@ public class Avatar extends BaseModel {
     
     private Integer hacking; // Hacking
     private Integer work; // Work
-
+    
     private Boolean active;
     private LocalDateTime timeout; // When the timeout expires (null if not timed out)
     private String timeoutType; // Type of timeout: "HOSPITAL" or "JAIL"

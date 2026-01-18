@@ -79,6 +79,9 @@ public class GameAction extends BaseModel {
     @Column(name = "failure_chance")
     private Double failureChance;
 
+    @Column(name = "recommended_max_level")
+    private Integer recommendedMaxLevel;
+
     public Integer getRequiredAttributeValue(Attribute attribute) {
         return switch (attribute) {
             case STRENGTH -> requiredStrength != null ? requiredStrength : 0;
