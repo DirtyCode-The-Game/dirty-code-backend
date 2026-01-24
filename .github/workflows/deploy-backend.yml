@@ -1,0 +1,70 @@
+name: Deploy Backend to Digital Ocean
+
+on:
+  workflow_dispatch: # Permite execução manual
+
+env:
+  REGISTRY: registry.digitalocean.com
+  IMAGE_NAME: dirty-code/backend
+
+jobs:
+  deploy:
+    name: Build and Deploy Backend
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 25
+      uses: actions/setup-java@v4
+      with:
+        java-version: '25'
+        distribution: 'temurin'
+        cache: gradle
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    - name: Build with Gradle
+      run: ./gradlew build -x test
+
+    - name: Install doctl
+      uses: digitalocean/action-doctl@v2
+      with:
+        token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+        
+    - name: Log in to DigitalOcean Container Registry
+      run: doctl registry login --expiry-seconds 1200
+      
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+      
+    - name: Build Docker image
+      run: |
+        docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest .
+        docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+
+    - name: Push Docker image
+      run: |
+        docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+        docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+        
+    - name: Clean up old images (optional)
+      run: |
+        # Remove imagens locais para economizar espaço
+        docker rmi ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest || true
+        docker rmi ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} || true
+        
+    - name: Deployment Success Notification
+      if: success()
+      run: |
+        echo "✅ Deploy realizado com sucesso!"
+        echo "🐳 Imagem: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest"
+        echo "📝 Commit: ${{ github.sha }}"
+        
+    - name: Deployment Failure Notification
+      if: failure()
+      run: |
+        echo "❌ Falha no deploy!"
+        echo "📝 Commit: ${{ github.sha }}"

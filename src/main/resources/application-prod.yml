@@ -4,10 +4,16 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/dirtycode
+    url: ${DATABASE_URL}
     driver-class-name: org.postgresql.Driver
-    username: root
-    password: root
+    username: ${DATABASE_USER}
+    password: ${DATABASE_PASS}
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 1
+      idle-timeout: 30000
+      connection-timeout: 30000
+      max-lifetime: 1800000
   jpa:
     hibernate:
       ddl-auto: none
@@ -18,7 +24,7 @@ spring:
 
 app:
   frontend:
-    login-url: ${FRONTEND_LOGIN_URL:http://localhost:3000/api/login?token=%s&refreshToken=%s}
+    login-url: ${FRONTEND_LOGIN_URL}
 
 firebase:
   enabled: true
@@ -37,4 +43,4 @@ firebase:
 gcp:
   client-id: ${GCP_CLIENT_ID}
   client-secret: ${GCP_CLIENT_SECRET}
-  redirect-uri: "http://localhost:8080/dirty-code/v1/gmail/call-back"
+  redirect-uri: ${REDIRECT_URL}

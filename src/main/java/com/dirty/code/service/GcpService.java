@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Collections;
 
@@ -19,18 +20,20 @@ public class GcpService {
     @Value("${gcp.client-id}")
     private String clientId;
 
-    @Value("${gcp.escaped-redirect-uri}")
-    private String escapedRedirectUri;
+    @Value("${gcp.redirect-uri}")
+    private String redirectUri;
 
     public String getGoogleAuthUrl() {
         log.info("Generating Google Auth URL");
-        String url = "https://accounts.google.com/o/oauth2/v2/auth?" +
-                "client_id=" + clientId +
-                "&redirect_uri=" + escapedRedirectUri +
-                "&response_type=code" +
-                "&scope=openid%20email%20profile" +
-                "&access_type=offline" +
-                "&prompt=consent%20select_account";
+        String url = UriComponentsBuilder.fromUriString("https://accounts.google.com/o/oauth2/v2/auth")
+                .queryParam("client_id", clientId)
+                .queryParam("redirect_uri", redirectUri)
+                .queryParam("response_type", "code")
+                .queryParam("scope", "openid email profile")
+                .queryParam("access_type", "offline")
+                .queryParam("prompt", "consent select_account")
+                .build()
+                .toUriString();
         log.info("Google Auth URL generated successfully");
         return url;
     }

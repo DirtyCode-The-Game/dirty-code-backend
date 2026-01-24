@@ -17,9 +17,8 @@ public class GoogleTokenRequest {
     @JsonProperty("client_secret")
     private String clientSecret;
 
-    @Builder.Default
     @JsonProperty("redirect_uri")
-    private String redirectUri = "http://localhost:8080/dirty-code/v1/gmail/call-back";
+    private String redirectUri;
 
     @Builder.Default
     @JsonProperty("grant_type")

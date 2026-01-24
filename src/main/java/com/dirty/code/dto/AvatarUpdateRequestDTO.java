@@ -6,15 +6,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.math.BigDecimal;
-
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AvatarCreateRequestDTO {
+public class AvatarUpdateRequestDTO {
     private String name;
     private String picture;
     private String story;
+    private Integer intelligence;
+    private Integer charisma;
+    private Integer strength;
+    private Integer stealth;
 }

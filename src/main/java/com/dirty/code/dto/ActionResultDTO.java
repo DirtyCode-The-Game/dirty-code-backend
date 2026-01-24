@@ -9,10 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChatMessageDTO {
-    private String avatarId;
-    private String avatarName;
-    private String message;
-    private String timestamp;
-    private String fullDate;
+public class ActionResultDTO {
+    private boolean success;
+    private AvatarResponseDTO avatar;
+    private Integer timesExecuted;
 }
