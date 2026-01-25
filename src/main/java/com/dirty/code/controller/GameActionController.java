@@ -13,13 +13,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dirty.code.dto.ActionResultDTO;
 import com.dirty.code.dto.GameActionDTO;
+import com.dirty.code.repository.model.GameActionType;
 
 @RestController
 @RequestMapping("/v1/actions")
 public interface GameActionController {
 
     @GetMapping("/type/{type}")
-    List<GameActionDTO> getActionsByType(@AuthenticationPrincipal String uid, @PathVariable String type);
+    List<GameActionDTO> getActionsByType(@AuthenticationPrincipal String uid, @PathVariable GameActionType type);
 
     @PostMapping("/{actionId}/perform")
     ActionResultDTO performAction(@AuthenticationPrincipal String uid, @PathVariable UUID actionId, @RequestParam(defaultValue = "1") Integer times);

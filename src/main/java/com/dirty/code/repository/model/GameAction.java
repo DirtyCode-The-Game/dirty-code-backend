@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
@@ -23,13 +24,14 @@ public class GameAction extends BaseModel {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String type;
+    private GameActionType type;
 
     @Column(nullable = false)
     private String title;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
     private Integer stamina;
@@ -82,12 +84,22 @@ public class GameAction extends BaseModel {
     @Column(name = "recommended_max_level")
     private Integer recommendedMaxLevel;
 
-    public Integer getRequiredAttributeValue(Attribute attribute) {
-        return switch (attribute) {
-            case STRENGTH -> requiredStrength != null ? requiredStrength : 0;
-            case INTELLIGENCE -> requiredIntelligence != null ? requiredIntelligence : 0;
-            case CHARISMA -> requiredCharisma != null ? requiredCharisma : 0;
-            case STEALTH -> requiredStealth != null ? requiredStealth : 0;
-        };
-    }
+    @Column(name = "temporary_strength")
+    private Integer temporaryStrength;
+
+    @Column(name = "temporary_intelligence")
+    private Integer temporaryIntelligence;
+
+    @Column(name = "temporary_charisma")
+    private Integer temporaryCharisma;
+
+    @Column(name = "temporary_stealth")
+    private Integer temporaryStealth;
+
+    @Column(name = "action_cooldown")
+    private LocalDateTime actionCooldown;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "special_action")
+    private SpecialAction specialAction;
 }

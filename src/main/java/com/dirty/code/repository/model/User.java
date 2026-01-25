@@ -29,13 +29,13 @@ public class User extends BaseModel {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(unique = true, nullable = false)
+    @Column(name = "firebase_uid", unique = true, nullable = false)
     private String firebaseUid;
 
     private String name;
     private String email;
+
+    @Column(name = "photo_url")
     private String photoUrl;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Avatar> avatars;
 }

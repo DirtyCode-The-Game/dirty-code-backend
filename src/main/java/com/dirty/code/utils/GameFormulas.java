@@ -74,6 +74,10 @@ public class GameFormulas {
             int required = requiredAttributes.getOrDefault(attribute, 0);
             int actual = avatarAttributes.getOrDefault(attribute, 0);
             chance += calculateAttributeImpact(required, actual);
+
+            if (actual < 0) {
+                chance += 5.0; // Soma 5% de risco para cada status negativo
+            }
         }
 
         return Math.max(0, Math.min(100, chance)) / 100.0;

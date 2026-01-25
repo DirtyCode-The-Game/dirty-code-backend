@@ -93,7 +93,7 @@ public class ChatService implements ChatController {
         log.info("Sending message from user UID: {}", uid);
         AtomicReference<String> name = new AtomicReference<>();
         AtomicReference<String> avatarId = new AtomicReference<>();
-        avatarRepository.findByUserFirebaseUidAndActiveTrue(uid)
+        avatarRepository.findByFirebaseUidAndActiveTrue(uid)
                 .ifPresentOrElse(e -> {
                             name.set(e.getName());
                             avatarId.set(e.getId().toString());

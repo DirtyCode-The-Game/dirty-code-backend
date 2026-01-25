@@ -1,7 +1,6 @@
 package com.dirty.code.service;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -32,6 +31,7 @@ public class AvatarService implements AvatarController {
 
     private final AvatarRepository avatarRepository;
     private final UserRepository userRepository;
+    private final AvatarTimeoutService timeoutService;
 
     @Override
     @Transactional(readOnly = true)
@@ -73,7 +73,7 @@ public class AvatarService implements AvatarController {
                 .hacking(0)
                 .work(0)
                 .active(true)
-                .user(user)
+                .userId(user.getId())
                 .build();
 
         Avatar savedAvatar = avatarRepository.save(avatar);
@@ -87,7 +87,7 @@ public class AvatarService implements AvatarController {
     public AvatarResponseDTO updateAvatar(String uid, AvatarUpdateRequestDTO request) {
         log.info("Updating avatar for user UID: {}", uid);
 
-        Avatar avatar = avatarRepository.findByUserFirebaseUidAndActiveTrue(uid)
+        Avatar avatar = avatarRepository.findByFirebaseUidAndActiveTrue(uid)
                 .orElseThrow(() -> new ResourceNotFoundException("Active avatar not found for user UID: " + uid));
 
         // Use current values if request values are null
@@ -152,7 +152,7 @@ public class AvatarService implements AvatarController {
     public AvatarResponseDTO increaseAttribute(String uid, Attribute attribute) {
         log.info("Increasing attribute {} for user UID: {}", attribute, uid);
 
-        Avatar avatar = avatarRepository.findByUserFirebaseUidAndActiveTrue(uid)
+        Avatar avatar = avatarRepository.findByFirebaseUidAndActiveTrue(uid)
                 .orElseThrow(() -> new ResourceNotFoundException("Active avatar not found for user UID: " + uid));
 
         if (avatar.getAvailablePoints() <= 0) {
@@ -198,22 +198,6 @@ public class AvatarService implements AvatarController {
      */
     @Transactional
     public void clearExpiredTimeout(Avatar avatar) {
-        if (avatar == null || avatar.getTimeout() == null) {
-            return;
-        }
-
-        if (LocalDateTime.now().isAfter(avatar.getTimeout())) {
-            log.info("Auto-clearing expired timeout for avatar {}: type={}, expired at={}", 
-                    avatar.getName(), avatar.getTimeoutType(), avatar.getTimeout());
-            
-            avatar.setTimeout(null);
-            avatar.setTimeoutType(null);
-            avatar.setLife(100);
-            avatar.setStamina(100);
-            
-            avatarRepository.save(avatar);
-            log.info("Avatar {} automatically restored after timeout expiration", avatar.getName());
-
-        }
+        timeoutService.processExpiredTimeoutSilently(avatar);
     }
 }

@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import com.dirty.code.repository.model.Avatar;
+import com.dirty.code.repository.model.TimeoutType;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -37,6 +38,11 @@ public class AvatarResponseDTO {
     private Integer charisma; // Carisma
     private Integer strength; // Força
     private Integer stealth; // Discrição
+    private Integer temporaryStrength;
+    private Integer temporaryIntelligence;
+    private Integer temporaryCharisma;
+    private Integer temporaryStealth;
+    private LocalDateTime statusCooldown;
     private Integer hacking; // Hacking
     private Integer work; // Work
     private String focus; // "hacking", "work" or "both"
@@ -44,7 +50,7 @@ public class AvatarResponseDTO {
     private Boolean active;
 
     private LocalDateTime timeout; // When the timeout expires
-    private String timeoutType; // "HOSPITAL" or "JAIL"
+    private TimeoutType timeoutType; // "HOSPITAL" or "JAIL"
 
     public static AvatarResponseDTO fromAvatar(Avatar avatar) {
         return AvatarResponseDTO.builder()
@@ -66,6 +72,11 @@ public class AvatarResponseDTO {
                 .charisma(avatar.getCharisma())
                 .strength(avatar.getStrength())
                 .stealth(avatar.getStealth())
+                .temporaryStrength(avatar.getTemporaryStrength())
+                .temporaryIntelligence(avatar.getTemporaryIntelligence())
+                .temporaryCharisma(avatar.getTemporaryCharisma())
+                .temporaryStealth(avatar.getTemporaryStealth())
+                .statusCooldown(avatar.getStatusCooldown())
                 .hacking(avatar.getHacking())
                 .work(avatar.getWork())
                 .focus(calculateFocus(avatar.getWork(), avatar.getHacking()))

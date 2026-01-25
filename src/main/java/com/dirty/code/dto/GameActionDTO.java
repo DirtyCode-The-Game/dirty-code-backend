@@ -1,11 +1,14 @@
 package com.dirty.code.dto;
 
+import com.dirty.code.repository.model.GameActionType;
+import com.dirty.code.repository.model.SpecialAction;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
@@ -14,7 +17,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class GameActionDTO {
     private UUID id;
-    private String type;
+    private GameActionType type;
     private String title;
     private String description;
     private Integer stamina;
@@ -35,4 +38,11 @@ public class GameActionDTO {
     private String actionImage;
     private Double failureChance;
     private Integer recommendedMaxLevel;
+    private Integer temporaryStrength;
+    private Integer temporaryIntelligence;
+    private Integer temporaryCharisma;
+    private Integer temporaryStealth;
+
+    private LocalDateTime actionCooldown;
+    private SpecialAction specialAction;
 }

@@ -52,7 +52,16 @@ public class SimulatedAvatarService {
 
     private void createSimulatedAvatar(String name, int difficultyMultiplier) {
         String firebaseUid = "bot-uid-" + name.toLowerCase();
-        List<String> avatares = List.of("/avatars/avatar_1.png", "/avatars/avatar_2.png", "/avatars/avatar_3.png");
+        List<String> avatares = List.of("/avatars/avatar_1.webp", 
+                "/avatars/avatar_2.webp", 
+                "/avatars/avatar_3.webp",
+                "/avatars/avatar_4.webp",
+                "/avatars/avatar_5.webp",
+                "/avatars/avatar_6.webp",
+                "/avatars/avatar_7.webp",
+                "/avatars/avatar_8.webp",
+                "/avatars/avatar_9.webp",
+                "/avatars/avatar_10.webp");
         String randomAvatarPicture = avatares.get(ThreadLocalRandom.current().nextInt(avatares.size()));
 
         User botUser = userRepository.findByFirebaseUid(firebaseUid)
@@ -68,7 +77,7 @@ public class SimulatedAvatarService {
 
         avatarRepository.save(Avatar.builder()
                 .name(name)
-                .user(botUser)
+                .userId(botUser.getId())
                 .level(level)
                 .experience(exp)
                 .totalExperience(level * 1000)
@@ -130,7 +139,10 @@ public class SimulatedAvatarService {
     public void sendSimulatedMessage() {
         if (!firebaseEnabled) {
             List<Avatar> simulatedAvatars = avatarRepository.findByActiveTrue().stream()
-                    .filter(a -> a.getUser().getFirebaseUid().startsWith("bot-uid-"))
+                    .filter(a -> {
+                        User user = userRepository.findById(a.getUserId()).orElse(null);
+                        return user != null && user.getFirebaseUid().startsWith("bot-uid-");
+                    })
                     .toList();
             
             if (simulatedAvatars.isEmpty()) {

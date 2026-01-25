@@ -2,6 +2,8 @@ package com.dirty.code.config;
 
 import com.dirty.code.repository.GameActionRepository;
 import com.dirty.code.repository.model.GameAction;
+import com.dirty.code.repository.model.GameActionType;
+import com.dirty.code.repository.model.SpecialAction;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +33,7 @@ public class GameDataInitializer {
         log.info("Initializing game data... (Firebase enabled: {})", firebaseEnabled);
 
         initializeGameActions();
-        
+
         if (!firebaseEnabled) {
             simulatedAvatarService.initializeSimulatedAvatars();
             simulatedAvatarService.addSimulatedInitialMessages();
@@ -61,7 +63,7 @@ public class GameDataInitializer {
     private void createHackingActions() {
         gameActionRepository.saveAll(List.of(
                 GameAction.builder()
-                        .type("hacking")
+                        .type(GameActionType.HACKING)
                         .title("Pitbrad do CaraLivro")
                         .description("Oi vó, aqui é o Pitbrad. Manda o Pix que perdi meu cartão aqui em Hollywood.")
                         .stamina(-10)
@@ -84,9 +86,9 @@ public class GameDataInitializer {
                         .recommendedMaxLevel(10)
                         .build(),
                 GameAction.builder()
-                        .type("hacking")
+                        .type(GameActionType.HACKING)
                         .title("Vem pra Turquia sou um Sultão minha MILF gata")
-                        .description("Sou sultão. Quero me casar com você. Só preciso de um Pix simbólico pra liberar o passaporte no consulado.")
+                        .description("Sou sultão. Quero me casar with você. Só preciso de um Pix simbólico pra liberar o passaporte no consulado.")
                         .stamina(-10)
                         .hp(0)
                         .hpVariation(0.0)
@@ -107,7 +109,7 @@ public class GameDataInitializer {
                         .recommendedMaxLevel(10)
                         .build(),
                 GameAction.builder()
-                        .type("hacking")
+                        .type(GameActionType.HACKING)
                         .title("Urubu do Pix")
                         .description("Me mande 10 dinheiros que eu te devolvo 1000 em 24h.")
                         .stamina(-25)
@@ -130,7 +132,7 @@ public class GameDataInitializer {
                         .recommendedMaxLevel(10)
                         .build(),
                 GameAction.builder()
-                        .type("hacking")
+                        .type(GameActionType.HACKING)
                         .title("Suporte do Banco via Áudio de Zap")
                         .description("Boa tarde, aqui é do suporte. Fala sua senha em áudio pra eu ‘validar’ seu cadastro rapidinho.")
                         .stamina(-50)
@@ -158,28 +160,116 @@ public class GameDataInitializer {
 
 
     private void createTrainingActions() {
-        gameActionRepository.save(GameAction.builder()
-                .type("training")
-                .title("Video do Deschampo")
-                .description("DESCHAMPO malemá explica algo de TI, no fim do vídeo você entendeu nada e já quer lançar o CaraLivro 2.")
-                .stamina(-10)
-                .hp(0)
-                .hpVariation(0.0)
-                .money(BigDecimal.valueOf(-10))
-                .moneyVariation(0.0)
-                .xp(10)
-                .xpVariation(0.5)
-                .requiredStrength(0)
-                .requiredIntelligence(0)
-                .requiredCharisma(0)
-                .requiredStealth(0)
-                .canBeArrested(false)
-                .lostHpFailure(0)
-                .lostHpFailureVariation(0.0)
-                .textFile("deschampo.json")
-                .actionImage("deschampo.jpg")
-                .failureChance(0.0)
-                .build());
+        gameActionRepository.saveAll(List.of(
+                GameAction.builder()
+                        .type(GameActionType.TRAINING)
+                        .title("Video do Deschampo")
+                        .description("DESCHAMPO malemá explica algo de TI, no fim do vídeo você entendeu nada e já quer lançar o CaraLivro 2.")
+                        .stamina(0)
+                        .hp(0)
+                        .hpVariation(0.0)
+                        .money(BigDecimal.valueOf(-2500))
+                        .moneyVariation(0.0)
+                        .xp(0)
+                        .xpVariation(0.0)
+                        .requiredStrength(0)
+                        .requiredIntelligence(0)
+                        .requiredCharisma(0)
+                        .requiredStealth(0)
+                        .canBeArrested(false)
+                        .lostHpFailure(0)
+                        .lostHpFailureVariation(0.0)
+                        .textFile("deschampo.json")
+                        .actionImage("deschampo.jpg")
+                        .failureChance(0.0)
+                        .recommendedMaxLevel(10)
+                        .temporaryCharisma(3)
+                        .temporaryIntelligence(1)
+                        .temporaryStealth(0)
+                        .temporaryStrength(0)
+                        .build(),
+                GameAction.builder()
+                        .type(GameActionType.TRAINING)
+                        .title("TV Fonte Código")
+                        .description("Chato pra caralho, mas da pra tirar alguma coisa dessa velharia. Sério nem sei se vale a pena...")
+                        .stamina(0)
+                        .hp(0)
+                        .hpVariation(0.0)
+                        .money(BigDecimal.valueOf(-2500))
+                        .moneyVariation(0.0)
+                        .xp(0)
+                        .xpVariation(0.0)
+                        .requiredStrength(0)
+                        .requiredIntelligence(0)
+                        .requiredCharisma(0)
+                        .requiredStealth(0)
+                        .canBeArrested(false)
+                        .lostHpFailure(0)
+                        .lostHpFailureVariation(0.0)
+                        .textFile("tv_fonte_codigo.json")
+                        .actionImage("tv_fonte_codigo.jpg")
+                        .failureChance(0.0)
+                        .recommendedMaxLevel(10)
+                        .temporaryCharisma(1)
+                        .temporaryIntelligence(3)
+                        .temporaryStealth(0)
+                        .temporaryStrength(0)
+                        .build(),
+                    GameAction.builder()
+                            .type(GameActionType.TRAINING)
+                            .title("Tranquilidade Joven")
+                            .description("O cara é carismatico, pena que é um completo retardado, acho melhor não seguir os conselhos de finanças dele.")
+                            .stamina(0)
+                            .hp(0)
+                            .hpVariation(0.0)
+                            .money(BigDecimal.valueOf(-2500))
+                            .moneyVariation(0.0)
+                            .xp(0)
+                            .xpVariation(0.0)
+                            .requiredStrength(0)
+                            .requiredIntelligence(0)
+                            .requiredCharisma(0)
+                            .requiredStealth(0)
+                            .canBeArrested(false)
+                            .lostHpFailure(0)
+                            .lostHpFailureVariation(0.0)
+                            .textFile("tranquilidade_jovem.json")
+                            .actionImage("tranquilidade_jovem.jpg")
+                            .failureChance(0.0)
+                            .recommendedMaxLevel(10)
+                            .temporaryCharisma(6)
+                            .temporaryIntelligence(-2)
+                            .temporaryStealth(0)
+                            .temporaryStrength(0)
+                            .build(),
+                GameAction.builder()
+                        .type(GameActionType.TRAINING)
+                        .title("Gane Jovem Ko")
+                        .description("Sério, como pode alguém esbanjar sabedoria e conhecimento with tanta falta de carisma")
+                        .stamina(0)
+                        .hp(0)
+                        .hpVariation(0.0)
+                        .money(BigDecimal.valueOf(-2500))
+                        .moneyVariation(0.0)
+                        .xp(0)
+                        .xpVariation(0.0)
+                        .requiredStrength(0)
+                        .requiredIntelligence(0)
+                        .requiredCharisma(0)
+                        .requiredStealth(0)
+                        .canBeArrested(false)
+                        .lostHpFailure(0)
+                        .lostHpFailureVariation(0.0)
+                        .textFile("gane_jovem_ko.json")
+                        .actionImage("gane_jovem_ko.jpg")
+                        .failureChance(0.0)
+                        .recommendedMaxLevel(10)
+                        .temporaryCharisma(-2)
+                        .temporaryIntelligence(6)
+                        .temporaryStealth(0)
+                        .temporaryStrength(0)
+                        .build()
+                ));
 
         log.info("Created training actions");
     }
@@ -187,7 +277,7 @@ public class GameDataInitializer {
     private void createWorkActions() {
         gameActionRepository.saveAll(List.of(
                 GameAction.builder()
-                        .type("work")
+                        .type(GameActionType.WORK)
                         .title("Ajustar canais de tv do pai")
                         .description("O pai esta desesperado, a tv não esta funcionando.")
                         .stamina(-10)
@@ -210,7 +300,7 @@ public class GameDataInitializer {
                         .recommendedMaxLevel(10)
                         .build(),
                 GameAction.builder()
-                        .type("work")
+                        .type(GameActionType.WORK)
                         .title("Recuperar senha do CaraLivro da mãe")
                         .description("A mãe esqueceu a senha do CaraLivro de novo, como ela vai fofocar da vida da Cleude assim?")
                         .stamina(-10)
@@ -233,7 +323,7 @@ public class GameDataInitializer {
                         .recommendedMaxLevel(10)
                         .build(),
                 GameAction.builder()
-                        .type("work")
+                        .type(GameActionType.WORK)
                         .title("Revolta das impressoras")
                         .description("Sua impressora começou a cuspir folhas escrito \"foda-se\" de um jeito nisso!")
                         .stamina(-20)
@@ -256,7 +346,7 @@ public class GameDataInitializer {
                         .recommendedMaxLevel(10)
                         .build(),
                 GameAction.builder()
-                        .type("work")
+                        .type(GameActionType.WORK)
                         .title("Animador de festas profissional!")
                         .description("Prepare o pendrive aquele biquinho na festa como DJ deu certo, hoje o Alok vai chorar no banho!")
                         .stamina(-25)
@@ -278,7 +368,7 @@ public class GameDataInitializer {
                         .failureChance(0.20)
                         .recommendedMaxLevel(10)
                         .build()
-                ));
+        ));
 
         log.info("Created work actions");
     }
@@ -286,29 +376,29 @@ public class GameDataInitializer {
     private void createMarketActions() {
         gameActionRepository.saveAll(List.of(
                 GameAction.builder()
-                    .type("market")
-                    .title("Café Cafú")
-                    .description("Tem mais galho, casca e pedra que café nessa bosta.")
-                    .stamina(5)
-                    .hp(-5)
-                    .hpVariation(0.5)
-                    .money(BigDecimal.valueOf(-5))
-                    .moneyVariation(0.0)
-                    .xp(0)
-                    .xpVariation(0.0)
-                    .requiredStrength(0)
-                    .requiredIntelligence(0)
-                    .requiredCharisma(0)
-                    .requiredStealth(0)
-                    .canBeArrested(false)
-                    .lostHpFailure(0)
-                    .lostHpFailureVariation(0.0)
-                    .textFile("cafe_cafu.json")
-                    .actionImage("cafe_cafu.jpg")
-                    .failureChance(0.0)
-                    .build(),
+                        .type(GameActionType.MARKET)
+                        .title("Café Cafú")
+                        .description("Tem mais galho, casca e pedra que café nessa bosta.")
+                        .stamina(5)
+                        .hp(-5)
+                        .hpVariation(0.5)
+                        .money(BigDecimal.valueOf(-5))
+                        .moneyVariation(0.0)
+                        .xp(0)
+                        .xpVariation(0.0)
+                        .requiredStrength(0)
+                        .requiredIntelligence(0)
+                        .requiredCharisma(0)
+                        .requiredStealth(0)
+                        .canBeArrested(false)
+                        .lostHpFailure(0)
+                        .lostHpFailureVariation(0.0)
+                        .textFile("cafe_cafu.json")
+                        .actionImage("cafe_cafu.jpg")
+                        .failureChance(0.0)
+                        .build(),
                 GameAction.builder()
-                        .type("market")
+                        .type(GameActionType.MARKET)
                         .title("Café Três Corações... de galinha")
                         .description("Um blend duvidoso que promete despertar seus instintos mais primitivos. Contém traços de penas e bico.")
                         .stamina(10)
@@ -329,34 +419,59 @@ public class GameDataInitializer {
                         .actionImage("tres_galinha.jpg")
                         .failureChance(0.0)
                         .build()
-                ));
+        ));
 
         log.info("Created market actions");
     }
 
     private void createHospitalActions() {
-        gameActionRepository.save(GameAction.builder()
-                .type("hospital")
-                .title("AAS Infatil")
-                .description("É docinho...")
-                .stamina(0)
-                .hp(10)
-                .hpVariation(0.5)
-                .money(BigDecimal.valueOf(-15))
-                .moneyVariation(0.0)
-                .xp(0)
-                .xpVariation(0.0)
-                .requiredStrength(0)
-                .requiredIntelligence(0)
-                .requiredCharisma(0)
-                .requiredStealth(0)
-                .canBeArrested(false)
-                .lostHpFailure(0)
-                .lostHpFailureVariation(0.0)
-                .textFile("aas_infantil.json")
-                .actionImage("aas_infantil.jpg")
-                .failureChance(0.0)
-                .build());
+        gameActionRepository.saveAll(List.of(
+                GameAction.builder()
+                        .type(GameActionType.HOSPITAL)
+                        .title("AAS Infatil")
+                        .description("É docinho...")
+                        .stamina(0)
+                        .hp(10)
+                        .hpVariation(0.5)
+                        .money(BigDecimal.valueOf(-15))
+                        .moneyVariation(0.0)
+                        .xp(0)
+                        .xpVariation(0.0)
+                        .requiredStrength(0)
+                        .requiredIntelligence(0)
+                        .requiredCharisma(0)
+                        .requiredStealth(0)
+                        .canBeArrested(false)
+                        .lostHpFailure(0)
+                        .lostHpFailureVariation(0.0)
+                        .textFile("aas_infantil.json")
+                        .actionImage("aas_infantil.jpg")
+                        .failureChance(0.0)
+                        .build(),
+                GameAction.builder()
+                        .type(GameActionType.HOSPITAL)
+                        .title("Desneuralizador")
+                        .description("Ajuda você a esquecer toda bobagem que você assiste no youtube...")
+                        .stamina(0)
+                        .hp(0)
+                        .hpVariation(0.0)
+                        .money(BigDecimal.valueOf(-300000))
+                        .moneyVariation(0.0)
+                        .xp(0)
+                        .xpVariation(0.0)
+                        .requiredStrength(0)
+                        .requiredIntelligence(0)
+                        .requiredCharisma(0)
+                        .requiredStealth(0)
+                        .canBeArrested(false)
+                        .lostHpFailure(0)
+                        .lostHpFailureVariation(0.0)
+                        .textFile("desneuralizador.json")
+                        .actionImage("desneuralizador.jpg")
+                        .failureChance(0.0)
+                        .specialAction(SpecialAction.CLEAR_TEMPORARY_STATUS)
+                        .build()
+                ));
 
         log.info("Created hospital actions");
     }

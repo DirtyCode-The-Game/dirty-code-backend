@@ -1,4 +1,4 @@
-package com.dirty.code.service;
+package com.dirty.code.schedules;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
-public class RegenerationService {
+public class RegenerationScheduler {
 
     private final AvatarRepository avatarRepository;
 
@@ -23,7 +23,7 @@ public class RegenerationService {
     private static final int MAX_STAMINA = 100;
     private static final int MAX_LIFE = 100;
 
-    public RegenerationService(AvatarRepository avatarRepository) {
+    public RegenerationScheduler(AvatarRepository avatarRepository) {
         this.avatarRepository = avatarRepository;
     }
 
@@ -81,7 +81,7 @@ public class RegenerationService {
                 avatarRepository.updateStamina(avatar.getId(), newStamina);
                 log.debug("Regenerated avatar {} - Stamina: {} -> {}", 
                          avatar.getName(), currentStamina, newStamina);
-            } else if (newLife != null) {
+            } else {
                 avatarRepository.updateLife(avatar.getId(), newLife);
                 log.debug("Regenerated avatar {} - Life: {} -> {}", 
                          avatar.getName(), currentLife, newLife);

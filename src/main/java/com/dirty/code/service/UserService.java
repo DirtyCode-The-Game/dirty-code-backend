@@ -7,6 +7,7 @@ import com.dirty.code.controller.UserController;
 import com.dirty.code.dto.AvatarResponseDTO;
 import com.dirty.code.dto.UserResponseDTO;
 import com.dirty.code.exception.ResourceNotFoundException;
+import com.dirty.code.repository.AvatarRepository;
 import com.dirty.code.repository.UserRepository;
 import com.dirty.code.repository.model.Avatar;
 import com.dirty.code.repository.model.User;
@@ -21,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 public class UserService implements UserController {
 
     private final UserRepository userRepository;
+    private final AvatarRepository avatarRepository;
     private final AvatarService avatarService;
 
     @Override
@@ -32,10 +34,8 @@ public class UserService implements UserController {
     }
 
     private UserResponseDTO mapToResponseDTO(User user) {
-        Avatar activeAvatar = user.getAvatars() != null ? user.getAvatars().stream()
-                .filter(a -> Boolean.TRUE.equals(a.getActive()))
-                .findFirst()
-                .orElse(null) : null;
+        Avatar activeAvatar = avatarRepository.findByUserIdAndActiveTrue(user.getId())
+                .orElse(null);
 
         if (activeAvatar != null) {
             // Auto-clear expired timeout (hospital/jail) if present
