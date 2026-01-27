@@ -100,7 +100,7 @@ public class GameActionService implements GameActionController {
             }
         }
 
-        if (action.getStamina() < 0 && avatar.getStamina() < Math.abs(action.getStamina())) {
+        if (action.getStamina() < 0 && avatar.getCurrentStamina() < Math.abs(action.getStamina())) {
             if (firstExecution) {
                 throw new BusinessException("Not enough stamina to perform this action.");
             }
@@ -113,8 +113,8 @@ public class GameActionService implements GameActionController {
     private Map<String, Object> captureAvatarStats(Avatar avatar) {
         return Map.of(
                 "experience", avatar.getExperience(),
-                "life", avatar.getLife(),
-                "stamina", avatar.getStamina(),
+                "life", avatar.getCurrentLife(),
+                "stamina", avatar.getCurrentStamina(),
                 "money", avatar.getMoney(),
                 "temporaryStrength", avatar.getTemporaryStrength() != null ? avatar.getTemporaryStrength() : 0,
                 "temporaryIntelligence", avatar.getTemporaryIntelligence() != null ? avatar.getTemporaryIntelligence() : 0,
@@ -126,8 +126,8 @@ public class GameActionService implements GameActionController {
     private Map<String, Object> calculateVariations(Map<String, Object> initialStats, Avatar updatedAvatar) {
         return Map.of(
                 "experience", updatedAvatar.getExperience() - (int) initialStats.get("experience"),
-                "life", updatedAvatar.getLife() - (int) initialStats.get("life"),
-                "stamina", updatedAvatar.getStamina() - (int) initialStats.get("stamina"),
+                "life", updatedAvatar.getCurrentLife() - (int) initialStats.get("life"),
+                "stamina", updatedAvatar.getCurrentStamina() - (int) initialStats.get("stamina"),
                 "money", updatedAvatar.getMoney().subtract((BigDecimal) initialStats.get("money")),
                 "temporaryStrength", (updatedAvatar.getTemporaryStrength() != null ? updatedAvatar.getTemporaryStrength() : 0) - (int) initialStats.get("temporaryStrength"),
                 "temporaryIntelligence", (updatedAvatar.getTemporaryIntelligence() != null ? updatedAvatar.getTemporaryIntelligence() : 0) - (int) initialStats.get("temporaryIntelligence"),

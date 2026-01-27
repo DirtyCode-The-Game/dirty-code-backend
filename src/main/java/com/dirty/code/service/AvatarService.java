@@ -62,8 +62,10 @@ public class AvatarService implements AvatarController {
                 .experience(0)
                 .totalExperience(0)
                 .nextLevelExperience(com.dirty.code.utils.GameFormulas.getBaseExperience())
-                .stamina(100)
-                .life(100)
+                .currentStamina(100)
+                .maxStamina(100)
+                .currentLife(100)
+                .maxLife(100)
                 .money(BigDecimal.valueOf(500))
                 .availablePoints(0)
                 .intelligence(0)
@@ -117,8 +119,8 @@ public class AvatarService implements AvatarController {
 
         if (newStr > currentStr) {
             int strGained = newStr - currentStr;
-            avatar.setLife(Math.min(100 + (newStr * 10), avatar.getLife() + (strGained * 10)));
-            avatar.setStamina(Math.min(100 + (newStr * 10), avatar.getStamina() + (strGained * 10)));
+            avatar.setCurrentLife(Math.min(avatar.getMaxLife() + (newStr * 10), avatar.getCurrentLife() + (strGained * 10)));
+            avatar.setCurrentStamina(Math.min(avatar.getMaxStamina() + (newStr * 10), avatar.getCurrentStamina() + (strGained * 10)));
         }
 
         avatar.setIntelligence(newInt);
@@ -162,6 +164,7 @@ public class AvatarService implements AvatarController {
         switch (attribute) {
             case STRENGTH:
                 avatar.setStrength((avatar.getStrength() != null ? avatar.getStrength() : 0) + 1);
+                avatar.increaseMaxLifeAndStamina();
                 break;
             case INTELLIGENCE:
                 avatar.setIntelligence((avatar.getIntelligence() != null ? avatar.getIntelligence() : 0) + 1);
