@@ -52,12 +52,12 @@ public class GameActionProcessor {
         }
 
         // Apply Stamina cost/gain
-        avatar.setStamina(Math.min(100, Math.max(0, avatar.getStamina() + (action.getStamina() != null ? action.getStamina() : 0))));
+        avatar.setCurrentStamina(Math.min(100, Math.max(0, avatar.getCurrentStamina() + (action.getStamina() != null ? action.getStamina() : 0))));
 
         // Apply HP gain (if any)
         if (action.getHp() != null) {
             int hpToAdd = GameFormulas.calculateHpVariation(action.getHp(), action.getHpVariation());
-            avatar.setLife(Math.min(100, Math.max(0, avatar.getLife() + hpToAdd)));
+            avatar.setCurrentLife(Math.min(100, Math.max(0, avatar.getCurrentLife() + hpToAdd)));
         }
 
         if (timeoutService.checkAndHandleHospitalization(avatar)) {
@@ -94,7 +94,7 @@ public class GameActionProcessor {
             if (action.getLostHpFailureVariation() != null && action.getLostHpFailureVariation() > 0) {
                 hpToLose = GameFormulas.calculateXpVariation(hpToLose, action.getLostHpFailureVariation());
             }
-            avatar.setLife(Math.min(100, Math.max(0, avatar.getLife() - (hpToLose * multiplier))));
+            avatar.setCurrentLife(Math.min(100, Math.max(0, avatar.getCurrentLife() - (hpToLose * multiplier))));
         }
 
         if (timeoutService.checkAndHandleHospitalization(avatar)) {

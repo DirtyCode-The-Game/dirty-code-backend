@@ -44,8 +44,10 @@ public class Avatar extends BaseModel {
     @Column(name = "next_level_experience")
     private Integer nextLevelExperience;
 
-    private Integer stamina;
-    private Integer life;
+    private Integer currentStamina;
+    private Integer maxStamina;
+    private Integer currentLife;
+    private Integer maxLife;
     private BigDecimal money;
 
     @Column(name = "available_points")
@@ -135,5 +137,10 @@ public class Avatar extends BaseModel {
             this.availablePoints++;
             this.nextLevelExperience = GameFormulas.requiredExperienceForLevel(this.level + 1);
         }
+    }
+
+    public void increaseMaxLifeAndStamina() {
+        this.maxLife += 10;
+        this.maxStamina += 10;
     }
 }

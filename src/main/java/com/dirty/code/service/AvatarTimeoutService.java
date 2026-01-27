@@ -49,7 +49,7 @@ public class AvatarTimeoutService {
     }
 
     public boolean checkAndHandleHospitalization(Avatar avatar) {
-        if (avatar.getLife() <= 0) {
+        if (avatar.getCurrentLife() <= 0) {
             avatar.setTimeout(LocalDateTime.now().plusMinutes(5));
             avatar.setTimeoutType(TimeoutType.HOSPITAL);
             log.info("Avatar {} HP reached 0. Sent to hospital until {}.", avatar.getName(), avatar.getTimeout());
@@ -94,7 +94,7 @@ public class AvatarTimeoutService {
     private void clearTimeout(Avatar avatar) {
         avatar.setTimeout(null);
         avatar.setTimeoutType(null);
-        avatar.setLife(100);
-        avatar.setStamina(100);
+        avatar.setCurrentLife(avatar.getMaxLife());
+        avatar.setCurrentStamina(avatar.getMaxStamina());
     }
 }

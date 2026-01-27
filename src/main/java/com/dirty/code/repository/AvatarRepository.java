@@ -30,16 +30,16 @@ public interface AvatarRepository extends JpaRepository<Avatar, UUID> {
     List<Avatar> findByStatusCooldownExpired(@Param("now") LocalDateTime now);
 
     @Modifying
-    @Query("UPDATE Avatar a SET a.stamina = :stamina WHERE a.id = :avatarId")
-    void updateStamina(@Param("avatarId") UUID avatarId, @Param("stamina") Integer stamina);
+    @Query("UPDATE Avatar a SET a.currentStamina = :currentStamina WHERE a.id = :avatarId")
+    void updateCurrentStamina(@Param("avatarId") UUID avatarId, @Param("currentStamina") Integer currentStamina);
 
     @Modifying
-    @Query("UPDATE Avatar a SET a.life = :life WHERE a.id = :avatarId")
-    void updateLife(@Param("avatarId") UUID avatarId, @Param("life") Integer life);
+    @Query("UPDATE Avatar a SET a.currentLife = :currentLife WHERE a.id = :avatarId")
+    void updateCurrentLife(@Param("avatarId") UUID avatarId, @Param("currentLife") Integer currentLife);
 
     @Modifying
-    @Query("UPDATE Avatar a SET a.stamina = :stamina, a.life = :life WHERE a.id = :avatarId")
-    void updateStaminaAndLife(@Param("avatarId") UUID avatarId, 
-                              @Param("stamina") Integer stamina, 
-                              @Param("life") Integer life);
+    @Query("UPDATE Avatar a SET a.currentStamina = :currentStamina, a.currentLife = :currentLife WHERE a.id = :avatarId")
+    void updateCurrentStaminaAndLife(@Param("avatarId") UUID avatarId,
+                                     @Param("currentStamina") Integer currentStamina,
+                                     @Param("currentLife") Integer currentLife);
 }
