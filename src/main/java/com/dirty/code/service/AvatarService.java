@@ -19,7 +19,7 @@ import com.dirty.code.repository.AvatarRepository;
 import com.dirty.code.repository.UserRepository;
 import com.dirty.code.repository.model.Attribute;
 import com.dirty.code.repository.model.Avatar;
-import com.dirty.code.repository.model.User;
+import com.dirty.code.repository.model.DirtyUser;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -51,8 +51,8 @@ public class AvatarService implements AvatarController {
             throw new BusinessException("Avatar name already exists and is active: " + request.getName());
         }
 
-        User user = userRepository.findByFirebaseUid(uid)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with UID: " + uid));
+        DirtyUser user = userRepository.findByFirebaseUid(uid)
+                .orElseThrow(() -> new ResourceNotFoundException("DirtyUser not found with UID: " + uid));
 
         Avatar avatar = Avatar.builder()
                 .name(request.getName())
@@ -87,7 +87,10 @@ public class AvatarService implements AvatarController {
     public AvatarResponseDTO updateAvatar(String uid, AvatarUpdateRequestDTO request) {
         log.info("Updating avatar for user UID: {}", uid);
 
-        Avatar avatar = avatarRepository.findByFirebaseUidAndActiveTrue(uid)
+        DirtyUser user = userRepository.findByFirebaseUid(uid)
+                .orElseThrow(() -> new ResourceNotFoundException("DirtyUser not found with UID: " + uid));
+
+        Avatar avatar = avatarRepository.findByUserIdAndActiveTrue(user.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Active avatar not found for user UID: " + uid));
 
         // Use current values if request values are null
@@ -152,7 +155,10 @@ public class AvatarService implements AvatarController {
     public AvatarResponseDTO increaseAttribute(String uid, Attribute attribute) {
         log.info("Increasing attribute {} for user UID: {}", attribute, uid);
 
-        Avatar avatar = avatarRepository.findByFirebaseUidAndActiveTrue(uid)
+        DirtyUser user = userRepository.findByFirebaseUid(uid)
+                .orElseThrow(() -> new ResourceNotFoundException("DirtyUser not found with UID: " + uid));
+
+        Avatar avatar = avatarRepository.findByUserIdAndActiveTrue(user.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Active avatar not found for user UID: " + uid));
 
         if (avatar.getAvailablePoints() <= 0) {

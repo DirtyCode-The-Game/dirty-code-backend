@@ -57,6 +57,7 @@ public class GameDataInitializer {
         createWorkActions();
         createMarketActions();
         createHospitalActions();
+        drHooLeeSheet();
     }
 
 
@@ -474,5 +475,104 @@ public class GameDataInitializer {
                 ));
 
         log.info("Created hospital actions");
+    }
+
+    private void drHooLeeSheet() {
+        gameActionRepository.saveAll(List.of(
+                GameAction.builder()
+                        .type(GameActionType.SPECIAL_STATUS_SELLER)
+                        .title("Seringa de Força")
+                        .description("Credo vou injetar esse trosso vermelho em mim não...")
+                        .stamina(0)
+                        .hp(0)
+                        .hpVariation(0.0)
+                        .money(BigDecimal.valueOf(-100000))
+                        .moneyVariation(0.0)
+                        .xp(0)
+                        .xpVariation(0.0)
+                        .requiredStrength(0)
+                        .requiredIntelligence(0)
+                        .requiredCharisma(0)
+                        .requiredStealth(0)
+                        .canBeArrested(false)
+                        .lostHpFailure(999999999)
+                        .lostHpFailureVariation(0.0)
+                        .textFile("dr_hooleesheet_str.json")
+                        .actionImage("dr_hooleesheet_str.jpg")
+                        .failureChance(50.0)
+                        .specialAction(SpecialAction.ADD_STRENGTH)
+                        .build(),
+                GameAction.builder()
+                        .type(GameActionType.SPECIAL_STATUS_SELLER)
+                        .title("Seringa de Inteligência")
+                        .description("Um liquido azul e viscoso, parece um pouco estranho...")
+                        .stamina(0)
+                        .hp(0)
+                        .hpVariation(0.0)
+                        .money(BigDecimal.valueOf(-100000))
+                        .moneyVariation(0.0)
+                        .xp(0)
+                        .xpVariation(0.0)
+                        .requiredStrength(0)
+                        .requiredIntelligence(0)
+                        .requiredCharisma(0)
+                        .requiredStealth(0)
+                        .canBeArrested(false)
+                        .lostHpFailure(999999999)
+                        .lostHpFailureVariation(0.0)
+                        .textFile("dr_hooleesheet_int.json")
+                        .actionImage("dr_hooleesheet_int.jpg")
+                        .failureChance(50.0)
+                        .specialAction(SpecialAction.ADD_INTELLIGENCE)
+                        .build(),
+                GameAction.builder()
+                        .type(GameActionType.SPECIAL_STATUS_SELLER)
+                        .title("Seringa de Carisma")
+                        .description("Parece algodão doce liquido, credo que delicia...")
+                        .stamina(0)
+                        .hp(0)
+                        .hpVariation(0.0)
+                        .money(BigDecimal.valueOf(-100000))
+                        .moneyVariation(0.0)
+                        .xp(0)
+                        .xpVariation(0.0)
+                        .requiredStrength(0)
+                        .requiredIntelligence(0)
+                        .requiredCharisma(0)
+                        .requiredStealth(0)
+                        .canBeArrested(false)
+                        .lostHpFailure(999999999)
+                        .lostHpFailureVariation(0.0)
+                        .textFile("dr_hooleesheet_cha.json")
+                        .actionImage("dr_hooleesheet_cha.jpg")
+                        .failureChance(50.0)
+                        .specialAction(SpecialAction.ADD_CHARISMA)
+                        .build(),
+                GameAction.builder()
+                        .type(GameActionType.SPECIAL_STATUS_SELLER)
+                        .title("Seringa de Descrição")
+                        .description("Velho retardado me entregou uma seringa vazia...")
+                        .stamina(0)
+                        .hp(0)
+                        .hpVariation(0.0)
+                        .money(BigDecimal.valueOf(-100000))
+                        .moneyVariation(0.0)
+                        .xp(0)
+                        .xpVariation(0.0)
+                        .requiredStrength(0)
+                        .requiredIntelligence(0)
+                        .requiredCharisma(0)
+                        .requiredStealth(0)
+                        .canBeArrested(false)
+                        .lostHpFailure(999999999)
+                        .lostHpFailureVariation(0.0)
+                        .textFile("dr_hooleesheet_ste.json")
+                        .actionImage("dr_hooleesheet_ste.jpg")
+                        .failureChance(50.0)
+                        .specialAction(SpecialAction.ADD_STEALTH)
+                        .build()
+        ));
+
+        log.info("Created Dr. Hoo Lee Sheet actions");
     }
 }

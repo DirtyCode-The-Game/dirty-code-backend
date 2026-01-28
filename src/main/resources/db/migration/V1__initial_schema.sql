@@ -1,4 +1,4 @@
-CREATE TABLE users (
+CREATE TABLE dirty_user (
     id UUID PRIMARY KEY,
     firebase_uid VARCHAR(255) NOT NULL UNIQUE,
     name VARCHAR(255),
@@ -8,7 +8,7 @@ CREATE TABLE users (
     updated_at TIMESTAMP
 );
 
-CREATE TABLE avatars (
+CREATE TABLE avatar (
     id UUID PRIMARY KEY,
     user_id UUID NOT NULL,
     name VARCHAR(255),
@@ -38,10 +38,10 @@ CREATE TABLE avatars (
     active BOOLEAN,
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP,
-    CONSTRAINT fk_avatars_user FOREIGN KEY (user_id) REFERENCES users(id)
+    CONSTRAINT fk_avatar_user FOREIGN KEY (user_id) REFERENCES dirty_user(id)
 );
 
-CREATE TABLE actions (
+CREATE TABLE action (
     id UUID PRIMARY KEY,
     type VARCHAR(255) NOT NULL,
     title VARCHAR(255) NOT NULL,
@@ -74,5 +74,27 @@ CREATE TABLE actions (
     updated_at TIMESTAMP
 );
 
-INSERT INTO users (id, firebase_uid, name, email, photo_url, created_at, updated_at)
-VALUES ('00000000-0000-0000-0000-000000000000', 'mock-token-123', 'Mock User', 'mock-user@example.com', 'http://example.com/photo.jpg', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+CREATE TABLE avatar_action_purchase (
+    id UUID PRIMARY KEY,
+    avatar_id UUID NOT NULL,
+    action_id UUID NOT NULL,
+    purchase_count INTEGER NOT NULL DEFAULT 0,
+    current_price DECIMAL(19, 2) NOT NULL,
+    created_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP,
+    CONSTRAINT fk_purchase_avatar FOREIGN KEY (avatar_id) REFERENCES avatar(id),
+    CONSTRAINT fk_purchase_action FOREIGN KEY (action_id) REFERENCES action(id),
+    CONSTRAINT unique_avatar_action UNIQUE (avatar_id, action_id)
+);
+
+CREATE TABLE avatar_special_action (
+    avatar_id UUID PRIMARY KEY,
+    dr_strange_visible BOOLEAN DEFAULT FALSE,
+    dr_strange_last_update TIMESTAMP,
+    created_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP,
+    CONSTRAINT fk_special_action_avatar FOREIGN KEY (avatar_id) REFERENCES avatar(id)
+);
+
+INSERT INTO dirty_user (id, firebase_uid, name, email, photo_url, created_at, updated_at)
+VALUES ('00000000-0000-0000-0000-000000000000', 'mock-token-123', 'Mock DirtyUser', 'mock-user@example.com', 'http://example.com/photo.jpg', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);

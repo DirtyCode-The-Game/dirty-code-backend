@@ -45,7 +45,7 @@ public class FirebaseTokenFilter extends OncePerRequestFilter {
                 }
 
                 if (!userService.existsByUid(uid)) {
-                    log.warn("User with UID: {} not found in local database. Rejecting request.", uid);
+                    log.warn("DirtyUser with UID: {} not found in local database. Rejecting request.", uid);
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     return;
                 }

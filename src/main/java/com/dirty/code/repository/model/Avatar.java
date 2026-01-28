@@ -13,6 +13,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,7 +22,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "avatars")
+@Table(name = "avatar")
 @Data
 @Builder
 @NoArgsConstructor
@@ -71,6 +72,9 @@ public class Avatar extends BaseModel {
     @Column(name = "status_cooldown")
     private LocalDateTime statusCooldown;
 
+    @OneToOne(mappedBy = "avatar", cascade = jakarta.persistence.CascadeType.ALL)
+    private AvatarSpecialAction specialAction;
+
     public void checkAndResetTemporaryStats() {
         if (statusCooldown != null && LocalDateTime.now().isAfter(statusCooldown)) {
             this.temporaryStrength = 0;
@@ -80,6 +84,7 @@ public class Avatar extends BaseModel {
             this.statusCooldown = null;
         }
     }
+
 
     public int getEffectiveStrength() {
         checkAndResetTemporaryStats();
@@ -113,6 +118,7 @@ public class Avatar extends BaseModel {
 
     @Column(name = "user_id", nullable = false)
     private UUID userId;
+
 
     public void increaseExperience(int experienceToAdd) {
         if (experienceToAdd <= 0) {

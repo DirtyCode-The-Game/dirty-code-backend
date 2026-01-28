@@ -5,6 +5,7 @@ import com.dirty.code.dto.ChatMessageDTO;
 import com.dirty.code.dto.ChatRequestDTO;
 import com.dirty.code.exception.BusinessException;
 import com.dirty.code.repository.AvatarRepository;
+import com.dirty.code.repository.UserRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
@@ -38,6 +39,7 @@ public class ChatService implements ChatController {
     private static final long MESSAGE_COOLDOWN_MS = 15000;
     
     private final AvatarRepository avatarRepository;
+    private final UserRepository userRepository;
     private final SimpMessagingTemplate messagingTemplate;
     private final ResourceLoader resourceLoader;
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -93,7 +95,9 @@ public class ChatService implements ChatController {
         log.info("Sending message from user UID: {}", uid);
         AtomicReference<String> name = new AtomicReference<>();
         AtomicReference<String> avatarId = new AtomicReference<>();
-        avatarRepository.findByFirebaseUidAndActiveTrue(uid)
+
+        userRepository.findByFirebaseUid(uid)
+                .flatMap(user -> avatarRepository.findByUserIdAndActiveTrue(user.getId()))
                 .ifPresentOrElse(e -> {
                             name.set(e.getName());
                             avatarId.set(e.getId().toString());

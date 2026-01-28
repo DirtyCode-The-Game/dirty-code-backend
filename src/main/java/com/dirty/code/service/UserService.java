@@ -10,7 +10,7 @@ import com.dirty.code.exception.ResourceNotFoundException;
 import com.dirty.code.repository.AvatarRepository;
 import com.dirty.code.repository.UserRepository;
 import com.dirty.code.repository.model.Avatar;
-import com.dirty.code.repository.model.User;
+import com.dirty.code.repository.model.DirtyUser;
 import com.google.firebase.auth.UserRecord;
 
 import lombok.RequiredArgsConstructor;
@@ -30,10 +30,10 @@ public class UserService implements UserController {
         log.info("Fetching current user info for UID: {}", uid);
         return userRepository.findByFirebaseUid(uid)
                 .map(this::mapToResponseDTO)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with UID: " + uid));
+                .orElseThrow(() -> new ResourceNotFoundException("DirtyUser not found with UID: " + uid));
     }
 
-    private UserResponseDTO mapToResponseDTO(User user) {
+    private UserResponseDTO mapToResponseDTO(DirtyUser user) {
         Avatar activeAvatar = avatarRepository.findByUserIdAndActiveTrue(user.getId())
                 .orElse(null);
 
@@ -72,7 +72,7 @@ public class UserService implements UserController {
     public boolean existsByUid(String uid) {
         log.info("Checking existence of user with UID: {}", uid);
         boolean exists = userRepository.existsByFirebaseUid(uid);
-        log.info("User with UID: {} exists: {}", uid, exists);
+        log.info("DirtyUser with UID: {} exists: {}", uid, exists);
         return exists;
     }
 
@@ -88,7 +88,7 @@ public class UserService implements UserController {
                 })
                 .orElseGet(() -> {
                     log.info("Creating new user with UID: {}", uid);
-                    User newUser = User.builder()
+                    DirtyUser newUser = DirtyUser.builder()
                             .firebaseUid(uid)
                             .name(name)
                             .email(email)

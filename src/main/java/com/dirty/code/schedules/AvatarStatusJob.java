@@ -24,7 +24,7 @@ public class AvatarStatusJob {
         LocalDateTime now = LocalDateTime.now();
         log.debug("Running job to clear expired status cooldowns at {}", now);
 
-        List<Avatar> expiredAvatars = avatarRepository.findByStatusCooldownExpired(now);
+        List<Avatar> expiredAvatars = avatarRepository.findByActiveTrueAndStatusCooldownIsNotNullAndStatusCooldownLessThanEqual(now);
 
         if (expiredAvatars.isEmpty()) {
             return;

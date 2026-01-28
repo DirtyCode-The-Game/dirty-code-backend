@@ -51,6 +51,7 @@ public class AvatarResponseDTO {
 
     private LocalDateTime timeout; // When the timeout expires
     private TimeoutType timeoutType; // "HOSPITAL" or "JAIL"
+    private Boolean drStrangeVisible;
 
     public static AvatarResponseDTO fromAvatar(Avatar avatar) {
         return AvatarResponseDTO.builder()
@@ -62,7 +63,7 @@ public class AvatarResponseDTO {
                 .experience(avatar.getExperience())
                 .totalExperience(avatar.getTotalExperience())
                 .nextLevelExperience(avatar.getNextLevelExperience())
-
+                .drStrangeVisible(avatar.getSpecialAction() != null ? avatar.getSpecialAction().getDrStrangeVisible() : false)
                 .stamina(avatar.getStamina())
                 .life(avatar.getLife())
                 .money(avatar.getMoney())

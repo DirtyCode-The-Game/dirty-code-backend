@@ -76,7 +76,7 @@ public class GmailAuthService implements GmailAuthController {
         } else {
             log.info("Offline mode: Creating mock user and tokens");
             firebaseUid = "mock-token-123";
-            userService.saveOrUpdateUser(firebaseUid, "mock-user@example.com", "Mock User", "http://example.com/photo.jpg");
+            userService.saveOrUpdateUser(firebaseUid, "mock-user@example.com", "Mock DirtyUser", "http://example.com/photo.jpg");
             
             return new RedirectView(String.format(frontendLoginUrl, "mock-token-123", "mock-token-123"));
         }

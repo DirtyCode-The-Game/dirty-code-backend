@@ -7,8 +7,12 @@ import com.dirty.code.dto.GameActionDTO;
 import com.dirty.code.exception.BusinessException;
 import com.dirty.code.exception.ResourceNotFoundException;
 import com.dirty.code.repository.AvatarRepository;
+import com.dirty.code.repository.AvatarSpecialActionRepository;
 import com.dirty.code.repository.GameActionRepository;
+import com.dirty.code.repository.UserRepository;
 import com.dirty.code.repository.model.Avatar;
+import com.dirty.code.repository.model.AvatarSpecialAction;
+import com.dirty.code.repository.model.DirtyUser;
 import com.dirty.code.repository.model.GameAction;
 import com.dirty.code.repository.model.GameActionType;
 import lombok.RequiredArgsConstructor;
@@ -28,21 +32,32 @@ import java.util.stream.Collectors;
 public class GameActionService implements GameActionController {
 
     private final GameActionRepository gameActionRepository;
+    private final UserRepository userRepository;
     private final AvatarRepository avatarRepository;
     private final AvatarTimeoutService timeoutService;
     private final GameActionProcessor actionProcessor;
+    private final AvatarSpecialActionRepository specialActionRepository;
 
     @Override
     public List<GameActionDTO> getActionsByType(String uid, GameActionType type) {
-        Avatar avatar = avatarRepository.findByFirebaseUidAndActiveTrue(uid)
+        DirtyUser user = userRepository.findByFirebaseUid(uid)
+                .orElseThrow(() -> new ResourceNotFoundException("DirtyUser not found for user: " + uid));
+        
+        Avatar avatar = avatarRepository.findByUserIdAndActiveTrue(user.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Active avatar not found for user: " + uid));
 
         avatar.checkAndResetTemporaryStats();
-
+        handleDrStrangeVisibility(avatar);
+        
         return gameActionRepository.findByType(type).stream()
                 .map(action -> {
                     GameActionDTO dto = convertToDTO(action);
                     dto.setFailureChance(actionProcessor.calculateFailureChance(avatar, action));
+                    
+                    if (type == GameActionType.SPECIAL_STATUS_SELLER) {
+                        dto.setMoney(actionProcessor.calculateDynamicPrice(avatar, action));
+                    }
+                    
                     return dto;
                 })
                 .collect(Collectors.toList());
@@ -51,10 +66,14 @@ public class GameActionService implements GameActionController {
     @Transactional
     @Override
     public ActionResultDTO performAction(String uid, UUID actionId, Integer times) {
-        Avatar avatar = avatarRepository.findByFirebaseUidAndActiveTrue(uid)
+        DirtyUser user = userRepository.findByFirebaseUid(uid)
+                .orElseThrow(() -> new ResourceNotFoundException("DirtyUser not found for user: " + uid));
+
+        Avatar avatar = avatarRepository.findByUserIdAndActiveTrue(user.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Active avatar not found for user: " + uid));
 
         avatar.checkAndResetTemporaryStats();
+        handleDrStrangeVisibility(avatar);
         timeoutService.validateAndHandleTimeout(avatar);
 
         GameAction action = gameActionRepository.findById(actionId)
@@ -90,8 +109,13 @@ public class GameActionService implements GameActionController {
     }
 
     private boolean canPerformAction(Avatar avatar, GameAction action, boolean firstExecution) {
-        if (action.getMoney() != null && action.getMoney().compareTo(BigDecimal.ZERO) < 0) {
-            BigDecimal cost = action.getMoney().abs();
+        BigDecimal actionMoney = action.getMoney();
+        if (action.getType() == GameActionType.SPECIAL_STATUS_SELLER) {
+            actionMoney = actionProcessor.calculateDynamicPrice(avatar, action);
+        }
+
+        if (actionMoney != null && actionMoney.compareTo(BigDecimal.ZERO) < 0) {
+            BigDecimal cost = actionMoney.abs();
             if (avatar.getMoney().compareTo(cost) < 0) {
                 if (firstExecution) {
                     throw new BusinessException(String.format("Not enough money. Required: %.2f, Available: %.2f", cost, avatar.getMoney()));
@@ -108,6 +132,19 @@ public class GameActionService implements GameActionController {
         }
 
         return true;
+    }
+
+    private void handleDrStrangeVisibility(Avatar avatar) {
+        AvatarSpecialAction specialAction = avatar.getSpecialAction();
+        if (specialAction == null) {
+            specialAction = AvatarSpecialAction.builder()
+                    .avatar(avatar)
+                    .drStrangeVisible(false)
+                    .build();
+            avatar.setSpecialAction(specialAction);
+        }
+        specialAction.checkAndHandleDrStrangeVisibility();
+        specialActionRepository.save(specialAction);
     }
 
     private Map<String, Object> captureAvatarStats(Avatar avatar) {
@@ -174,8 +211,11 @@ public class GameActionService implements GameActionController {
     public ActionResultDTO leaveTimeout(String uid, boolean payForFreedom) {
         log.info("Avatar attempting to leave timeout for user UID: {}, payForFreedom: {}", uid, payForFreedom);
 
-        Avatar avatar = avatarRepository.findByFirebaseUidAndActiveTrue(uid)
-                .orElseThrow(() -> new ResourceNotFoundException("Active avatar not found for user UID: " + uid));
+        DirtyUser user = userRepository.findByFirebaseUid(uid)
+                .orElseThrow(() -> new ResourceNotFoundException("DirtyUser not found for user: " + uid));
+
+        Avatar avatar = avatarRepository.findByUserIdAndActiveTrue(user.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Active avatar not found for user: " + uid));
 
         Avatar savedAvatar = timeoutService.leaveTimeout(avatar, payForFreedom);
 

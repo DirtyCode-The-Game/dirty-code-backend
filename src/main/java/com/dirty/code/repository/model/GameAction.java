@@ -16,7 +16,7 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "actions")
+@Table(name = "action")
 @EqualsAndHashCode(callSuper = true)
 public class GameAction extends BaseModel {
 

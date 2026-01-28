@@ -4,7 +4,7 @@ import com.dirty.code.dto.ChatMessageDTO;
 import com.dirty.code.repository.AvatarRepository;
 import com.dirty.code.repository.UserRepository;
 import com.dirty.code.repository.model.Avatar;
-import com.dirty.code.repository.model.User;
+import com.dirty.code.repository.model.DirtyUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,8 +64,8 @@ public class SimulatedAvatarService {
                 "/avatars/avatar_10.webp");
         String randomAvatarPicture = avatares.get(ThreadLocalRandom.current().nextInt(avatares.size()));
 
-        User botUser = userRepository.findByFirebaseUid(firebaseUid)
-                .orElseGet(() -> userRepository.save(User.builder()
+        DirtyUser botUser = userRepository.findByFirebaseUid(firebaseUid)
+                .orElseGet(() -> userRepository.save(DirtyUser.builder()
                         .firebaseUid(firebaseUid)
                         .name(name + " (Bot)")
                         .email(name.toLowerCase() + "@dirtycode.bot")
@@ -140,7 +140,7 @@ public class SimulatedAvatarService {
         if (!firebaseEnabled) {
             List<Avatar> simulatedAvatars = avatarRepository.findByActiveTrue().stream()
                     .filter(a -> {
-                        User user = userRepository.findById(a.getUserId()).orElse(null);
+                        DirtyUser user = userRepository.findById(a.getUserId()).orElse(null);
                         return user != null && user.getFirebaseUid().startsWith("bot-uid-");
                     })
                     .toList();

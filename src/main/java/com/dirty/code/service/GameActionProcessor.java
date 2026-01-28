@@ -1,7 +1,9 @@
 package com.dirty.code.service;
 
+import com.dirty.code.repository.AvatarActionPurchaseRepository;
 import com.dirty.code.repository.model.Attribute;
 import com.dirty.code.repository.model.Avatar;
+import com.dirty.code.repository.model.AvatarActionPurchase;
 import com.dirty.code.repository.model.GameAction;
 import com.dirty.code.repository.model.GameActionType;
 import com.dirty.code.repository.model.SpecialAction;
@@ -21,6 +23,7 @@ import java.util.Map;
 public class GameActionProcessor {
 
     private final AvatarTimeoutService timeoutService;
+    private final AvatarActionPurchaseRepository purchaseRepository;
 
     public double calculateFailureChance(Avatar avatar, GameAction action) {
         GameActionType type = action.getType();
@@ -43,6 +46,16 @@ public class GameActionProcessor {
                         Attribute.STEALTH, avatar.getEffectiveStealth()
                 )
         );
+    }
+
+    public BigDecimal calculateDynamicPrice(Avatar avatar, GameAction action) {
+        if (action.getType() != GameActionType.SPECIAL_STATUS_SELLER) {
+            return action.getMoney();
+        }
+
+        return purchaseRepository.findByAvatarIdAndActionId(avatar.getId(), action.getId())
+                .map(AvatarActionPurchase::getCurrentPrice)
+                .orElse(action.getMoney());
     }
 
     public boolean processActionEffects(Avatar avatar, GameAction action) {
@@ -76,13 +89,54 @@ public class GameActionProcessor {
     }
 
     private void applySpecialAction(Avatar avatar, GameAction action) {
+        if (action.getType() == GameActionType.SPECIAL_STATUS_SELLER) {
+            BigDecimal price = calculateDynamicPrice(avatar, action);
+            if (price != null) {
+                avatar.setMoney(avatar.getMoney().add(price));
+                if (avatar.getMoney().compareTo(BigDecimal.ZERO) < 0) {
+                    avatar.setMoney(BigDecimal.ZERO);
+                }
+            }
+        }
+
         if (action.getSpecialAction() == SpecialAction.CLEAR_TEMPORARY_STATUS) {
             avatar.setTemporaryStrength(0);
             avatar.setTemporaryIntelligence(0);
             avatar.setTemporaryCharisma(0);
             avatar.setTemporaryStealth(0);
             avatar.setStatusCooldown(null);
+        } else if (action.getSpecialAction() == SpecialAction.ADD_STRENGTH) {
+            avatar.setStrength((avatar.getStrength() != null ? avatar.getStrength() : 0) + 1);
+            updateActionCost(avatar, action);
+        } else if (action.getSpecialAction() == SpecialAction.ADD_INTELLIGENCE) {
+            avatar.setIntelligence((avatar.getIntelligence() != null ? avatar.getIntelligence() : 0) + 1);
+            updateActionCost(avatar, action);
+        } else if (action.getSpecialAction() == SpecialAction.ADD_CHARISMA) {
+            avatar.setCharisma((avatar.getCharisma() != null ? avatar.getCharisma() : 0) + 1);
+            updateActionCost(avatar, action);
+        } else if (action.getSpecialAction() == SpecialAction.ADD_STEALTH) {
+            avatar.setStealth((avatar.getStealth() != null ? avatar.getStealth() : 0) + 1);
+            updateActionCost(avatar, action);
         }
+    }
+
+    private void updateActionCost(Avatar avatar, GameAction action) {
+        AvatarActionPurchase purchase = purchaseRepository.findByAvatarIdAndActionId(avatar.getId(), action.getId())
+                .orElse(AvatarActionPurchase.builder()
+                        .avatar(avatar)
+                        .action(action)
+                        .purchaseCount(0)
+                        .currentPrice(action.getMoney())
+                        .build());
+
+        purchase.setPurchaseCount(purchase.getPurchaseCount() + 1);
+        
+        BigDecimal currentCost = purchase.getCurrentPrice().abs();
+        BigDecimal newCost = currentCost.multiply(BigDecimal.valueOf(1.5));
+        purchase.setCurrentPrice(newCost.negate());
+        
+        purchaseRepository.save(purchase);
+        log.info("Action {} cost increased for avatar {} to {}", action.getTitle(), avatar.getName(), purchase.getCurrentPrice());
     }
 
     private void handleFailure(Avatar avatar, GameAction action, double failureChance) {
@@ -108,8 +162,13 @@ public class GameActionProcessor {
     }
 
     private void handleSuccess(Avatar avatar, GameAction action) {
-        if (action.getMoney() != null) {
-            BigDecimal moneyToAdd = GameFormulas.calculateMoneyVariation(action.getMoney(), action.getMoneyVariation());
+        BigDecimal actionMoney = action.getMoney();
+        if (action.getType() == GameActionType.SPECIAL_STATUS_SELLER) {
+            actionMoney = calculateDynamicPrice(avatar, action);
+        }
+
+        if (actionMoney != null) {
+            BigDecimal moneyToAdd = GameFormulas.calculateMoneyVariation(actionMoney, action.getMoneyVariation());
             BigDecimal newMoney = avatar.getMoney().add(moneyToAdd);
             if (newMoney.compareTo(BigDecimal.ZERO) < 0) {
                 newMoney = BigDecimal.ZERO;
