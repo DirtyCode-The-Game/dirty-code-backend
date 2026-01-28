@@ -43,7 +43,7 @@ public class GameActionService implements GameActionController {
         DirtyUser user = userRepository.findByFirebaseUid(uid)
                 .orElseThrow(() -> new ResourceNotFoundException("DirtyUser not found for user: " + uid));
         
-        Avatar avatar = avatarRepository.findByUserIdAndActiveTrue(user.getId())
+        Avatar avatar = avatarRepository.findByUserAndActiveTrue(user)
                 .orElseThrow(() -> new ResourceNotFoundException("Active avatar not found for user: " + uid));
 
         avatar.checkAndResetTemporaryStats();
@@ -69,7 +69,7 @@ public class GameActionService implements GameActionController {
         DirtyUser user = userRepository.findByFirebaseUid(uid)
                 .orElseThrow(() -> new ResourceNotFoundException("DirtyUser not found for user: " + uid));
 
-        Avatar avatar = avatarRepository.findByUserIdAndActiveTrue(user.getId())
+        Avatar avatar = avatarRepository.findByUserAndActiveTrue(user)
                 .orElseThrow(() -> new ResourceNotFoundException("Active avatar not found for user: " + uid));
 
         avatar.checkAndResetTemporaryStats();
@@ -214,7 +214,7 @@ public class GameActionService implements GameActionController {
         DirtyUser user = userRepository.findByFirebaseUid(uid)
                 .orElseThrow(() -> new ResourceNotFoundException("DirtyUser not found for user: " + uid));
 
-        Avatar avatar = avatarRepository.findByUserIdAndActiveTrue(user.getId())
+        Avatar avatar = avatarRepository.findByUserAndActiveTrue(user)
                 .orElseThrow(() -> new ResourceNotFoundException("Active avatar not found for user: " + uid));
 
         Avatar savedAvatar = timeoutService.leaveTimeout(avatar, payForFreedom);

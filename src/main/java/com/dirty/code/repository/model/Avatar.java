@@ -10,9 +10,12 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -115,6 +118,10 @@ public class Avatar extends BaseModel {
     @Enumerated(EnumType.STRING)
     @Column(name = "timeout_type")
     private TimeoutType timeoutType; // Type of timeout: "HOSPITAL" or "JAIL"
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    private DirtyUser user;
 
     @Column(name = "user_id", nullable = false)
     private UUID userId;

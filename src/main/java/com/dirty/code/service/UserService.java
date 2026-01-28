@@ -34,7 +34,7 @@ public class UserService implements UserController {
     }
 
     private UserResponseDTO mapToResponseDTO(DirtyUser user) {
-        Avatar activeAvatar = avatarRepository.findByUserIdAndActiveTrue(user.getId())
+        Avatar activeAvatar = avatarRepository.findByUserAndActiveTrue(user)
                 .orElse(null);
 
         if (activeAvatar != null) {

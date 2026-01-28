@@ -97,7 +97,7 @@ public class ChatService implements ChatController {
         AtomicReference<String> avatarId = new AtomicReference<>();
 
         userRepository.findByFirebaseUid(uid)
-                .flatMap(user -> avatarRepository.findByUserIdAndActiveTrue(user.getId()))
+                .flatMap(user -> avatarRepository.findByUserAndActiveTrue(user))
                 .ifPresentOrElse(e -> {
                             name.set(e.getName());
                             avatarId.set(e.getId().toString());

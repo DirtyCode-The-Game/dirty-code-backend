@@ -90,7 +90,7 @@ public class AvatarService implements AvatarController {
         DirtyUser user = userRepository.findByFirebaseUid(uid)
                 .orElseThrow(() -> new ResourceNotFoundException("DirtyUser not found with UID: " + uid));
 
-        Avatar avatar = avatarRepository.findByUserIdAndActiveTrue(user.getId())
+        Avatar avatar = avatarRepository.findByUserAndActiveTrue(user)
                 .orElseThrow(() -> new ResourceNotFoundException("Active avatar not found for user UID: " + uid));
 
         // Use current values if request values are null
@@ -158,7 +158,7 @@ public class AvatarService implements AvatarController {
         DirtyUser user = userRepository.findByFirebaseUid(uid)
                 .orElseThrow(() -> new ResourceNotFoundException("DirtyUser not found with UID: " + uid));
 
-        Avatar avatar = avatarRepository.findByUserIdAndActiveTrue(user.getId())
+        Avatar avatar = avatarRepository.findByUserAndActiveTrue(user)
                 .orElseThrow(() -> new ResourceNotFoundException("Active avatar not found for user UID: " + uid));
 
         if (avatar.getAvailablePoints() <= 0) {
