@@ -3,6 +3,7 @@ package com.dirty.code.service;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -47,12 +48,18 @@ public class AvatarService implements AvatarController {
     public AvatarResponseDTO createAvatar(String uid, AvatarCreateRequestDTO request) {
         log.info("Creating avatar for user UID: {}", uid);
 
+        DirtyUser user = userRepository.findByFirebaseUid(uid)
+                .orElseThrow(() -> new ResourceNotFoundException("DirtyUser not found with UID: " + uid));
+
+        Optional<Avatar> existingAvatar = avatarRepository.findByUserAndActiveTrue(user);
+        if (existingAvatar.isPresent()) {
+            log.info("User already has an active avatar. Returning existing one.");
+            return AvatarResponseDTO.fromAvatar(existingAvatar.get());
+        }
+
         if (avatarRepository.existsByNameAndActiveTrue(request.getName())) {
             throw new BusinessException("Avatar name already exists and is active: " + request.getName());
         }
-
-        DirtyUser user = userRepository.findByFirebaseUid(uid)
-                .orElseThrow(() -> new ResourceNotFoundException("DirtyUser not found with UID: " + uid));
 
         Avatar avatar = Avatar.builder()
                 .name(request.getName())
