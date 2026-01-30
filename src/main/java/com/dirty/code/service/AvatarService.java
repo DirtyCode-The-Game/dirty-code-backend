@@ -1,12 +1,14 @@
 package com.dirty.code.service;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import com.dirty.code.utils.GameFormulas;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -66,9 +68,9 @@ public class AvatarService implements AvatarController {
                 .picture(request.getPicture())
                 .story(request.getStory())
                 .level(0)
-                .experience(0)
-                .totalExperience(0)
-                .nextLevelExperience(com.dirty.code.utils.GameFormulas.getBaseExperience())
+                .experience(BigInteger.ZERO)
+                .totalExperience(BigInteger.ZERO)
+                .nextLevelExperience(GameFormulas.requiredExperienceForLevel(1))
                 .stamina(100)
                 .life(100)
                 .money(BigDecimal.valueOf(500))

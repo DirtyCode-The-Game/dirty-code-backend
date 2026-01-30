@@ -5,6 +5,7 @@ import com.dirty.code.repository.AvatarRepository;
 import com.dirty.code.repository.UserRepository;
 import com.dirty.code.repository.model.Avatar;
 import com.dirty.code.repository.model.DirtyUser;
+import com.dirty.code.utils.GameFormulas;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
@@ -72,15 +74,15 @@ public class SimulatedAvatarService {
                         .build()));
 
         int level = difficultyMultiplier * 5;
-        int exp = 0;
-        int nextLevelExp = com.dirty.code.utils.GameFormulas.requiredExperienceForLevel(level + 1);
+        BigInteger exp = BigInteger.ZERO;
+        BigInteger nextLevelExp = GameFormulas.requiredExperienceForLevel(level + 1);
 
         avatarRepository.save(Avatar.builder()
                 .name(name)
                 .userId(botUser.getId())
                 .level(level)
                 .experience(exp)
-                .totalExperience(level * 1000)
+                .totalExperience(BigInteger.valueOf(level * 1000L))
                 .nextLevelExperience(nextLevelExp)
                 .stamina(100)
                 .life(100)

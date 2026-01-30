@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -34,43 +35,57 @@ public class GameAction extends BaseModel {
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
-    private Integer stamina;
+    @Builder.Default
+    private Integer stamina = 0;
     
-    private Integer hp;
+    @Builder.Default
+    private Integer hp = 0;
     
     @Column(name = "hp_variation")
-    private Double hpVariation;
+    @Builder.Default
+    private Double hpVariation = 0.0;
 
-    private BigDecimal money;
+    @Builder.Default
+    private BigDecimal money = BigDecimal.ZERO;
 
     @Column(name = "money_variation")
-    private Double moneyVariation;
+    @Builder.Default
+    private Double moneyVariation = 0.0;
 
-    private Integer xp;
+    @Builder.Default
+    private BigInteger xp = BigInteger.ZERO;
 
     @Column(name = "xp_variation")
-    private Double xpVariation;
+    @Builder.Default
+    private Double xpVariation = 0.0;
 
     @Column(name = "required_strength")
-    private Integer requiredStrength;
+    @Builder.Default
+    private Integer requiredStrength = 0;
 
     @Column(name = "required_intelligence")
-    private Integer requiredIntelligence;
+    @Builder.Default
+    private Integer requiredIntelligence = 0;
 
     @Column(name = "required_charisma")
-    private Integer requiredCharisma;
+    @Builder.Default
+    private Integer requiredCharisma = 0;
 
     @Column(name = "required_stealth")
-    private Integer requiredStealth;
+    @Builder.Default
+    private Integer requiredStealth = 0;
 
     @Column(name = "can_be_arrested")
-    private Boolean canBeArrested;
+    @Builder.Default
+    private Boolean canBeArrested = false;
 
     @Column(name = "lost_hp_failure")
-    private Integer lostHpFailure;
+    @Builder.Default
+    private BigInteger lostHpFailure = BigInteger.ZERO;
 
     @Column(name = "lost_hp_failure_variation")
-    private Double lostHpFailureVariation;
+    @Builder.Default
+    private Double lostHpFailureVariation = 0.0;
 
     @Column(name = "text_file")
     private String textFile;
@@ -79,22 +94,28 @@ public class GameAction extends BaseModel {
     private String actionImage;
 
     @Column(name = "failure_chance")
-    private Double failureChance;
+    @Builder.Default
+    private Double failureChance = 0.0;
 
     @Column(name = "recommended_max_level")
-    private Integer recommendedMaxLevel;
+    @Builder.Default
+    private Integer recommendedMaxLevel = 1;
 
     @Column(name = "temporary_strength")
-    private Integer temporaryStrength;
+    @Builder.Default
+    private Integer temporaryStrength = 0;
 
     @Column(name = "temporary_intelligence")
-    private Integer temporaryIntelligence;
+    @Builder.Default
+    private Integer temporaryIntelligence = 0;
 
     @Column(name = "temporary_charisma")
-    private Integer temporaryCharisma;
+    @Builder.Default
+    private Integer temporaryCharisma = 0;
 
     @Column(name = "temporary_stealth")
-    private Integer temporaryStealth;
+    @Builder.Default
+    private Integer temporaryStealth = 0;
 
     @Column(name = "action_cooldown")
     private LocalDateTime actionCooldown;

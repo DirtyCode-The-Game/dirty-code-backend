@@ -32,8 +32,10 @@ public class AvatarActionPurchase extends BaseModel {
     private GameAction action;
 
     @Column(name = "purchase_count", nullable = false)
-    private Integer purchaseCount;
+    @Builder.Default
+    private Integer purchaseCount = 0;
 
     @Column(name = "current_price", nullable = false)
-    private BigDecimal currentPrice;
+    @Builder.Default
+    private BigDecimal currentPrice = BigDecimal.ZERO;
 }

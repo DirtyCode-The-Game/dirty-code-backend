@@ -1,6 +1,7 @@
 package com.dirty.code.dto;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -25,9 +26,9 @@ public class AvatarResponseDTO {
     private String story;
 
     private Integer level;
-    private Integer experience;
-    private Integer totalExperience;
-    private Integer nextLevelExperience;
+    private BigInteger experience;
+    private BigInteger totalExperience;
+    private BigInteger nextLevelExperience;
 
     private Integer stamina;
     private Integer life;

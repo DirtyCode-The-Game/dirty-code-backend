@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -162,7 +163,7 @@ public class GameActionService implements GameActionController {
 
     private Map<String, Object> calculateVariations(Map<String, Object> initialStats, Avatar updatedAvatar) {
         return Map.of(
-                "experience", updatedAvatar.getExperience() - (int) initialStats.get("experience"),
+                "experience", updatedAvatar.getExperience().subtract((BigInteger) initialStats.get("experience")),
                 "life", updatedAvatar.getLife() - (int) initialStats.get("life"),
                 "stamina", updatedAvatar.getStamina() - (int) initialStats.get("stamina"),
                 "money", updatedAvatar.getMoney().subtract((BigDecimal) initialStats.get("money")),

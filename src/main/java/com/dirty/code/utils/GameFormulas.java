@@ -1,6 +1,9 @@
 package com.dirty.code.utils;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.Map;
 import java.util.Random;
 
@@ -10,33 +13,52 @@ public class GameFormulas {
 
     private static final Random RANDOM = new Random();
 
-    private static final int BASE_EXPERIENCE = 100;
-
-    public static int getBaseExperience() {
-        return BASE_EXPERIENCE;
-    }
-
-    public static int requiredExperienceForLevel(int level) {
+    public static BigInteger requiredExperienceForLevel(long level) {
         if (level <= 0) {
-            return 0;
+            return new BigInteger("99999999");
         }
 
-        double base = 80.0;
-        double exponentialBase = 120.0;
-        double growthRate = 1.18;
-        double quadraticFactor = 20.0;
+        BigDecimal exponentialBase = BigDecimal.valueOf(120);
+        BigDecimal growthRate = new BigDecimal("1.18");
+        BigDecimal quadraticFactor = BigDecimal.valueOf(25);
 
-        double rawRequiredExperience =
-                base
-                        + (exponentialBase * Math.pow(growthRate, level))
-                        + (quadraticFactor * level * level);
+        MathContext mathContext = new MathContext(80, RoundingMode.HALF_UP);
 
-        if (rawRequiredExperience >= Integer.MAX_VALUE) {
-            return Integer.MAX_VALUE;
-        }
+        BigDecimal levelAsBigDecimal = BigDecimal.valueOf(level);
+        BigDecimal levelSquared = levelAsBigDecimal.multiply(levelAsBigDecimal, mathContext);
 
-        return (int) Math.round(rawRequiredExperience);
+        BigDecimal exponentialTerm = exponentialBase.multiply(pow(growthRate, level, mathContext), mathContext);
+        BigDecimal quadraticTerm = quadraticFactor.multiply(levelSquared, mathContext);
+
+        BigDecimal adjustedRequiredExperience = BigDecimal.valueOf(880)
+                .add(exponentialTerm, mathContext)
+                .add(quadraticTerm, mathContext);
+
+        return adjustedRequiredExperience.setScale(0, RoundingMode.HALF_UP).toBigInteger();
     }
+
+    private static BigDecimal pow(BigDecimal baseValue, long exponent, MathContext mathContext) {
+        if (exponent == 0L) {
+            return BigDecimal.ONE;
+        }
+
+        BigDecimal result = BigDecimal.ONE;
+        BigDecimal factor = baseValue;
+        long remainingExponent = exponent;
+
+        while (remainingExponent > 0L) {
+            if ((remainingExponent & 1L) == 1L) {
+                result = result.multiply(factor, mathContext);
+            }
+            remainingExponent >>= 1;
+            if (remainingExponent > 0L) {
+                factor = factor.multiply(factor, mathContext);
+            }
+        }
+
+        return result;
+    }
+
 
     public static BigDecimal calculateMoneyVariation(BigDecimal baseAmount, Double variation) {
         if (variation == null || variation <= 0) {
@@ -47,8 +69,14 @@ public class GameFormulas {
         return baseAmount.add(variationAmount);
     }
 
-    public static int calculateXpVariation(int baseAmount, Double variation) {
-        return defaultVariationCalc(baseAmount, variation);
+    public static BigInteger calculateXpVariation(BigInteger baseAmount, Double variation) {
+        if (variation == null || variation <= 0) {
+            return baseAmount;
+        }
+        double randomFactor = (RANDOM.nextDouble() * 2 - 1); // random(-1, 1)
+        BigDecimal baseAsDecimal = new BigDecimal(baseAmount);
+        BigDecimal variationAmount = baseAsDecimal.multiply(BigDecimal.valueOf(randomFactor * variation));
+        return baseAsDecimal.add(variationAmount).setScale(0, RoundingMode.HALF_UP).toBigInteger();
     }
 
     public static int calculateHpVariation(int baseAmount, Double variation) {

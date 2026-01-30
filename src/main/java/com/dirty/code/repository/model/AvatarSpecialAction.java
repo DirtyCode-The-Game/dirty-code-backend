@@ -35,7 +35,8 @@ public class AvatarSpecialAction extends BaseModel {
     private Avatar avatar;
 
     @Column(name = "dr_strange_visible")
-    private Boolean drStrangeVisible;
+    @Builder.Default
+    private Boolean drStrangeVisible = false;
 
     @Column(name = "dr_strange_last_update")
     private LocalDateTime drStrangeLastUpdate;

@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.Map;
 
@@ -144,11 +145,12 @@ public class GameActionProcessor {
         int multiplier = isHighRisk ? 3 : 1;
 
         if (action.getLostHpFailure() != null) {
-            int hpToLose = action.getLostHpFailure();
+            BigInteger hpToLoseBI = action.getLostHpFailure();
             if (action.getLostHpFailureVariation() != null && action.getLostHpFailureVariation() > 0) {
-                hpToLose = GameFormulas.calculateXpVariation(hpToLose, action.getLostHpFailureVariation());
+                hpToLoseBI = GameFormulas.calculateXpVariation(hpToLoseBI, action.getLostHpFailureVariation());
             }
-            avatar.setLife(Math.min(100, Math.max(0, avatar.getLife() - (hpToLose * multiplier))));
+            int totalHpToLose = hpToLoseBI.multiply(BigInteger.valueOf(multiplier)).intValue();
+            avatar.setLife(Math.min(100, Math.max(0, avatar.getLife() - totalHpToLose)));
         }
 
         if (timeoutService.checkAndHandleHospitalization(avatar)) {
@@ -177,7 +179,7 @@ public class GameActionProcessor {
         }
 
         if (action.getXp() != null) {
-            int xpToAdd = GameFormulas.calculateXpVariation(action.getXp(), action.getXpVariation());
+            BigInteger xpToAdd = GameFormulas.calculateXpVariation(action.getXp(), action.getXpVariation());
             avatar.increaseExperience(xpToAdd);
         }
 

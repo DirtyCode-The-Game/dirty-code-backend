@@ -4,6 +4,7 @@ import com.dirty.code.repository.GameActionRepository;
 import com.dirty.code.repository.model.GameAction;
 import com.dirty.code.repository.model.GameActionType;
 import com.dirty.code.repository.model.SpecialAction;
+import com.dirty.code.service.SimulatedAvatarService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 
 /**
@@ -23,7 +25,7 @@ import java.util.List;
 public class GameDataInitializer {
 
     private final GameActionRepository gameActionRepository;
-    private final com.dirty.code.service.SimulatedAvatarService simulatedAvatarService;
+    private final SimulatedAvatarService simulatedAvatarService;
 
     @Value("${firebase.enabled:false}")
     private boolean firebaseEnabled;
@@ -61,317 +63,55 @@ public class GameDataInitializer {
     }
 
 
-    private void createHackingActions() {
-        gameActionRepository.saveAll(List.of(
-                GameAction.builder()
-                        .type(GameActionType.HACKING)
-                        .title("Pitbrad do CaraLivro")
-                        .description("Oi vó, aqui é o Pitbrad. Manda o Pix que perdi meu cartão aqui em Hollywood.")
-                        .stamina(-10)
-                        .hp(0)
-                        .hpVariation(0.0)
-                        .money(BigDecimal.valueOf(1000))
-                        .moneyVariation(0.5)
-                        .xp(100)
-                        .xpVariation(0.5)
-                        .requiredStrength(0)
-                        .requiredIntelligence(0)
-                        .requiredCharisma(0)
-                        .requiredStealth(0)
-                        .canBeArrested(true)
-                        .lostHpFailure(0)
-                        .lostHpFailureVariation(0.0)
-                        .textFile("pitbrad_do_caralivro.json")
-                        .actionImage("pitbrad_do_caralivro.jpg")
-                        .failureChance(0.30)
-                        .recommendedMaxLevel(10)
-                        .build(),
-                GameAction.builder()
-                        .type(GameActionType.HACKING)
-                        .title("Vem pra Turquia sou um Sultão minha MILF gata")
-                        .description("Sou sultão. Quero me casar with você. Só preciso de um Pix simbólico pra liberar o passaporte no consulado.")
-                        .stamina(-10)
-                        .hp(0)
-                        .hpVariation(0.0)
-                        .money(BigDecimal.valueOf(3000))
-                        .moneyVariation(0.5)
-                        .xp(200)
-                        .xpVariation(0.5)
-                        .requiredStrength(0)
-                        .requiredIntelligence(1)
-                        .requiredCharisma(0)
-                        .requiredStealth(2)
-                        .canBeArrested(true)
-                        .lostHpFailure(0)
-                        .lostHpFailureVariation(0.0)
-                        .textFile("sultao_da_turquia.json")
-                        .actionImage("sultao_da_turquia.jpg")
-                        .failureChance(0.30)
-                        .recommendedMaxLevel(10)
-                        .build(),
-                GameAction.builder()
-                        .type(GameActionType.HACKING)
-                        .title("Urubu do Pix")
-                        .description("Me mande 10 dinheiros que eu te devolvo 1000 em 24h.")
-                        .stamina(-25)
-                        .hp(0)
-                        .hpVariation(0.0)
-                        .money(BigDecimal.valueOf(5000))
-                        .moneyVariation(0.5)
-                        .xp(500)
-                        .xpVariation(0.5)
-                        .requiredStrength(0)
-                        .requiredIntelligence(0)
-                        .requiredCharisma(0)
-                        .requiredStealth(4)
-                        .canBeArrested(true)
-                        .lostHpFailure(0)
-                        .lostHpFailureVariation(0.0)
-                        .textFile("urubu_do_pix.json")
-                        .actionImage("urubu_do_pix.jpg")
-                        .failureChance(0.30)
-                        .recommendedMaxLevel(10)
-                        .build(),
-                GameAction.builder()
-                        .type(GameActionType.HACKING)
-                        .title("Suporte do Banco via Áudio de Zap")
-                        .description("Boa tarde, aqui é do suporte. Fala sua senha em áudio pra eu ‘validar’ seu cadastro rapidinho.")
-                        .stamina(-50)
-                        .hp(0)
-                        .hpVariation(0.0)
-                        .money(BigDecimal.valueOf(7000))
-                        .moneyVariation(0.65)
-                        .xp(1000)
-                        .xpVariation(0.65)
-                        .requiredStrength(0)
-                        .requiredIntelligence(4)
-                        .requiredCharisma(1)
-                        .requiredStealth(5)
-                        .canBeArrested(true)
-                        .lostHpFailure(0)
-                        .lostHpFailureVariation(0.0)
-                        .textFile("suporte_do_banco_audio.json")
-                        .actionImage("suporte_do_banco_audio.jpg")
-                        .failureChance(0.30)
-                        .recommendedMaxLevel(10)
-                        .build()
-        ));
-        log.info("Created hacking actions");
-    }
-
-
     private void createTrainingActions() {
         gameActionRepository.saveAll(List.of(
                 GameAction.builder()
                         .type(GameActionType.TRAINING)
                         .title("Video do Deschampo")
                         .description("DESCHAMPO malemá explica algo de TI, no fim do vídeo você entendeu nada e já quer lançar o CaraLivro 2.")
-                        .stamina(0)
-                        .hp(0)
-                        .hpVariation(0.0)
                         .money(BigDecimal.valueOf(-2500))
-                        .moneyVariation(0.0)
-                        .xp(0)
-                        .xpVariation(0.0)
-                        .requiredStrength(0)
-                        .requiredIntelligence(0)
-                        .requiredCharisma(0)
-                        .requiredStealth(0)
-                        .canBeArrested(false)
-                        .lostHpFailure(0)
-                        .lostHpFailureVariation(0.0)
                         .textFile("deschampo.json")
                         .actionImage("deschampo.jpg")
-                        .failureChance(0.0)
                         .recommendedMaxLevel(10)
                         .temporaryCharisma(3)
                         .temporaryIntelligence(1)
-                        .temporaryStealth(0)
-                        .temporaryStrength(0)
                         .build(),
                 GameAction.builder()
                         .type(GameActionType.TRAINING)
                         .title("TV Fonte Código")
                         .description("Chato pra caralho, mas da pra tirar alguma coisa dessa velharia. Sério nem sei se vale a pena...")
-                        .stamina(0)
-                        .hp(0)
-                        .hpVariation(0.0)
                         .money(BigDecimal.valueOf(-2500))
-                        .moneyVariation(0.0)
-                        .xp(0)
-                        .xpVariation(0.0)
-                        .requiredStrength(0)
-                        .requiredIntelligence(0)
-                        .requiredCharisma(0)
-                        .requiredStealth(0)
-                        .canBeArrested(false)
-                        .lostHpFailure(0)
-                        .lostHpFailureVariation(0.0)
                         .textFile("tv_fonte_codigo.json")
                         .actionImage("tv_fonte_codigo.jpg")
-                        .failureChance(0.0)
                         .recommendedMaxLevel(10)
                         .temporaryCharisma(1)
                         .temporaryIntelligence(3)
-                        .temporaryStealth(0)
-                        .temporaryStrength(0)
                         .build(),
                     GameAction.builder()
                             .type(GameActionType.TRAINING)
                             .title("Tranquilidade Joven")
                             .description("O cara é carismatico, pena que é um completo retardado, acho melhor não seguir os conselhos de finanças dele.")
-                            .stamina(0)
-                            .hp(0)
-                            .hpVariation(0.0)
                             .money(BigDecimal.valueOf(-2500))
-                            .moneyVariation(0.0)
-                            .xp(0)
-                            .xpVariation(0.0)
-                            .requiredStrength(0)
-                            .requiredIntelligence(0)
-                            .requiredCharisma(0)
-                            .requiredStealth(0)
-                            .canBeArrested(false)
-                            .lostHpFailure(0)
-                            .lostHpFailureVariation(0.0)
                             .textFile("tranquilidade_jovem.json")
                             .actionImage("tranquilidade_jovem.jpg")
-                            .failureChance(0.0)
                             .recommendedMaxLevel(10)
                             .temporaryCharisma(6)
                             .temporaryIntelligence(-2)
-                            .temporaryStealth(0)
-                            .temporaryStrength(0)
                             .build(),
                 GameAction.builder()
                         .type(GameActionType.TRAINING)
                         .title("Gane Jovem Ko")
-                        .description("Sério, como pode alguém esbanjar sabedoria e conhecimento with tanta falta de carisma")
-                        .stamina(0)
-                        .hp(0)
-                        .hpVariation(0.0)
+                        .description("Sério, como pode alguém esbanjar sabedoria e conhecimento com tanta falta de carisma")
                         .money(BigDecimal.valueOf(-2500))
-                        .moneyVariation(0.0)
-                        .xp(0)
-                        .xpVariation(0.0)
-                        .requiredStrength(0)
-                        .requiredIntelligence(0)
-                        .requiredCharisma(0)
-                        .requiredStealth(0)
-                        .canBeArrested(false)
-                        .lostHpFailure(0)
-                        .lostHpFailureVariation(0.0)
                         .textFile("gane_jovem_ko.json")
                         .actionImage("gane_jovem_ko.jpg")
-                        .failureChance(0.0)
                         .recommendedMaxLevel(10)
                         .temporaryCharisma(-2)
                         .temporaryIntelligence(6)
-                        .temporaryStealth(0)
-                        .temporaryStrength(0)
                         .build()
                 ));
 
         log.info("Created training actions");
-    }
-
-    private void createWorkActions() {
-        gameActionRepository.saveAll(List.of(
-                GameAction.builder()
-                        .type(GameActionType.WORK)
-                        .title("Ajustar canais de tv do pai")
-                        .description("O pai esta desesperado, a tv não esta funcionando.")
-                        .stamina(-10)
-                        .hp(0)
-                        .hpVariation(0.0)
-                        .money(BigDecimal.valueOf(20))
-                        .moneyVariation(0.5)
-                        .xp(10)
-                        .xpVariation(0.5)
-                        .requiredStrength(0)
-                        .requiredIntelligence(0)
-                        .requiredCharisma(0)
-                        .requiredStealth(0)
-                        .canBeArrested(false)
-                        .lostHpFailure(5)
-                        .lostHpFailureVariation(0.2)
-                        .textFile("tv_do_pai.json")
-                        .actionImage("tv_do_pai.jpg")
-                        .failureChance(0.10)
-                        .recommendedMaxLevel(10)
-                        .build(),
-                GameAction.builder()
-                        .type(GameActionType.WORK)
-                        .title("Recuperar senha do CaraLivro da mãe")
-                        .description("A mãe esqueceu a senha do CaraLivro de novo, como ela vai fofocar da vida da Cleude assim?")
-                        .stamina(-10)
-                        .hp(0)
-                        .hpVariation(0.0)
-                        .money(BigDecimal.valueOf(30))
-                        .moneyVariation(0.5)
-                        .xp(50)
-                        .xpVariation(0.5)
-                        .requiredStrength(0)
-                        .requiredIntelligence(2)
-                        .requiredCharisma(1)
-                        .requiredStealth(0)
-                        .canBeArrested(false)
-                        .lostHpFailure(20)
-                        .lostHpFailureVariation(0.2)
-                        .textFile("caralivro_mae.json")
-                        .actionImage("caralivro_mae.jpg")
-                        .failureChance(0.20)
-                        .recommendedMaxLevel(10)
-                        .build(),
-                GameAction.builder()
-                        .type(GameActionType.WORK)
-                        .title("Revolta das impressoras")
-                        .description("Sua impressora começou a cuspir folhas escrito \"foda-se\" de um jeito nisso!")
-                        .stamina(-20)
-                        .hp(0)
-                        .hpVariation(0.0)
-                        .money(BigDecimal.valueOf(5))
-                        .moneyVariation(0.5)
-                        .xp(100)
-                        .xpVariation(0.5)
-                        .requiredStrength(0)
-                        .requiredIntelligence(4)
-                        .requiredCharisma(0)
-                        .requiredStealth(0)
-                        .canBeArrested(false)
-                        .lostHpFailure(20)
-                        .lostHpFailureVariation(0.2)
-                        .textFile("revolta_impressoras.json")
-                        .actionImage("revolta_impressoras.jpg")
-                        .failureChance(0.20)
-                        .recommendedMaxLevel(10)
-                        .build(),
-                GameAction.builder()
-                        .type(GameActionType.WORK)
-                        .title("Animador de festas profissional!")
-                        .description("Prepare o pendrive aquele biquinho na festa como DJ deu certo, hoje o Alok vai chorar no banho!")
-                        .stamina(-25)
-                        .hp(0)
-                        .hpVariation(0.0)
-                        .money(BigDecimal.valueOf(150))
-                        .moneyVariation(0.5)
-                        .xp(200)
-                        .xpVariation(0.5)
-                        .requiredStrength(0)
-                        .requiredIntelligence(3)
-                        .requiredCharisma(5)
-                        .requiredStealth(0)
-                        .canBeArrested(false)
-                        .lostHpFailure(25)
-                        .lostHpFailureVariation(0.2)
-                        .textFile("dj.json")
-                        .actionImage("dj.jpg")
-                        .failureChance(0.20)
-                        .recommendedMaxLevel(10)
-                        .build()
-        ));
-
-        log.info("Created work actions");
     }
 
     private void createMarketActions() {
@@ -384,19 +124,8 @@ public class GameDataInitializer {
                         .hp(-5)
                         .hpVariation(0.5)
                         .money(BigDecimal.valueOf(-5))
-                        .moneyVariation(0.0)
-                        .xp(0)
-                        .xpVariation(0.0)
-                        .requiredStrength(0)
-                        .requiredIntelligence(0)
-                        .requiredCharisma(0)
-                        .requiredStealth(0)
-                        .canBeArrested(false)
-                        .lostHpFailure(0)
-                        .lostHpFailureVariation(0.0)
                         .textFile("cafe_cafu.json")
                         .actionImage("cafe_cafu.jpg")
-                        .failureChance(0.0)
                         .build(),
                 GameAction.builder()
                         .type(GameActionType.MARKET)
@@ -406,19 +135,8 @@ public class GameDataInitializer {
                         .hp(-2)
                         .hpVariation(0.5)
                         .money(BigDecimal.valueOf(-15))
-                        .moneyVariation(0.0)
-                        .xp(0)
-                        .xpVariation(0.0)
-                        .requiredStrength(0)
-                        .requiredIntelligence(0)
-                        .requiredCharisma(0)
-                        .requiredStealth(0)
-                        .canBeArrested(false)
-                        .lostHpFailure(0)
-                        .lostHpFailureVariation(0.0)
                         .textFile("tres_galinha.json")
                         .actionImage("tres_galinha.jpg")
-                        .failureChance(0.0)
                         .build()
         ));
 
@@ -431,45 +149,19 @@ public class GameDataInitializer {
                         .type(GameActionType.HOSPITAL)
                         .title("AAS Infatil")
                         .description("É docinho...")
-                        .stamina(0)
                         .hp(10)
                         .hpVariation(0.5)
                         .money(BigDecimal.valueOf(-15))
-                        .moneyVariation(0.0)
-                        .xp(0)
-                        .xpVariation(0.0)
-                        .requiredStrength(0)
-                        .requiredIntelligence(0)
-                        .requiredCharisma(0)
-                        .requiredStealth(0)
-                        .canBeArrested(false)
-                        .lostHpFailure(0)
-                        .lostHpFailureVariation(0.0)
                         .textFile("aas_infantil.json")
                         .actionImage("aas_infantil.jpg")
-                        .failureChance(0.0)
                         .build(),
                 GameAction.builder()
                         .type(GameActionType.HOSPITAL)
                         .title("Desneuralizador")
                         .description("Ajuda você a esquecer toda bobagem que você assiste no youtube...")
-                        .stamina(0)
-                        .hp(0)
-                        .hpVariation(0.0)
                         .money(BigDecimal.valueOf(-300000))
-                        .moneyVariation(0.0)
-                        .xp(0)
-                        .xpVariation(0.0)
-                        .requiredStrength(0)
-                        .requiredIntelligence(0)
-                        .requiredCharisma(0)
-                        .requiredStealth(0)
-                        .canBeArrested(false)
-                        .lostHpFailure(0)
-                        .lostHpFailureVariation(0.0)
                         .textFile("desneuralizador.json")
                         .actionImage("desneuralizador.jpg")
-                        .failureChance(0.0)
                         .specialAction(SpecialAction.CLEAR_TEMPORARY_STATUS)
                         .build()
                 ));
@@ -483,20 +175,8 @@ public class GameDataInitializer {
                         .type(GameActionType.SPECIAL_STATUS_SELLER)
                         .title("Seringa de Força")
                         .description("Credo vou injetar esse trosso vermelho em mim não...")
-                        .stamina(0)
-                        .hp(0)
-                        .hpVariation(0.0)
-                        .money(BigDecimal.valueOf(-100000))
-                        .moneyVariation(0.0)
-                        .xp(0)
-                        .xpVariation(0.0)
-                        .requiredStrength(0)
-                        .requiredIntelligence(0)
-                        .requiredCharisma(0)
-                        .requiredStealth(0)
-                        .canBeArrested(false)
-                        .lostHpFailure(999999999)
-                        .lostHpFailureVariation(0.0)
+                        .money(BigDecimal.valueOf(-500000))
+                        .lostHpFailure(BigInteger.valueOf(999999999L))
                         .textFile("dr_hooleesheet_str.json")
                         .actionImage("dr_hooleesheet_str.jpg")
                         .failureChance(50.0)
@@ -506,20 +186,8 @@ public class GameDataInitializer {
                         .type(GameActionType.SPECIAL_STATUS_SELLER)
                         .title("Seringa de Inteligência")
                         .description("Um liquido azul e viscoso, parece um pouco estranho...")
-                        .stamina(0)
-                        .hp(0)
-                        .hpVariation(0.0)
-                        .money(BigDecimal.valueOf(-100000))
-                        .moneyVariation(0.0)
-                        .xp(0)
-                        .xpVariation(0.0)
-                        .requiredStrength(0)
-                        .requiredIntelligence(0)
-                        .requiredCharisma(0)
-                        .requiredStealth(0)
-                        .canBeArrested(false)
-                        .lostHpFailure(999999999)
-                        .lostHpFailureVariation(0.0)
+                        .money(BigDecimal.valueOf(-500000))
+                        .lostHpFailure(BigInteger.valueOf(999999999L))
                         .textFile("dr_hooleesheet_int.json")
                         .actionImage("dr_hooleesheet_int.jpg")
                         .failureChance(50.0)
@@ -529,20 +197,8 @@ public class GameDataInitializer {
                         .type(GameActionType.SPECIAL_STATUS_SELLER)
                         .title("Seringa de Carisma")
                         .description("Parece algodão doce liquido, credo que delicia...")
-                        .stamina(0)
-                        .hp(0)
-                        .hpVariation(0.0)
-                        .money(BigDecimal.valueOf(-100000))
-                        .moneyVariation(0.0)
-                        .xp(0)
-                        .xpVariation(0.0)
-                        .requiredStrength(0)
-                        .requiredIntelligence(0)
-                        .requiredCharisma(0)
-                        .requiredStealth(0)
-                        .canBeArrested(false)
-                        .lostHpFailure(999999999)
-                        .lostHpFailureVariation(0.0)
+                        .money(BigDecimal.valueOf(-500000))
+                        .lostHpFailure(BigInteger.valueOf(999999999L))
                         .textFile("dr_hooleesheet_cha.json")
                         .actionImage("dr_hooleesheet_cha.jpg")
                         .failureChance(50.0)
@@ -552,20 +208,8 @@ public class GameDataInitializer {
                         .type(GameActionType.SPECIAL_STATUS_SELLER)
                         .title("Seringa de Descrição")
                         .description("Velho retardado me entregou uma seringa vazia...")
-                        .stamina(0)
-                        .hp(0)
-                        .hpVariation(0.0)
-                        .money(BigDecimal.valueOf(-100000))
-                        .moneyVariation(0.0)
-                        .xp(0)
-                        .xpVariation(0.0)
-                        .requiredStrength(0)
-                        .requiredIntelligence(0)
-                        .requiredCharisma(0)
-                        .requiredStealth(0)
-                        .canBeArrested(false)
-                        .lostHpFailure(999999999)
-                        .lostHpFailureVariation(0.0)
+                        .money(BigDecimal.valueOf(-500000))
+                        .lostHpFailure(BigInteger.valueOf(999999999L))
                         .textFile("dr_hooleesheet_ste.json")
                         .actionImage("dr_hooleesheet_ste.jpg")
                         .failureChance(50.0)
@@ -574,5 +218,377 @@ public class GameDataInitializer {
         ));
 
         log.info("Created Dr. Hoo Lee Sheet actions");
+    }
+
+    private void createHackingActions() {
+        gameActionRepository.saveAll(List.of(
+                GameAction.builder()
+                        .type(GameActionType.HACKING)
+                        .title("Pitbrad do CaraLivro")
+                        .description("Oi vó, aqui é o Pitbrad. Manda o Pix que perdi meu cartão aqui em Hollywood.")
+
+                        .xp(BigInteger.valueOf(100))
+                        .money(BigDecimal.valueOf(250))
+                        .stamina(-10)
+
+                        .xpVariation(0.5)
+                        .moneyVariation(0.5)
+
+                        .canBeArrested(true)
+
+                        .textFile("pitbrad_do_caralivro.json")
+                        .actionImage("pitbrad_do_caralivro.jpg")
+                        .failureChance(0.30)
+                        .recommendedMaxLevel(10)
+                        .build(),
+                GameAction.builder()
+                        .type(GameActionType.HACKING)
+                        .title("Vem pra Turquia sou um Sultão minha MILF gata")
+                        .description("Sou sultão. Quero me casar with você. Só preciso de um Pix simbólico pra liberar o passaporte no consulado.")
+
+                        .xp(BigInteger.valueOf(10))
+                        .money(BigDecimal.valueOf(300))
+                        .stamina(-10)
+
+                        .xpVariation(0.5)
+                        .moneyVariation(0.5)
+
+                        .requiredIntelligence(1)
+                        .requiredStealth(2)
+
+                        .canBeArrested(true)
+
+                        .textFile("sultao_da_turquia.json")
+                        .actionImage("sultao_da_turquia.jpg")
+                        .failureChance(0.30)
+                        .recommendedMaxLevel(10)
+                        .build(),
+                GameAction.builder()
+                        .type(GameActionType.HACKING)
+                        .title("Urubu do Pix")
+                        .description("Me mande 10 dinheiros que eu te devolvo 1000 em 24h.")
+
+                        .xp(BigInteger.valueOf(50))
+                        .money(BigDecimal.valueOf(650))
+                        .stamina(-25)
+
+                        .xpVariation(0.5)
+                        .moneyVariation(0.5)
+
+                        .requiredStealth(4)
+
+                        .canBeArrested(true)
+
+                        .textFile("urubu_do_pix.json")
+                        .actionImage("urubu_do_pix.jpg")
+                        .failureChance(0.30)
+                        .recommendedMaxLevel(10)
+                        .build(),
+                GameAction.builder()
+                        .type(GameActionType.HACKING)
+                        .title("Suporte do Banco via Áudio de Zap")
+                        .description("Boa tarde, aqui é do suporte. Fala sua senha em áudio pra eu ‘validar’ seu cadastro rapidinho.")
+
+                        .xp(BigInteger.valueOf(100))
+                        .money(BigDecimal.valueOf(1300))
+                        .stamina(-50)
+
+                        .xpVariation(0.5)
+                        .moneyVariation(0.5)
+
+                        .requiredIntelligence(4)
+                        .requiredStealth(5)
+
+                        .canBeArrested(true)
+
+                        .textFile("suporte_do_banco_audio.json")
+                        .actionImage("suporte_do_banco_audio.jpg")
+                        .failureChance(0.30)
+                        .recommendedMaxLevel(10)
+                        .build(),
+
+                //20 +
+                GameAction.builder()
+                        .type(GameActionType.HACKING)
+                        .title("Wi-Fi Grátis (e Perigoso)")
+                        .description("A cafeteria da esquina acha que 'cafezinhogratis' é uma senha segura. Você está prestes a provar que o WPA2 deles é tão forte quanto um café coado três vezes.")
+
+                        .xp(BigInteger.valueOf(200))
+                        .money(BigDecimal.valueOf(800))
+                        .stamina(-25)
+
+                        .xpVariation(0.60)
+                        .moneyVariation(0.60)
+
+                        .requiredIntelligence(8)
+                        .requiredStealth(10)
+
+                        .canBeArrested(true)
+
+                        .textFile("wifi_cafeteria.json")
+                        .actionImage("wifi_cafeteria.jpg")
+                        .failureChance(0.35)
+                        .recommendedMaxLevel(20)
+                        .build(),
+                GameAction.builder()
+                        .type(GameActionType.HACKING) 
+                        .title("Mestre dos Rotworms (ElfBot)")
+                        .description("Enquanto os outros jogam, você configura o script perfeito para caçar rotworms 24/7. O lucro é em gold virtual, mas o orgulho de ser um 'cheater' é real.")
+
+                        .xp(BigInteger.valueOf(300))
+                        .money(BigDecimal.valueOf(2000))
+                        .stamina(-50)
+
+                        .xpVariation(0.60)
+                        .moneyVariation(0.60)
+
+                        .requiredIntelligence(12)
+                        .requiredStealth(7)
+
+                        .canBeArrested(true)
+
+                        .textFile("elfbot_tibia.json")
+                        .actionImage("elfbot_tibia.jpg")
+                        
+                        .failureChance(0.35)
+                        .recommendedMaxLevel(20)
+                        .build(),
+                GameAction.builder()
+                        .type(GameActionType.HACKING)
+                        .title("SQL Injection na Padaria") 
+                        .description("O site da 'Padaria do Seu Manoel' usa PHP 4 e não limpa os inputs. Um ' OR 1=1 --' e você é o novo administrador do banco de dados de pães de queijo.")
+
+                        .xp(BigInteger.valueOf(700))
+                        .money(BigDecimal.valueOf(4200))
+                        .stamina(-100)
+
+                        .xpVariation(0.60)
+                        .moneyVariation(0.60)
+
+                        .requiredIntelligence(13)
+                        .requiredStealth(10)
+
+                        .canBeArrested(true)
+
+                       
+                        .textFile("sql_injection_local.json")
+                        .actionImage("sql_injection_local.jpg")
+                        .failureChance(0.35)
+                        .recommendedMaxLevel(20)
+                        .build(),
+                GameAction.builder()
+                        .type(GameActionType.HACKING) 
+                        .title("Hacker de Low-Stakes (YouTube)")
+                        .description("O alvo é um ex-participante de reality show que faz unboxing de recebidos. O plano? Um e-mail de 'parceria' fake para sequestrar o canal e postar vídeos de Blaze.")
+                        
+                        .xp(BigInteger.valueOf(1000))
+                        .money(BigDecimal.valueOf(8000))
+                        .stamina(-150)
+
+                        .xpVariation(0.60)
+                        .moneyVariation(0.60)
+
+                        .requiredIntelligence(8)
+                        .requiredStealth(15)
+
+                        .canBeArrested(true)
+
+                        .textFile("youtube_subcelebridade.json")
+                        .actionImage("youtube_subcelebridade.jpg")
+                        .failureChance(0.35)
+                        .recommendedMaxLevel(20)
+                        .build()
+        ));
+        log.info("Created hacking actions");
+    }
+
+    private void createWorkActions() {
+        gameActionRepository.saveAll(List.of(
+                GameAction.builder()
+                        .type(GameActionType.WORK)
+                        .title("Ajustar canais de tv do pai")
+                        .description("O pai esta desesperado, a tv não esta funcionando.")
+
+                        .xp(BigInteger.valueOf(100))
+                        .money(BigDecimal.valueOf(20))
+                        .stamina(-10)
+
+                        .xpVariation(0.3)
+                        .moneyVariation(0.3)
+
+                        .lostHpFailure(BigInteger.valueOf(5))
+                        .lostHpFailureVariation(0.2)
+
+                        .textFile("tv_do_pai.json")
+                        .actionImage("tv_do_pai.jpg")
+                        .failureChance(0.15)
+                        .recommendedMaxLevel(10)
+                        .build(),
+                GameAction.builder()
+                        .type(GameActionType.WORK)
+                        .title("Recuperar senha do CaraLivro da mãe")
+                        .description("A mãe esqueceu a senha do CaraLivro de novo, como ela vai fofocar da vida da Cleude assim?")
+
+                        .xp(BigInteger.valueOf(200))
+                        .money(BigDecimal.valueOf(30))
+                        .stamina(-10)
+
+                        .xpVariation(0.3)
+                        .moneyVariation(0.3)
+
+                        .requiredIntelligence(4)
+                        .requiredCharisma(2)
+
+                        .lostHpFailure(BigInteger.valueOf(20))
+                        .lostHpFailureVariation(0.2)
+
+                        .textFile("caralivro_mae.json")
+                        .actionImage("caralivro_mae.jpg")
+                        .failureChance(0.15)
+                        .recommendedMaxLevel(10)
+                        .build(),
+                GameAction.builder()
+                        .type(GameActionType.WORK)
+                        .title("Revolta das impressoras")
+                        .description("Sua impressora começou a cuspir folhas escrito \"foda-se\" de um jeito nisso!")
+
+                        .xp(BigInteger.valueOf(500))
+                        .money(BigDecimal.valueOf(30))
+                        .stamina(-20)
+
+                        .xpVariation(0.3)
+                        .moneyVariation(0.3)
+
+                        .requiredIntelligence(3)
+                        .requiredCharisma(5)
+
+                        .lostHpFailure(BigInteger.valueOf(20))
+                        .lostHpFailureVariation(0.2)
+
+                        .textFile("revolta_impressoras.json")
+                        .actionImage("revolta_impressoras.jpg")
+                        .failureChance(0.15)
+                        .recommendedMaxLevel(10)
+                        .build(),
+                GameAction.builder()
+                        .type(GameActionType.WORK)
+                        .title("Animador de festas profissional!")
+                        .description("Prepare o pendrive aquele biquinho na festa como DJ deu certo, hoje o Alok vai chorar no banho!")
+
+                        .xp(BigInteger.valueOf(800))
+                        .money(BigDecimal.valueOf(150))
+                        .stamina(-25)
+
+                        .xpVariation(0.3)
+                        .moneyVariation(0.3)
+
+                        .requiredIntelligence(4)
+                        .requiredCharisma(6)
+
+                        .lostHpFailure(BigInteger.valueOf(40))
+                        .lostHpFailureVariation(0.2)
+
+                        .textFile("dj.json")
+                        .actionImage("dj.jpg")
+                        .failureChance(0.15)
+                        .recommendedMaxLevel(10)
+                        .build(),
+
+                //20+
+                GameAction.builder() //passar cafe
+                        .type(GameActionType.WORK)
+                        .title("Barista de Emergência")
+                        .description("O servidor caiu? Não importa. O café acabou? CAOS TOTAL. Você é o único capaz de operar a máquina italiana de 1990 que exige um sacrifício humano para funcionar.")
+
+                        .xp(BigInteger.valueOf(900))
+                        .money(BigDecimal.valueOf(300))
+                        .stamina(-20)
+
+                        .xpVariation(0.3)
+                        .moneyVariation(0.3)
+
+                        .requiredIntelligence(5)
+                        .requiredCharisma(10)
+
+                        .lostHpFailure(BigInteger.valueOf(40))
+                        .lostHpFailureVariation(0.5)
+
+                        .textFile("barista_emergencia.json")
+                        .actionImage("barista_emergencia.jpg")
+                        .failureChance(0.20)
+                        .recommendedMaxLevel(20)
+                        .build(),
+                GameAction.builder()
+                        .type(GameActionType.WORK)
+                        .title("Sobrevivente de 'Daily' Infinita")
+                        .description("A reunião era pra durar 15 minutos em pé. Já se passaram 2 horas, todos estão sentados no chão e o PO está explicando o sentido da vida.")
+
+                        .xp(BigInteger.valueOf(2000))
+                        .money(BigDecimal.valueOf(700))
+                        .stamina(-40)
+
+                        .xpVariation(0.3)
+                        .moneyVariation(0.3)
+
+                        .requiredIntelligence(7)
+                        .requiredCharisma(10)
+
+                        .lostHpFailure(BigInteger.valueOf(50))
+                        .lostHpFailureVariation(0.5)
+
+                        .textFile("daily_infinita.json")
+                        .actionImage("daily_infinita.jpg")
+                        .failureChance(0.20)
+                        .recommendedMaxLevel(20)
+                        .build(),
+                GameAction.builder()
+                        .type(GameActionType.WORK)
+                        .title("Fiscal de Digitação")
+                        .description("Você e outro dev olhando para a mesma tela. Um digita, o outro julga cada erro de sintaxe em silêncio. É tipo dirigir com o sogro no carona.")
+
+                        .xp(BigInteger.valueOf(2600))
+                        .money(BigDecimal.valueOf(900))
+                        .stamina(-50)
+
+                        .xpVariation(0.3)
+                        .moneyVariation(0.3)
+
+                        .requiredIntelligence(10)
+                        .requiredCharisma(10)
+
+                        .lostHpFailure(BigInteger.valueOf(50))
+                        .lostHpFailureVariation(0.5)
+
+                        .textFile("pair_programming.json")
+                        .actionImage("pair_programming.jpg")
+                        .failureChance(0.20)
+                        .recommendedMaxLevel(20)
+                        .build(),
+                GameAction.builder()
+                        .type(GameActionType.WORK)
+                        .title("Arqueologia Digital: Migrando o Caos")
+                        .description("O plano é levar o sistema de 1985 para a nuvem. Na prática, você está só empurrando o lixo pra baixo do tapete de outra pessoa (a Amazon).")
+
+                        .xp(BigInteger.valueOf(2800))
+                        .money(BigDecimal.valueOf(1000))
+                        .stamina(-30)
+
+                        .xpVariation(0.3)
+                        .moneyVariation(0.3)
+
+                        .requiredIntelligence(17)
+                        .requiredCharisma(8)
+
+                        .lostHpFailure(BigInteger.valueOf(80))
+                        .lostHpFailureVariation(0.5)
+
+                        .textFile("arqueologia_digital.json")
+                        .actionImage("arqueologia_digital.jpg")
+                        .failureChance(0.20)
+                        .recommendedMaxLevel(20)
+                        .build()
+        ));
+
+        log.info("Created work actions");
     }
 }

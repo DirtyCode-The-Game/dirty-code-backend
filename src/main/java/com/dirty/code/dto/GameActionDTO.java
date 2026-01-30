@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -25,14 +26,14 @@ public class GameActionDTO {
     private Double hpVariation;
     private BigDecimal money;
     private Double moneyVariation;
-    private Integer xp;
+    private BigInteger xp;
     private Double xpVariation;
     private Integer requiredStrength;
     private Integer requiredIntelligence;
     private Integer requiredCharisma;
     private Integer requiredStealth;
     private Boolean canBeArrested;
-    private Integer lostHpFailure;
+    private BigInteger lostHpFailure;
     private Double lostHpFailureVariation;
     private String textFile;
     private String actionImage;
