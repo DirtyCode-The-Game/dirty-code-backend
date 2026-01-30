@@ -72,6 +72,9 @@ public class Avatar extends BaseModel {
     private Integer strength = 0; // Força
     @Builder.Default
     private Integer stealth = 0; // Discrição
+    @Column(name = "wanted_level")
+    @Builder.Default
+    private Integer wantedLevel = 0;
     
     @Column(name = "temporary_strength")
     @Builder.Default
@@ -138,6 +141,10 @@ public class Avatar extends BaseModel {
     @Enumerated(EnumType.STRING)
     @Column(name = "timeout_type")
     private TimeoutType timeoutType; // Type of timeout: "HOSPITAL" or "JAIL"
+
+    @Builder.Default
+    @Column(name = "timeout_cost")
+    private BigDecimal timeoutCost = BigDecimal.ZERO;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", insertable = false, updatable = false)

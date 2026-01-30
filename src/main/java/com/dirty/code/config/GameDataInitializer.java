@@ -60,6 +60,7 @@ public class GameDataInitializer {
         createMarketActions();
         createHospitalActions();
         drHooLeeSheet();
+        createJailActions();
     }
 
 
@@ -227,7 +228,7 @@ public class GameDataInitializer {
                         .title("Pitbrad do CaraLivro")
                         .description("Oi vó, aqui é o Pitbrad. Manda o Pix que perdi meu cartão aqui em Hollywood.")
 
-                        .xp(BigInteger.valueOf(100))
+                        .xp(BigInteger.valueOf(5))
                         .money(BigDecimal.valueOf(250))
                         .stamina(-10)
 
@@ -590,5 +591,21 @@ public class GameDataInitializer {
         ));
 
         log.info("Created work actions");
+    }
+
+    private void createJailActions() {
+        gameActionRepository.saveAll(List.of(
+                GameAction.builder()
+                        .type(GameActionType.JAIL)
+                        .title("Trabalho Voluntário")
+                        .description("E ai seu otário, você pode ajudar a gente a limpar a pracinha e em troca vamos reduzir um pouco seu nível de procurado...")
+                        .stamina(-50)
+                        .hp(-50)
+                        .specialAction(SpecialAction.VOLUNTARY_WORK)
+                        .textFile("trabalho_voluntario.json")
+                        .actionImage("trabalho_voluntario.jpg")
+                        .build()
+        ));
+        log.info("Created jail actions");
     }
 }

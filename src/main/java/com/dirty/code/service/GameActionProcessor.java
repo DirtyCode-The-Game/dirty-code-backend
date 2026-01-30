@@ -6,7 +6,6 @@ import com.dirty.code.repository.model.Avatar;
 import com.dirty.code.repository.model.AvatarActionPurchase;
 import com.dirty.code.repository.model.GameAction;
 import com.dirty.code.repository.model.GameActionType;
-import com.dirty.code.repository.model.SpecialAction;
 import com.dirty.code.repository.model.TimeoutType;
 import com.dirty.code.utils.GameFormulas;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +21,6 @@ import java.util.Map;
 @Component
 @RequiredArgsConstructor
 public class GameActionProcessor {
-
     private final AvatarTimeoutService timeoutService;
     private final AvatarActionPurchaseRepository purchaseRepository;
 
@@ -66,15 +64,15 @@ public class GameActionProcessor {
         }
 
         // Apply Stamina cost/gain
-        avatar.setStamina(Math.min(100, Math.max(0, avatar.getStamina() + (action.getStamina() != null ? action.getStamina() : 0))));
+        avatar.setStamina(GameFormulas.clampStamina(avatar.getStamina() + (action.getStamina() != null ? action.getStamina() : 0)));
 
         // Apply HP gain (if any)
         if (action.getHp() != null) {
             int hpToAdd = GameFormulas.calculateHpVariation(action.getHp(), action.getHpVariation());
-            avatar.setLife(Math.min(100, Math.max(0, avatar.getLife() + hpToAdd)));
+            avatar.setLife(GameFormulas.clampLife(avatar.getLife() + hpToAdd));
         }
 
-        if (timeoutService.checkAndHandleHospitalization(avatar)) {
+        if (timeoutService.checkAndHandleHospitalization(avatar, 1)) {
             log.info("Avatar {} sent to hospital after failure (HP variations)", avatar.getName());
             return false;
         }
@@ -93,31 +91,52 @@ public class GameActionProcessor {
         if (action.getType() == GameActionType.SPECIAL_STATUS_SELLER) {
             BigDecimal price = calculateDynamicPrice(avatar, action);
             if (price != null) {
-                avatar.setMoney(avatar.getMoney().add(price));
-                if (avatar.getMoney().compareTo(BigDecimal.ZERO) < 0) {
-                    avatar.setMoney(BigDecimal.ZERO);
-                }
+                avatar.setMoney(GameFormulas.clampMoney(avatar.getMoney().add(price)));
             }
         }
 
-        if (action.getSpecialAction() == SpecialAction.CLEAR_TEMPORARY_STATUS) {
-            avatar.setTemporaryStrength(0);
-            avatar.setTemporaryIntelligence(0);
-            avatar.setTemporaryCharisma(0);
-            avatar.setTemporaryStealth(0);
-            avatar.setStatusCooldown(null);
-        } else if (action.getSpecialAction() == SpecialAction.ADD_STRENGTH) {
-            avatar.setStrength((avatar.getStrength() != null ? avatar.getStrength() : 0) + 1);
-            updateActionCost(avatar, action);
-        } else if (action.getSpecialAction() == SpecialAction.ADD_INTELLIGENCE) {
-            avatar.setIntelligence((avatar.getIntelligence() != null ? avatar.getIntelligence() : 0) + 1);
-            updateActionCost(avatar, action);
-        } else if (action.getSpecialAction() == SpecialAction.ADD_CHARISMA) {
-            avatar.setCharisma((avatar.getCharisma() != null ? avatar.getCharisma() : 0) + 1);
-            updateActionCost(avatar, action);
-        } else if (action.getSpecialAction() == SpecialAction.ADD_STEALTH) {
-            avatar.setStealth((avatar.getStealth() != null ? avatar.getStealth() : 0) + 1);
-            updateActionCost(avatar, action);
+        switch (action.getSpecialAction()) {
+            case CLEAR_TEMPORARY_STATUS:
+                avatar.setTemporaryStrength(0);
+                avatar.setTemporaryIntelligence(0);
+                avatar.setTemporaryCharisma(0);
+                avatar.setTemporaryStealth(0);
+                avatar.setStatusCooldown(null);
+                break;
+            case ADD_STRENGTH:
+                avatar.setStrength(GameFormulas.permanentStatIncrement(avatar.getStrength()));
+                updateActionCost(avatar, action);
+                break;
+            case ADD_INTELLIGENCE:
+                avatar.setIntelligence(GameFormulas.permanentStatIncrement(avatar.getIntelligence()));
+                updateActionCost(avatar, action);
+                break;
+            case ADD_CHARISMA:
+                avatar.setCharisma(GameFormulas.permanentStatIncrement(avatar.getCharisma()));
+                updateActionCost(avatar, action);
+                break;
+            case ADD_STEALTH:
+                avatar.setStealth(GameFormulas.permanentStatIncrement(avatar.getStealth()));
+                updateActionCost(avatar, action);
+                break;
+            case VOLUNTARY_WORK:
+                Integer wanted = avatar.getWantedLevel();
+                if (wanted != null) {
+                    avatar.setWantedLevel(Math.max(0, wanted - 50));
+                }
+                avatar.setLife(GameFormulas.clampLife(avatar.getLife() - 50));
+                avatar.setStamina(GameFormulas.clampStamina(avatar.getStamina() - 50));
+                BigInteger totalExp = avatar.getTotalExperience();
+                if (totalExp != null && totalExp.compareTo(BigInteger.ZERO) > 0) {
+                    BigInteger loss = totalExp.divide(BigInteger.valueOf(20));
+                    avatar.setExperience(avatar.getExperience().subtract(loss));
+                    avatar.setTotalExperience(avatar.getTotalExperience().subtract(loss));
+                }
+                if (timeoutService.checkAndHandleHospitalization(avatar, 1)) {
+                    log.info("Avatar {} sent to hospital after voluntary work", avatar.getName());
+                }
+                log.info("Avatar {} completed voluntary work: wantedLevel -50, HP -50, totalExperience -5%", avatar.getName());
+                break;
         }
     }
 
@@ -132,17 +151,15 @@ public class GameActionProcessor {
 
         purchase.setPurchaseCount(purchase.getPurchaseCount() + 1);
         
-        BigDecimal currentCost = purchase.getCurrentPrice().abs();
-        BigDecimal newCost = currentCost.multiply(BigDecimal.valueOf(1.5));
-        purchase.setCurrentPrice(newCost.negate());
+        purchase.setCurrentPrice(GameFormulas.priceIncrease(purchase.getCurrentPrice()));
         
         purchaseRepository.save(purchase);
         log.info("Action {} cost increased for avatar {} to {}", action.getTitle(), avatar.getName(), purchase.getCurrentPrice());
     }
 
     private void handleFailure(Avatar avatar, GameAction action, double failureChance) {
-        boolean isHighRisk = failureChance > 0.5;
-        int multiplier = isHighRisk ? 3 : 1;
+        int multiplier = GameFormulas.riskMultiplier(failureChance);
+        boolean isHighRisk = failureChance > GameFormulas.HIGH_RISK_THRESHOLD;
 
         if (action.getLostHpFailure() != null) {
             BigInteger hpToLoseBI = action.getLostHpFailure();
@@ -150,16 +167,29 @@ public class GameActionProcessor {
                 hpToLoseBI = GameFormulas.calculateXpVariation(hpToLoseBI, action.getLostHpFailureVariation());
             }
             int totalHpToLose = hpToLoseBI.multiply(BigInteger.valueOf(multiplier)).intValue();
-            avatar.setLife(Math.min(100, Math.max(0, avatar.getLife() - totalHpToLose)));
+            avatar.setLife(GameFormulas.clampLife(avatar.getLife() - totalHpToLose));
         }
 
-        if (timeoutService.checkAndHandleHospitalization(avatar)) {
+        boolean hospitalized = timeoutService.checkAndHandleHospitalization(avatar, multiplier);
+        if (hospitalized) {
             log.info("Avatar {} died during failure and sent to hospital", avatar.getName());
-        } else if (Boolean.TRUE.equals(action.getCanBeArrested())) {
-            int jailTimeMinutes = 5 * multiplier;
-            avatar.setTimeout(LocalDateTime.now().plusMinutes(jailTimeMinutes));
-            avatar.setTimeoutType(TimeoutType.JAIL);
-            log.info("Avatar {} arrested and sent to jail until {} (High risk: {})", avatar.getName(), avatar.getTimeout(), isHighRisk);
+        }
+        if (Boolean.TRUE.equals(action.getCanBeArrested())) {
+            Integer wantedLevel = avatar.getWantedLevel();
+            if (wantedLevel == null) {
+                wantedLevel = 0;
+            }
+            wantedLevel += GameFormulas.WANTED_LEVEL_INCREMENT_BASE;
+            wantedLevel *= multiplier;
+            avatar.setWantedLevel(wantedLevel);
+            if (wantedLevel >= GameFormulas.JAIL_WANTED_LEVEL_THRESHOLD && !hospitalized) {
+                int effectiveLevel = Math.max(1, (avatar.getLevel() != null ? avatar.getLevel() : 0));
+                int jailTimeMinutes = GameFormulas.timeoutMinutes(effectiveLevel, multiplier);
+                avatar.setTimeout(LocalDateTime.now().plusMinutes(jailTimeMinutes));
+                avatar.setTimeoutType(TimeoutType.JAIL);
+                avatar.setTimeoutCost(GameFormulas.timeoutCost(TimeoutType.JAIL, effectiveLevel, multiplier));
+                log.info("Avatar {} sent to jail due to wanted level {}, until {} (High risk: {})", avatar.getName(), wantedLevel, avatar.getTimeout(), isHighRisk);
+            }
         }
     }
 
@@ -171,11 +201,7 @@ public class GameActionProcessor {
 
         if (actionMoney != null) {
             BigDecimal moneyToAdd = GameFormulas.calculateMoneyVariation(actionMoney, action.getMoneyVariation());
-            BigDecimal newMoney = avatar.getMoney().add(moneyToAdd);
-            if (newMoney.compareTo(BigDecimal.ZERO) < 0) {
-                newMoney = BigDecimal.ZERO;
-            }
-            avatar.setMoney(newMoney);
+            avatar.setMoney(GameFormulas.clampMoney(avatar.getMoney().add(moneyToAdd)));
         }
 
         if (action.getXp() != null) {
@@ -207,7 +233,7 @@ public class GameActionProcessor {
         }
 
         if (hasTempStats) {
-            avatar.setStatusCooldown(LocalDateTime.now().plusHours(24));
+            avatar.setStatusCooldown(GameFormulas.temporaryStatsCooldown(LocalDateTime.now()));
             log.info("Applied temporary stats to avatar {} from action {}. Cooldown set to {}", 
                     avatar.getName(), action.getTitle(), avatar.getStatusCooldown());
         }

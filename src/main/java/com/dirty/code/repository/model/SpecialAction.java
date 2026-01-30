@@ -8,7 +8,8 @@ public enum SpecialAction {
     ADD_STRENGTH("ADD_STRENGTH"),
     ADD_INTELLIGENCE("ADD_INTELLIGENCE"),
     ADD_CHARISMA("ADD_CHARISMA"),
-    ADD_STEALTH("ADD_STEALTH");
+    ADD_STEALTH("ADD_STEALTH"),
+    VOLUNTARY_WORK("VOLUNTARY_WORK");
 
     private final String value;
 

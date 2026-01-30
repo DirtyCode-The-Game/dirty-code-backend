@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Random;
 
 import com.dirty.code.repository.model.Attribute;
+import com.dirty.code.repository.model.TimeoutType;
+import java.time.LocalDateTime;
 
 public class GameFormulas {
 
@@ -122,5 +124,60 @@ public class GameFormulas {
 
     public static boolean isFailure(double failureChance) {
         return RANDOM.nextDouble() < failureChance;
+    }
+
+    public static final int MAX_LIFE = 100;
+    public static final int MAX_STAMINA = 100;
+    public static final double HIGH_RISK_THRESHOLD = 0.5;
+    public static final int LOW_RISK_MULTIPLIER = 1;
+    public static final int HIGH_RISK_MULTIPLIER = 3;
+    public static final int WANTED_LEVEL_INCREMENT_BASE = 20;
+    public static final int JAIL_WANTED_LEVEL_THRESHOLD = 100;
+    public static final int BASE_TIMEOUT_MINUTES = 5;
+    public static final long HOSPITAL_COST_PER_LEVEL_BASE = 500L;
+    public static final long JAIL_COST_PER_LEVEL_BASE = 1000L;
+    public static final double PRICE_INCREASE_FACTOR = 1.5;
+    public static final int TEMPORARY_STATS_COOLDOWN_HOURS = 24;
+    public static final int PERMANENT_STAT_INCREMENT = 1;
+
+    public static int riskMultiplier(double failureChance) {
+        return failureChance > HIGH_RISK_THRESHOLD ? HIGH_RISK_MULTIPLIER : LOW_RISK_MULTIPLIER;
+    }
+
+    public static int wantedLevelIncrement(double failureChance) {
+        return WANTED_LEVEL_INCREMENT_BASE * riskMultiplier(failureChance);
+    }
+
+    public static int timeoutMinutes(int level, int multiplier) {
+        return BASE_TIMEOUT_MINUTES * Math.max(1, level) * multiplier;
+    }
+
+    public static BigDecimal timeoutCost(TimeoutType type, int level, int multiplier) {
+        long baseCost = (type == TimeoutType.HOSPITAL ? HOSPITAL_COST_PER_LEVEL_BASE : JAIL_COST_PER_LEVEL_BASE);
+        return BigDecimal.valueOf(baseCost * Math.max(1, level) * multiplier);
+    }
+
+    public static int clampLife(int life) {
+        return Math.min(MAX_LIFE, Math.max(0, life));
+    }
+
+    public static int clampStamina(int stamina) {
+        return Math.min(MAX_STAMINA, Math.max(0, stamina));
+    }
+
+    public static BigDecimal clampMoney(BigDecimal money) {
+        return money.compareTo(BigDecimal.ZERO) < 0 ? BigDecimal.ZERO : money;
+    }
+
+    public static BigDecimal priceIncrease(BigDecimal currentPrice) {
+        return currentPrice.abs().multiply(BigDecimal.valueOf(PRICE_INCREASE_FACTOR)).negate();
+    }
+
+    public static LocalDateTime temporaryStatsCooldown(LocalDateTime now) {
+        return now.plusHours(TEMPORARY_STATS_COOLDOWN_HOURS);
+    }
+
+    public static int permanentStatIncrement(Integer current) {
+        return (current != null ? current : 0) + PERMANENT_STAT_INCREMENT;
     }
 }

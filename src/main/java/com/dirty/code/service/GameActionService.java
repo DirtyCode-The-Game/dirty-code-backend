@@ -75,10 +75,14 @@ public class GameActionService implements GameActionController {
 
         avatar.checkAndResetTemporaryStats();
         handleDrStrangeVisibility(avatar);
-        timeoutService.validateAndHandleTimeout(avatar);
-
+        
         GameAction action = gameActionRepository.findById(actionId)
-                .orElseThrow(() -> new ResourceNotFoundException("Action not found with ID: " + actionId));
+            .orElseThrow(() -> new ResourceNotFoundException("Action not found with ID: " + actionId));
+        
+        if (avatar.getTimeoutType() != null && avatar.getTimeout() != null && java.time.LocalDateTime.now().isBefore(avatar.getTimeout())) {
+            throw new BusinessException("Não é possível executar ações durante timeout. Apenas ações específicas da prisão/hospital são permitidas.");
+        }
+        timeoutService.validateAndHandleTimeout(avatar);
 
         Map<String, Object> initialStats = captureAvatarStats(avatar);
 
@@ -92,7 +96,7 @@ public class GameActionService implements GameActionController {
 
             executionCount++;
             overallSuccess = actionProcessor.processActionEffects(avatar, action);
-
+            
             if (!overallSuccess || avatar.getTimeout() != null) {
                 break;
             }

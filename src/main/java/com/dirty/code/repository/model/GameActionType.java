@@ -10,6 +10,7 @@ public enum GameActionType {
     MARKET("MARKET"),
     HOSPITAL("HOSPITAL"),
     JAIL("JAIL"),
+    STORE("STORE"),
     SPECIAL_STATUS_SELLER("SPECIAL_STATUS_SELLER"),;
 
     private final String value;

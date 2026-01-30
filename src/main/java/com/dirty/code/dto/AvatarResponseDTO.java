@@ -39,6 +39,7 @@ public class AvatarResponseDTO {
     private Integer charisma; // Carisma
     private Integer strength; // Força
     private Integer stealth; // Discrição
+    private Integer wantedLevel;
     private Integer temporaryStrength;
     private Integer temporaryIntelligence;
     private Integer temporaryCharisma;
@@ -52,6 +53,7 @@ public class AvatarResponseDTO {
 
     private LocalDateTime timeout; // When the timeout expires
     private TimeoutType timeoutType; // "HOSPITAL" or "JAIL"
+    private BigDecimal timeoutCost;
     private Boolean drStrangeVisible;
 
     public static AvatarResponseDTO fromAvatar(Avatar avatar) {
@@ -74,6 +76,7 @@ public class AvatarResponseDTO {
                 .charisma(avatar.getCharisma())
                 .strength(avatar.getStrength())
                 .stealth(avatar.getStealth())
+                .wantedLevel(avatar.getWantedLevel())
                 .temporaryStrength(avatar.getTemporaryStrength())
                 .temporaryIntelligence(avatar.getTemporaryIntelligence())
                 .temporaryCharisma(avatar.getTemporaryCharisma())
@@ -86,6 +89,7 @@ public class AvatarResponseDTO {
                 .active(avatar.getActive())
                 .timeout(avatar.getTimeout())
                 .timeoutType(avatar.getTimeoutType())
+                .timeoutCost(avatar.getTimeoutCost())
                 .build();
     }
 

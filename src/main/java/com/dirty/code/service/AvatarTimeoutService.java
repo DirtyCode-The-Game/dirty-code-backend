@@ -48,10 +48,12 @@ public class AvatarTimeoutService {
         }
     }
 
-    public boolean checkAndHandleHospitalization(Avatar avatar) {
+    public boolean checkAndHandleHospitalization(Avatar avatar, int multiplier) {
         if (avatar.getLife() <= 0) {
-            avatar.setTimeout(LocalDateTime.now().plusMinutes(5));
+            int multiplierByLevel = avatar.getLevel() == 0 ? 1 : avatar.getLevel();
+            avatar.setTimeout(LocalDateTime.now().plusMinutes(5L * multiplierByLevel));
             avatar.setTimeoutType(TimeoutType.HOSPITAL);
+            avatar.setTimeoutCost(BigDecimal.valueOf((500L * multiplierByLevel) * multiplier));
             log.info("Avatar {} HP reached 0. Sent to hospital until {}.", avatar.getName(), avatar.getTimeout());
             return true;
         }
@@ -68,7 +70,7 @@ public class AvatarTimeoutService {
         boolean timeoutExpired = LocalDateTime.now().isAfter(avatar.getTimeout());
 
         if (payForFreedom && !timeoutExpired) {
-            BigDecimal freedomCost = BigDecimal.valueOf(500).multiply(BigDecimal.valueOf(Math.max(1, avatar.getLevel())));
+            BigDecimal freedomCost = avatar.getTimeoutCost();
 
             if (avatar.getMoney().compareTo(freedomCost) < 0) {
                 String errorMsg = String.format("Not enough money to buy freedom. Required: %.2f, Available: %.2f",
@@ -92,9 +94,17 @@ public class AvatarTimeoutService {
     }
 
     private void clearTimeout(Avatar avatar) {
+        if (avatar.getTimeoutType() == TimeoutType.JAIL) {
+            avatar.setWantedLevel(0);
+        }
+        
+        if (avatar.getTimeoutType() == TimeoutType.HOSPITAL) {
+            avatar.setLife(1);
+        }
+        
+        avatar.setActive(true);
         avatar.setTimeout(null);
         avatar.setTimeoutType(null);
-        avatar.setLife(100);
-        avatar.setStamina(100);
+        avatar.setTimeoutCost(BigDecimal.ZERO);
     }
 }
