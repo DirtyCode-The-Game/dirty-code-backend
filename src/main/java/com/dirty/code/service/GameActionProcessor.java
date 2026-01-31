@@ -48,10 +48,6 @@ public class GameActionProcessor {
     }
 
     public BigDecimal calculateDynamicPrice(Avatar avatar, GameAction action) {
-        if (action.getType() != GameActionType.SPECIAL_STATUS_SELLER) {
-            return action.getMoney();
-        }
-
         return purchaseRepository.findByAvatarIdAndActionId(avatar.getId(), action.getId())
                 .map(AvatarActionPurchase::getCurrentPrice)
                 .orElse(action.getMoney());
@@ -88,11 +84,9 @@ public class GameActionProcessor {
     }
 
     private void applySpecialAction(Avatar avatar, GameAction action) {
-        if (action.getType() == GameActionType.SPECIAL_STATUS_SELLER) {
-            BigDecimal price = calculateDynamicPrice(avatar, action);
-            if (price != null) {
-                avatar.setMoney(GameFormulas.clampMoney(avatar.getMoney().add(price)));
-            }
+        BigDecimal price = calculateDynamicPrice(avatar, action);
+        if (price != null) {
+            avatar.setMoney(GameFormulas.clampMoney(avatar.getMoney().add(price)));
         }
 
         switch (action.getSpecialAction()) {
@@ -104,18 +98,22 @@ public class GameActionProcessor {
                 avatar.setStatusCooldown(null);
                 break;
             case ADD_STRENGTH:
+                if (checkPermanentStatFailure(avatar, action)) return;
                 avatar.setStrength(GameFormulas.permanentStatIncrement(avatar.getStrength()));
                 updateActionCost(avatar, action);
                 break;
             case ADD_INTELLIGENCE:
+                if (checkPermanentStatFailure(avatar, action)) return;
                 avatar.setIntelligence(GameFormulas.permanentStatIncrement(avatar.getIntelligence()));
                 updateActionCost(avatar, action);
                 break;
             case ADD_CHARISMA:
+                if (checkPermanentStatFailure(avatar, action)) return;
                 avatar.setCharisma(GameFormulas.permanentStatIncrement(avatar.getCharisma()));
                 updateActionCost(avatar, action);
                 break;
             case ADD_STEALTH:
+                if (checkPermanentStatFailure(avatar, action)) return;
                 avatar.setStealth(GameFormulas.permanentStatIncrement(avatar.getStealth()));
                 updateActionCost(avatar, action);
                 break;
@@ -157,6 +155,17 @@ public class GameActionProcessor {
         log.info("Action {} cost increased for avatar {} to {}", action.getTitle(), avatar.getName(), purchase.getCurrentPrice());
     }
 
+    private boolean checkPermanentStatFailure(Avatar avatar, GameAction action) {
+        if (GameFormulas.isFailure(0.3)) {
+            avatar.setLife(0);
+            if (timeoutService.checkAndHandleHospitalization(avatar, 1)) {
+                log.info("Avatar {} failed to increment permanent stat and sent to hospital", avatar.getName());
+            }
+            return true;
+        }
+        return false;
+    }
+
     private void handleFailure(Avatar avatar, GameAction action, double failureChance) {
         int multiplier = GameFormulas.riskMultiplier(failureChance);
         boolean isHighRisk = failureChance > GameFormulas.HIGH_RISK_THRESHOLD;
@@ -194,10 +203,7 @@ public class GameActionProcessor {
     }
 
     private void handleSuccess(Avatar avatar, GameAction action) {
-        BigDecimal actionMoney = action.getMoney();
-        if (action.getType() == GameActionType.SPECIAL_STATUS_SELLER) {
-            actionMoney = calculateDynamicPrice(avatar, action);
-        }
+        BigDecimal actionMoney = calculateDynamicPrice(avatar, action);
 
         if (actionMoney != null) {
             BigDecimal moneyToAdd = GameFormulas.calculateMoneyVariation(actionMoney, action.getMoneyVariation());

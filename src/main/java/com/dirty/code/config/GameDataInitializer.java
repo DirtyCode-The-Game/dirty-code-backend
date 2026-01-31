@@ -72,7 +72,7 @@ public class GameDataInitializer {
                         .description("DESCHAMPO malemá explica algo de TI, no fim do vídeo você entendeu nada e já quer lançar o CaraLivro 2.")
                         .money(BigDecimal.valueOf(-2500))
                         .textFile("deschampo.json")
-                        .actionImage("deschampo.jpg")
+                        .actionImage("deschampo.webp")
                         .recommendedMaxLevel(10)
                         .temporaryCharisma(3)
                         .temporaryIntelligence(1)
@@ -83,7 +83,7 @@ public class GameDataInitializer {
                         .description("Chato pra caralho, mas da pra tirar alguma coisa dessa velharia. Sério nem sei se vale a pena...")
                         .money(BigDecimal.valueOf(-2500))
                         .textFile("tv_fonte_codigo.json")
-                        .actionImage("tv_fonte_codigo.jpg")
+                        .actionImage("tv_fonte_codigo.webp")
                         .recommendedMaxLevel(10)
                         .temporaryCharisma(1)
                         .temporaryIntelligence(3)
@@ -94,7 +94,7 @@ public class GameDataInitializer {
                             .description("O cara é carismatico, pena que é um completo retardado, acho melhor não seguir os conselhos de finanças dele.")
                             .money(BigDecimal.valueOf(-2500))
                             .textFile("tranquilidade_jovem.json")
-                            .actionImage("tranquilidade_jovem.jpg")
+                            .actionImage("tranquilidade_jovem.webp")
                             .recommendedMaxLevel(10)
                             .temporaryCharisma(6)
                             .temporaryIntelligence(-2)
@@ -105,7 +105,7 @@ public class GameDataInitializer {
                         .description("Sério, como pode alguém esbanjar sabedoria e conhecimento com tanta falta de carisma")
                         .money(BigDecimal.valueOf(-2500))
                         .textFile("gane_jovem_ko.json")
-                        .actionImage("gane_jovem_ko.jpg")
+                        .actionImage("gane_jovem_ko.webp")
                         .recommendedMaxLevel(10)
                         .temporaryCharisma(-2)
                         .temporaryIntelligence(6)
@@ -126,7 +126,7 @@ public class GameDataInitializer {
                         .hpVariation(0.5)
                         .money(BigDecimal.valueOf(-5))
                         .textFile("cafe_cafu.json")
-                        .actionImage("cafe_cafu.jpg")
+                        .actionImage("cafe_cafu.webp")
                         .build(),
                 GameAction.builder()
                         .type(GameActionType.MARKET)
@@ -137,7 +137,7 @@ public class GameDataInitializer {
                         .hpVariation(0.5)
                         .money(BigDecimal.valueOf(-15))
                         .textFile("tres_galinha.json")
-                        .actionImage("tres_galinha.jpg")
+                        .actionImage("tres_galinha.webp")
                         .build()
         ));
 
@@ -154,7 +154,7 @@ public class GameDataInitializer {
                         .hpVariation(0.5)
                         .money(BigDecimal.valueOf(-15))
                         .textFile("aas_infantil.json")
-                        .actionImage("aas_infantil.jpg")
+                        .actionImage("aas_infantil.webp")
                         .build(),
                 GameAction.builder()
                         .type(GameActionType.HOSPITAL)
@@ -162,7 +162,7 @@ public class GameDataInitializer {
                         .description("Ajuda você a esquecer toda bobagem que você assiste no youtube...")
                         .money(BigDecimal.valueOf(-300000))
                         .textFile("desneuralizador.json")
-                        .actionImage("desneuralizador.jpg")
+                        .actionImage("desneuralizador.webp")
                         .specialAction(SpecialAction.CLEAR_TEMPORARY_STATUS)
                         .build()
                 ));
@@ -176,43 +176,36 @@ public class GameDataInitializer {
                         .type(GameActionType.SPECIAL_STATUS_SELLER)
                         .title("Seringa de Força")
                         .description("Credo vou injetar esse trosso vermelho em mim não...")
-                        .money(BigDecimal.valueOf(-500000))
-                        .lostHpFailure(BigInteger.valueOf(999999999L))
+                        .money(BigDecimal.valueOf(-100000))
                         .textFile("dr_hooleesheet_str.json")
-                        .actionImage("dr_hooleesheet_str.jpg")
-                        .failureChance(50.0)
+                        .actionImage("dr_hooleesheet_str.webp")
                         .specialAction(SpecialAction.ADD_STRENGTH)
                         .build(),
                 GameAction.builder()
                         .type(GameActionType.SPECIAL_STATUS_SELLER)
                         .title("Seringa de Inteligência")
                         .description("Um liquido azul e viscoso, parece um pouco estranho...")
-                        .money(BigDecimal.valueOf(-500000))
-                        .lostHpFailure(BigInteger.valueOf(999999999L))
+                        .money(BigDecimal.valueOf(-100000))
                         .textFile("dr_hooleesheet_int.json")
-                        .actionImage("dr_hooleesheet_int.jpg")
-                        .failureChance(50.0)
+                        .actionImage("dr_hooleesheet_int.webp")
                         .specialAction(SpecialAction.ADD_INTELLIGENCE)
                         .build(),
                 GameAction.builder()
                         .type(GameActionType.SPECIAL_STATUS_SELLER)
                         .title("Seringa de Carisma")
                         .description("Parece algodão doce liquido, credo que delicia...")
-                        .money(BigDecimal.valueOf(-500000))
-                        .lostHpFailure(BigInteger.valueOf(999999999L))
+                        .money(BigDecimal.valueOf(-100000))
                         .textFile("dr_hooleesheet_cha.json")
-                        .actionImage("dr_hooleesheet_cha.jpg")
-                        .failureChance(50.0)
+                        .actionImage("dr_hooleesheet_cha.webp")
                         .specialAction(SpecialAction.ADD_CHARISMA)
                         .build(),
                 GameAction.builder()
                         .type(GameActionType.SPECIAL_STATUS_SELLER)
                         .title("Seringa de Descrição")
                         .description("Velho retardado me entregou uma seringa vazia...")
-                        .money(BigDecimal.valueOf(-500000))
-                        .lostHpFailure(BigInteger.valueOf(999999999L))
+                        .money(BigDecimal.valueOf(-100000))
                         .textFile("dr_hooleesheet_ste.json")
-                        .actionImage("dr_hooleesheet_ste.jpg")
+                        .actionImage("dr_hooleesheet_ste.webp")
                         .failureChance(50.0)
                         .specialAction(SpecialAction.ADD_STEALTH)
                         .build()
@@ -238,7 +231,7 @@ public class GameDataInitializer {
                         .canBeArrested(true)
 
                         .textFile("pitbrad_do_caralivro.json")
-                        .actionImage("pitbrad_do_caralivro.jpg")
+                        .actionImage("pitbrad_do_caralivro.webp")
                         .failureChance(0.30)
                         .recommendedMaxLevel(10)
                         .build(),
@@ -260,7 +253,7 @@ public class GameDataInitializer {
                         .canBeArrested(true)
 
                         .textFile("sultao_da_turquia.json")
-                        .actionImage("sultao_da_turquia.jpg")
+                        .actionImage("sultao_da_turquia.webp")
                         .failureChance(0.30)
                         .recommendedMaxLevel(10)
                         .build(),
@@ -281,7 +274,7 @@ public class GameDataInitializer {
                         .canBeArrested(true)
 
                         .textFile("urubu_do_pix.json")
-                        .actionImage("urubu_do_pix.jpg")
+                        .actionImage("urubu_do_pix.webp")
                         .failureChance(0.30)
                         .recommendedMaxLevel(10)
                         .build(),
@@ -303,7 +296,7 @@ public class GameDataInitializer {
                         .canBeArrested(true)
 
                         .textFile("suporte_do_banco_audio.json")
-                        .actionImage("suporte_do_banco_audio.jpg")
+                        .actionImage("suporte_do_banco_audio.webp")
                         .failureChance(0.30)
                         .recommendedMaxLevel(10)
                         .build(),
@@ -327,7 +320,7 @@ public class GameDataInitializer {
                         .canBeArrested(true)
 
                         .textFile("wifi_cafeteria.json")
-                        .actionImage("wifi_cafeteria.jpg")
+                        .actionImage("wifi_cafeteria.webp")
                         .failureChance(0.35)
                         .recommendedMaxLevel(20)
                         .build(),
@@ -349,7 +342,7 @@ public class GameDataInitializer {
                         .canBeArrested(true)
 
                         .textFile("elfbot_tibia.json")
-                        .actionImage("elfbot_tibia.jpg")
+                        .actionImage("elfbot_tibia.webp")
                         
                         .failureChance(0.35)
                         .recommendedMaxLevel(20)
@@ -373,7 +366,7 @@ public class GameDataInitializer {
 
                        
                         .textFile("sql_injection_local.json")
-                        .actionImage("sql_injection_local.jpg")
+                        .actionImage("sql_injection_local.webp")
                         .failureChance(0.35)
                         .recommendedMaxLevel(20)
                         .build(),
@@ -395,7 +388,7 @@ public class GameDataInitializer {
                         .canBeArrested(true)
 
                         .textFile("youtube_subcelebridade.json")
-                        .actionImage("youtube_subcelebridade.jpg")
+                        .actionImage("youtube_subcelebridade.webp")
                         .failureChance(0.35)
                         .recommendedMaxLevel(20)
                         .build()
@@ -421,7 +414,7 @@ public class GameDataInitializer {
                         .lostHpFailureVariation(0.2)
 
                         .textFile("tv_do_pai.json")
-                        .actionImage("tv_do_pai.jpg")
+                        .actionImage("tv_do_pai.webp")
                         .failureChance(0.15)
                         .recommendedMaxLevel(10)
                         .build(),
@@ -444,7 +437,7 @@ public class GameDataInitializer {
                         .lostHpFailureVariation(0.2)
 
                         .textFile("caralivro_mae.json")
-                        .actionImage("caralivro_mae.jpg")
+                        .actionImage("caralivro_mae.webp")
                         .failureChance(0.15)
                         .recommendedMaxLevel(10)
                         .build(),
@@ -467,7 +460,7 @@ public class GameDataInitializer {
                         .lostHpFailureVariation(0.2)
 
                         .textFile("revolta_impressoras.json")
-                        .actionImage("revolta_impressoras.jpg")
+                        .actionImage("revolta_impressoras.webp")
                         .failureChance(0.15)
                         .recommendedMaxLevel(10)
                         .build(),
@@ -490,7 +483,7 @@ public class GameDataInitializer {
                         .lostHpFailureVariation(0.2)
 
                         .textFile("dj.json")
-                        .actionImage("dj.jpg")
+                        .actionImage("dj.webp")
                         .failureChance(0.15)
                         .recommendedMaxLevel(10)
                         .build(),
@@ -515,7 +508,7 @@ public class GameDataInitializer {
                         .lostHpFailureVariation(0.5)
 
                         .textFile("barista_emergencia.json")
-                        .actionImage("barista_emergencia.jpg")
+                        .actionImage("barista_emergencia.webp")
                         .failureChance(0.20)
                         .recommendedMaxLevel(20)
                         .build(),
@@ -538,7 +531,7 @@ public class GameDataInitializer {
                         .lostHpFailureVariation(0.5)
 
                         .textFile("daily_infinita.json")
-                        .actionImage("daily_infinita.jpg")
+                        .actionImage("daily_infinita.webp")
                         .failureChance(0.20)
                         .recommendedMaxLevel(20)
                         .build(),
@@ -561,7 +554,7 @@ public class GameDataInitializer {
                         .lostHpFailureVariation(0.5)
 
                         .textFile("pair_programming.json")
-                        .actionImage("pair_programming.jpg")
+                        .actionImage("pair_programming.webp")
                         .failureChance(0.20)
                         .recommendedMaxLevel(20)
                         .build(),
@@ -584,7 +577,7 @@ public class GameDataInitializer {
                         .lostHpFailureVariation(0.5)
 
                         .textFile("arqueologia_digital.json")
-                        .actionImage("arqueologia_digital.jpg")
+                        .actionImage("arqueologia_digital.webp")
                         .failureChance(0.20)
                         .recommendedMaxLevel(20)
                         .build()
@@ -603,7 +596,7 @@ public class GameDataInitializer {
                         .hp(-50)
                         .specialAction(SpecialAction.VOLUNTARY_WORK)
                         .textFile("trabalho_voluntario.json")
-                        .actionImage("trabalho_voluntario.jpg")
+                        .actionImage("trabalho_voluntario.webp")
                         .build()
         ));
         log.info("Created jail actions");

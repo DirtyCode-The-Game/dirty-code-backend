@@ -3,10 +3,12 @@ package com.dirty.code.repository.model;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import com.dirty.code.utils.GameFormulas;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -17,6 +19,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -95,7 +98,7 @@ public class Avatar extends BaseModel {
     @Column(name = "status_cooldown")
     private LocalDateTime statusCooldown;
 
-    @OneToOne(mappedBy = "avatar", cascade = jakarta.persistence.CascadeType.ALL)
+    @OneToOne(mappedBy = "avatar", cascade = CascadeType.ALL)
     private AvatarSpecialAction specialAction;
 
     public void checkAndResetTemporaryStats() {
