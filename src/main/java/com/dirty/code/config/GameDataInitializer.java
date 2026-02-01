@@ -221,8 +221,8 @@ public class GameDataInitializer {
                         .title("Pitbrad do CaraLivro")
                         .description("Oi vó, aqui é o Pitbrad. Manda o Pix que perdi meu cartão aqui em Hollywood.")
 
-                        .xp(BigInteger.valueOf(40))
-                        .money(BigDecimal.valueOf(300))
+                        .xp(BigInteger.valueOf(10))
+                        .money(BigDecimal.valueOf(100))
                         .stamina(-10)
 
                         .xpVariation(0.5)
@@ -240,8 +240,8 @@ public class GameDataInitializer {
                         .title("Vem pra Turquia sou um Sultão minha MILF gata")
                         .description("Sou sultão. Quero me casar with você. Só preciso de um Pix simbólico pra liberar o passaporte no consulado.")
 
-                        .xp(BigInteger.valueOf(60))
-                        .money(BigDecimal.valueOf(450))
+                        .xp(BigInteger.valueOf(20))
+                        .money(BigDecimal.valueOf(250))
                         .stamina(-10)
 
                         .xpVariation(0.5)
@@ -262,8 +262,8 @@ public class GameDataInitializer {
                         .title("Urubu do Pix")
                         .description("Me mande 10 dinheiros que eu te devolvo 1000 em 24h.")
 
-                        .xp(BigInteger.valueOf(90))
-                        .money(BigDecimal.valueOf(900))
+                        .xp(BigInteger.valueOf(50))
+                        .money(BigDecimal.valueOf(650))
                         .stamina(-25)
 
                         .xpVariation(0.5)
@@ -283,8 +283,8 @@ public class GameDataInitializer {
                         .title("Suporte do Banco via Áudio de Zap")
                         .description("Boa tarde, aqui é do suporte. Fala sua senha em áudio pra eu ‘validar’ seu cadastro rapidinho.")
 
-                        .xp(BigInteger.valueOf(140))
-                        .money(BigDecimal.valueOf(1800))
+                        .xp(BigInteger.valueOf(120))
+                        .money(BigDecimal.valueOf(1500))
                         .stamina(-50)
 
                         .xpVariation(0.5)
@@ -306,8 +306,8 @@ public class GameDataInitializer {
                         .title("Wi-Fi Grátis (e Perigoso)")
                         .description("A cafeteria da esquina acha que 'cafezinhogratis' é uma senha segura. Você está prestes a provar que o WPA2 deles é tão forte quanto um café coado três vezes.")
 
-                        .xp(BigInteger.valueOf(180))
-                        .money(BigDecimal.valueOf(1400))
+                        .xp(BigInteger.valueOf(120))
+                        .money(BigDecimal.valueOf(1500))
                         .stamina(-25)
 
                         .xpVariation(0.60)
@@ -328,8 +328,8 @@ public class GameDataInitializer {
                         .title("Mestre dos Rotworms (ElfBot)")
                         .description("Enquanto os outros jogam, você configura o script perfeito para caçar rotworms 24/7. O lucro é em gold virtual, mas o orgulho de ser um 'cheater' é real.")
 
-                        .xp(BigInteger.valueOf(240))
-                        .money(BigDecimal.valueOf(3000))
+                        .xp(BigInteger.valueOf(320))
+                        .money(BigDecimal.valueOf(3200))
                         .stamina(-50)
 
                         .xpVariation(0.60)
@@ -351,8 +351,8 @@ public class GameDataInitializer {
                         .title("SQL Injection na Padaria")
                         .description("O site da 'Padaria do Seu Manoel' usa PHP 4 e não limpa os inputs. Um ' OR 1=1 --' e você é o novo administrador do banco de dados de pães de queijo.")
 
-                        .xp(BigInteger.valueOf(320))
-                        .money(BigDecimal.valueOf(6500))
+                        .xp(BigInteger.valueOf(700))
+                        .money(BigDecimal.valueOf(8500))
                         .stamina(-100)
 
                         .xpVariation(0.60)
@@ -373,8 +373,8 @@ public class GameDataInitializer {
                         .title("Hacker de Low-Stakes (YouTube)")
                         .description("O alvo é um ex-participante de reality show que faz unboxing de recebidos. O plano? Um e-mail de 'parceria' fake para sequestrar o canal e postar vídeos de Blaze.")
 
-                        .xp(BigInteger.valueOf(400))
-                        .money(BigDecimal.valueOf(12000))
+                        .xp(BigInteger.valueOf(1200))
+                        .money(BigDecimal.valueOf(15000))
                         .stamina(-150)
 
                         .xpVariation(0.60)
@@ -396,8 +396,8 @@ public class GameDataInitializer {
                         .title("Scanner de Vulnerabilidade")
                         .description("Você seguiu um tutorial no YouTube e rodou um script pronto que achou um site com 'admin/admin'. É quase hacking, só falta o talento.")
 
-                        .xp(BigInteger.valueOf(120))
-                        .money(BigDecimal.valueOf(2200))
+                        .xp(BigInteger.valueOf(250))
+                        .money(BigDecimal.valueOf(3500))
                         .stamina(-20)
 
                         .xpVariation(0.20)
@@ -418,8 +418,8 @@ public class GameDataInitializer {
                         .title("Brute Force de Wi-Fi do Vizinho")
                         .description("Deixou o notebook rodando um dicionário de senhas a noite toda para roubar o Wi-Fi do vizinho. Agora você tem internet grátis e acesso a todas as buscas duvidosas dele no Google, hora do blakmail.")
 
-                        .xp(BigInteger.valueOf(180))
-                        .money(BigDecimal.valueOf(2800))
+                        .xp(BigInteger.valueOf(300))
+                        .money(BigDecimal.valueOf(4500))
                         .stamina(-25)
 
                         .xpVariation(0.30)
@@ -441,8 +441,8 @@ public class GameDataInitializer {
                         .title("Invasão de Câmera IP Barata")
                         .description("Descobriu que câmeras de segurança chinesas vêm com a mesma senha de fábrica. Agora você tem um reality show privado da sala de estar de alguém em Curitiba.")
 
-                        .xp(BigInteger.valueOf(260))
-                        .money(BigDecimal.valueOf(6000))
+                        .xp(BigInteger.valueOf(700))
+                        .money(BigDecimal.valueOf(10000))
                         .stamina(-50)
 
                         .xpVariation(0.20)
@@ -463,8 +463,8 @@ public class GameDataInitializer {
                         .title("Script de Bot para Comprar Ingresso")
                         .description(" Você automatizou a compra de ingressos para o show da Taylor Swift. Você não vai ao show, mas vai vender cada ingresso pelo triplo do preço no \"Cambaio Digital\".")
 
-                        .xp(BigInteger.valueOf(600))
-                        .money(BigDecimal.valueOf(20000))
+                        .xp(BigInteger.valueOf(3000))
+                        .money(BigDecimal.valueOf(45000))
                         .stamina(-200)
 
                         .xpVariation(0.40)
@@ -491,8 +491,8 @@ public class GameDataInitializer {
                         .title("Ajustar canais de tv do pai")
                         .description("O pai esta desesperado, a tv não esta funcionando.")
 
-                        .xp(BigInteger.valueOf(600))
-                        .money(BigDecimal.valueOf(15))
+                        .xp(BigInteger.valueOf(100))
+                        .money(BigDecimal.valueOf(6))
                         .stamina(-10)
 
                         .xpVariation(0.3)
@@ -511,8 +511,8 @@ public class GameDataInitializer {
                         .title("Recuperar senha do CaraLivro da mãe")
                         .description("A mãe esqueceu a senha do CaraLivro de novo, como ela vai fofocar da vida da Cleude assim?")
 
-                        .xp(BigInteger.valueOf(900))
-                        .money(BigDecimal.valueOf(20))
+                        .xp(BigInteger.valueOf(150))
+                        .money(BigDecimal.valueOf(8))
                         .stamina(-10)
 
                         .xpVariation(0.3)
@@ -534,8 +534,8 @@ public class GameDataInitializer {
                         .title("Revolta das impressoras")
                         .description("Sua impressora começou a cuspir folhas escrito \"foda-se\" de um jeito nisso!")
 
-                        .xp(BigInteger.valueOf(1400))
-                        .money(BigDecimal.valueOf(30))
+                        .xp(BigInteger.valueOf(250))
+                        .money(BigDecimal.valueOf(13))
                         .stamina(-20)
 
                         .xpVariation(0.3)
@@ -557,8 +557,8 @@ public class GameDataInitializer {
                         .title("Animador de festas profissional!")
                         .description("Prepare o pendrive aquele biquinho na festa como DJ deu certo, hoje o Alok vai chorar no banho!")
 
-                        .xp(BigInteger.valueOf(2000))
-                        .money(BigDecimal.valueOf(60))
+                        .xp(BigInteger.valueOf(300))
+                        .money(BigDecimal.valueOf(50))
                         .stamina(-25)
 
                         .xpVariation(0.3)
@@ -581,7 +581,7 @@ public class GameDataInitializer {
                         .title("Barista de Emergência")
                         .description("O servidor caiu? Não importa. O café acabou? CAOS TOTAL. Você é o único capaz de operar a máquina italiana de 1990 que exige um sacrifício humano para funcionar.")
 
-                        .xp(BigInteger.valueOf(2800))
+                        .xp(BigInteger.valueOf(400))
                         .money(BigDecimal.valueOf(50))
                         .stamina(-20)
 
@@ -604,8 +604,8 @@ public class GameDataInitializer {
                         .title("Sobrevivente de 'Daily' Infinita")
                         .description("A reunião era pra durar 15 minutos em pé. Já se passaram 2 horas, todos estão sentados no chão e o PO está explicando o sentido da vida.")
 
-                        .xp(BigInteger.valueOf(4500))
-                        .money(BigDecimal.valueOf(80))
+                        .xp(BigInteger.valueOf(850))
+                        .money(BigDecimal.valueOf(110))
                         .stamina(-40)
 
                         .xpVariation(0.3)
@@ -627,8 +627,8 @@ public class GameDataInitializer {
                         .title("Fiscal de Digitação")
                         .description("Você e outro dev olhando para a mesma tela. Um digita, o outro julga cada erro de sintaxe em silêncio. É tipo dirigir com o sogro no carona.")
 
-                        .xp(BigInteger.valueOf(5200))
-                        .money(BigDecimal.valueOf(90))
+                        .xp(BigInteger.valueOf(1150))
+                        .money(BigDecimal.valueOf(150))
                         .stamina(-50)
 
                         .xpVariation(0.3)
@@ -650,8 +650,8 @@ public class GameDataInitializer {
                         .title("Arqueologia Digital: Migrando o Caos")
                         .description("O plano é levar o sistema de 1985 para a nuvem. Na prática, você está só empurrando o lixo pra baixo do tapete de outra pessoa (a Amazon).")
 
-                        .xp(BigInteger.valueOf(6000))
-                        .money(BigDecimal.valueOf(100))
+                        .xp(BigInteger.valueOf(750))
+                        .money(BigDecimal.valueOf(150))
                         .stamina(-30)
 
                         .xpVariation(0.3)
@@ -674,8 +674,8 @@ public class GameDataInitializer {
                         .title("Refatoração de Código 'Legado' (de ontem)")
                         .description("O Pleno que saiu da empresa ontem deixou uma bagunça que nem o GPT explica. Você está tentando entender por que o cálculo de frete depende de uma API de clima na Mongólia.")
 
-                        .xp(BigInteger.valueOf(7500))
-                        .money(BigDecimal.valueOf(120))
+                        .xp(BigInteger.valueOf(900))
+                        .money(BigDecimal.valueOf(150))
                         .stamina(-20)
 
                         .xpVariation(0.3)
@@ -697,8 +697,8 @@ public class GameDataInitializer {
                         .title("Dublê de Deploy em Sexta-Feira")
                         .description("O Tech Lead deu o comando e sumiu. Agora você está sozinho na frente do monitor às 17:50, rezando para que o pipeline não fique vermelho e o cliente não ligue no seu celular pessoal.")
 
-                        .xp(BigInteger.valueOf(8500))
-                        .money(BigDecimal.valueOf(150))
+                        .xp(BigInteger.valueOf(1250))
+                        .money(BigDecimal.valueOf(250))
                         .stamina(-25)
 
                         .xpVariation(0.3)
@@ -720,8 +720,8 @@ public class GameDataInitializer {
                         .title("Mentor de Estagiário 'Prodígio'")
                         .description("Você e outro dev olhando para a mesma tela. Um digita, o outro julga cada erro de sintaxe em silêncio. É tipo dirigir com o sogro no carona.")
 
-                        .xp(BigInteger.valueOf(12000))
-                        .money(BigDecimal.valueOf(180))
+                        .xp(BigInteger.valueOf(4000))
+                        .money(BigDecimal.valueOf(1000))
                         .stamina(-80)
 
                         .xpVariation(0.3)
@@ -743,8 +743,8 @@ public class GameDataInitializer {
                         .title("Escovador de JSON de 50MB")
                         .description("A API retorna um objeto tão grande que trava o navegador. Sua missão é fazer um \"de/para\" manual e rezar para que a memória RAM do servidor aguente a pressão.")
 
-                        .xp(BigInteger.valueOf(20000))
-                        .money(BigDecimal.valueOf(250))
+                        .xp(BigInteger.valueOf(9000))
+                        .money(BigDecimal.valueOf(2500))
                         .stamina(-160)
 
                         .xpVariation(0.3)
