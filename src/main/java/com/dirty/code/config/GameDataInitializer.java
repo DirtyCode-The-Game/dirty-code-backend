@@ -391,6 +391,98 @@ public class GameDataInitializer {
                         .actionImage("youtube_subcelebridade.webp")
                         .failureChance(0.35)
                         .recommendedMaxLevel(20)
+                        .build(),
+
+                //30 +
+                GameAction.builder()
+                        .type(GameActionType.HACKING)
+                        .title("Scanner de Vulnerabilidade")
+                        .description("Você seguiu um tutorial no YouTube e rodou um script pronto que achou um site com 'admin/admin'. É quase hacking, só falta o talento.")
+
+                        .xp(BigInteger.valueOf(170))
+                        .money(BigDecimal.valueOf(1300))
+                        .stamina(-20)
+
+                        .xpVariation(0.20)
+                        .moneyVariation(0.20)
+
+                        .requiredIntelligence(10)
+                        .requiredStealth(15)
+
+                        .canBeArrested(true)
+
+                        .textFile("scanner_vulnerabilidade.json")
+                        .actionImage("scanner_vulnerabilidade.webp")
+                        .failureChance(0.35)
+                        .recommendedMaxLevel(30)
+                        .build(),
+                GameAction.builder()
+                        .type(GameActionType.HACKING)
+                        .title("Brute Force de Wi-Fi do Vizinho")
+                        .description("Deixou o notebook rodando um dicionário de senhas a noite toda para roubar o Wi-Fi do vizinho. Agora você tem internet grátis e acesso a todas as buscas duvidosas dele no Google, hora do blakmail.")
+
+                        .xp(BigInteger.valueOf(250))
+                        .money(BigDecimal.valueOf(1600))
+                        .stamina(-25)
+
+                        .xpVariation(0.30)
+                        .moneyVariation(0.30)
+
+                        .requiredIntelligence(12)
+                        .requiredStealth(15)
+
+                        .canBeArrested(true)
+
+                        .textFile("brute_force.json")
+                        .actionImage("brute_force.webp")
+
+                        .failureChance(0.35)
+                        .recommendedMaxLevel(30)
+                        .build(),
+                GameAction.builder()
+                        .type(GameActionType.HACKING)
+                        .title("Invasão de Câmera IP Barata")
+                        .description("Descobriu que câmeras de segurança chinesas vêm com a mesma senha de fábrica. Agora você tem um reality show privado da sala de estar de alguém em Curitiba.")
+
+                        .xp(BigInteger.valueOf(600))
+                        .money(BigDecimal.valueOf(3500))
+                        .stamina(-50)
+
+                        .xpVariation(0.20)
+                        .moneyVariation(0.20)
+
+                        .requiredIntelligence(16)
+                        .requiredStealth(14)
+
+                        .canBeArrested(true)
+
+
+                        .textFile("ip_camera.json")
+                        .actionImage("ip_camera.webp")
+                        .failureChance(0.35)
+                        .recommendedMaxLevel(30)
+                        .build(),
+                GameAction.builder()
+                        .type(GameActionType.HACKING)
+                        .title("Script de Bot para Comprar Ingresso")
+                        .description(" Você automatizou a compra de ingressos para o show da Taylor Swift. Você não vai ao show, mas vai vender cada ingresso pelo triplo do preço no \"Cambaio Digital\".")
+
+                        .xp(BigInteger.valueOf(2600))
+                        .money(BigDecimal.valueOf(15000))
+                        .stamina(-200)
+
+                        .xpVariation(0.40)
+                        .moneyVariation(0.40)
+
+                        .requiredIntelligence(15)
+                        .requiredStealth(17)
+
+                        .canBeArrested(true)
+
+                        .textFile("bot_ingresso.json")
+                        .actionImage("bot_ingresso.webp")
+                        .failureChance(0.35)
+                        .recommendedMaxLevel(30)
                         .build()
         ));
         log.info("Created hacking actions");
@@ -403,7 +495,7 @@ public class GameDataInitializer {
                         .title("Ajustar canais de tv do pai")
                         .description("O pai esta desesperado, a tv não esta funcionando.")
 
-                        .xp(BigInteger.valueOf(100))
+                        .xp(BigInteger.valueOf(10000))
                         .money(BigDecimal.valueOf(20))
                         .stamina(-10)
 
@@ -570,8 +662,8 @@ public class GameDataInitializer {
                         .xpVariation(0.3)
                         .moneyVariation(0.3)
 
-                        .requiredIntelligence(17)
-                        .requiredCharisma(8)
+                        .requiredIntelligence(15)
+                        .requiredCharisma(7)
 
                         .lostHpFailure(BigInteger.valueOf(80))
                         .lostHpFailureVariation(0.5)
@@ -580,6 +672,100 @@ public class GameDataInitializer {
                         .actionImage("arqueologia_digital.webp")
                         .failureChance(0.20)
                         .recommendedMaxLevel(20)
+                        .build(),
+                
+                //30 ++
+                GameAction.builder()
+                        .type(GameActionType.WORK)
+                        .title("Refatoração de Código 'Legado' (de ontem)")
+                        .description("O Pleno que saiu da empresa ontem deixou uma bagunça que nem o GPT explica. Você está tentando entender por que o cálculo de frete depende de uma API de clima na Mongólia.")
+
+                        .xp(BigInteger.valueOf(3200))
+                        .money(BigDecimal.valueOf(1100))
+                        .stamina(-20)
+
+                        .xpVariation(0.3)
+                        .moneyVariation(0.3)
+
+                        .requiredIntelligence(17)
+                        .requiredCharisma(8)
+
+                        .lostHpFailure(BigInteger.valueOf(20))
+                        .lostHpFailureVariation(0.5)
+
+                        .textFile("codigo_legado.json")
+                        .actionImage("codigo_legado.webp")
+                        .failureChance(0.20)
+                        .recommendedMaxLevel(30)
+                        .build(),
+                GameAction.builder()
+                        .type(GameActionType.WORK)
+                        .title("Dublê de Deploy em Sexta-Feira")
+                        .description("O Tech Lead deu o comando e sumiu. Agora você está sozinho na frente do monitor às 17:50, rezando para que o pipeline não fique vermelho e o cliente não ligue no seu celular pessoal.")
+
+                        .xp(BigInteger.valueOf(3500))
+                        .money(BigDecimal.valueOf(1200))
+                        .stamina(-20)
+
+                        .xpVariation(0.3)
+                        .moneyVariation(0.3)
+
+                        .requiredIntelligence(18)
+                        .requiredCharisma(9)
+
+                        .lostHpFailure(BigInteger.valueOf(20))
+                        .lostHpFailureVariation(0.5)
+
+                        .textFile("deploy_sexta.json")
+                        .actionImage("deploy_sexta.webp")
+                        .failureChance(0.20)
+                        .recommendedMaxLevel(30)
+                        .build(),
+                GameAction.builder()
+                        .type(GameActionType.WORK)
+                        .title("Mentor de Estagiário 'Prodígio'")
+                        .description("Você e outro dev olhando para a mesma tela. Um digita, o outro julga cada erro de sintaxe em silêncio. É tipo dirigir com o sogro no carona.")
+
+                        .xp(BigInteger.valueOf(15000))
+                        .money(BigDecimal.valueOf(5000))
+                        .stamina(-80)
+
+                        .xpVariation(0.3)
+                        .moneyVariation(0.3)
+
+                        .requiredIntelligence(18)
+                        .requiredCharisma(12)
+
+                        .lostHpFailure(BigInteger.valueOf(50))
+                        .lostHpFailureVariation(0.5)
+
+                        .textFile("mentor_estagiario.json")
+                        .actionImage("mentor_estagiario.webp")
+                        .failureChance(0.20)
+                        .recommendedMaxLevel(30)
+                        .build(),
+                GameAction.builder()
+                        .type(GameActionType.WORK)
+                        .title("Escovador de JSON de 50MB")
+                        .description("A API retorna um objeto tão grande que trava o navegador. Sua missão é fazer um \"de/para\" manual e rezar para que a memória RAM do servidor aguente a pressão.")
+
+                        .xp(BigInteger.valueOf(33000))
+                        .money(BigDecimal.valueOf(11000))
+                        .stamina(-160)
+
+                        .xpVariation(0.3)
+                        .moneyVariation(0.3)
+
+                        .requiredIntelligence(19)
+                        .requiredCharisma(14)
+
+                        .lostHpFailure(BigInteger.valueOf(80))
+                        .lostHpFailureVariation(0.5)
+
+                        .textFile("escovador_json.json")
+                        .actionImage("escovador_json.webp")
+                        .failureChance(0.20)
+                        .recommendedMaxLevel(30)
                         .build()
         ));
 
