@@ -60,12 +60,12 @@ public class GameActionProcessor {
         }
 
         // Apply Stamina cost/gain
-        avatar.setStamina(GameFormulas.clampStamina(avatar.getCurrentStamina() + (action.getCurrentStamina() != null ? action.getCurrentStamina() : 0)));
+        avatar.setCurrentStamina((GameFormulas.clampStamina(avatar.getCurrentStamina() + (action.getStamina() != null ? action.getStamina() : 0))));
 
         // Apply HP gain (if any)
         if (action.getHp() != null) {
             int hpToAdd = GameFormulas.calculateHpVariation(action.getHp(), action.getHpVariation());
-            avatar.setLife(GameFormulas.clampLife(avatar.getCurrentLife() + hpToAdd));
+            avatar.setCurrentLife(GameFormulas.clampLife(avatar.getCurrentLife() + hpToAdd));
         }
 
         if (timeoutService.checkAndHandleHospitalization(avatar, 1)) {
@@ -122,8 +122,8 @@ public class GameActionProcessor {
                 if (wanted != null) {
                     avatar.setWantedLevel(Math.max(0, wanted - 50));
                 }
-                avatar.setLife(GameFormulas.clampLife(avatar.getLife() - 50));
-                avatar.setStamina(GameFormulas.clampStamina(avatar.getStamina() - 50));
+                avatar.setCurrentLife(GameFormulas.clampLife(avatar.getCurrentLife() - 50));
+                avatar.setCurrentStamina(GameFormulas.clampStamina(avatar.getCurrentStamina() - 50));
                 BigInteger totalExp = avatar.getTotalExperience();
                 if (totalExp != null && totalExp.compareTo(BigInteger.ZERO) > 0) {
                     BigInteger loss = totalExp.divide(BigInteger.valueOf(20));
@@ -157,7 +157,7 @@ public class GameActionProcessor {
 
     private boolean checkPermanentStatFailure(Avatar avatar, GameAction action) {
         if (GameFormulas.isFailure(0.3)) {
-            avatar.setLife(0);
+            avatar.setCurrentLife(0);
             if (timeoutService.checkAndHandleHospitalization(avatar, 1)) {
                 log.info("Avatar {} failed to increment permanent stat and sent to hospital", avatar.getName());
             }
