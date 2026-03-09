@@ -20,8 +20,6 @@ public class RegenerationScheduler {
 
     private static final int STAMINA_REGEN_PER_MINUTE = 1;
     private static final int LIFE_REGEN_PER_MINUTE = 1;
-    private static final int MAX_STAMINA = 100;
-    private static final int MAX_LIFE = 100;
 
     public RegenerationScheduler(AvatarRepository avatarRepository) {
         this.avatarRepository = avatarRepository;
@@ -54,34 +52,37 @@ public class RegenerationScheduler {
     private boolean regenerateAvatar(Avatar avatar) {
         boolean needsUpdate = false;
 
-        Integer staminaValue = avatar.getStamina();
-        Integer lifeValue = avatar.getLife();
+        Integer staminaValue = avatar.getCurrentStamina();
+        Integer lifeValue = avatar.getCurrentLife();
         int currentStamina = (staminaValue != null) ? staminaValue : 0;
         int currentLife = (lifeValue != null) ? lifeValue : 0;
+
+        Integer maxStamina = avatar.getMaxStamina();
+        Integer maxLife = avatar.getMaxLife();
 
         Integer newStamina = null;
         Integer newLife = null;
 
-        if (currentStamina < MAX_STAMINA) {
-            newStamina = Math.min(currentStamina + STAMINA_REGEN_PER_MINUTE, MAX_STAMINA);
+        if (currentStamina < maxStamina) {
+            newStamina = Math.min(currentStamina + STAMINA_REGEN_PER_MINUTE, maxStamina);
             needsUpdate = true;
         }
 
-        if (currentLife < MAX_LIFE) {
-            newLife = Math.min(currentLife + LIFE_REGEN_PER_MINUTE, MAX_LIFE);
+        if (currentLife < maxLife) {
+            newLife = Math.min(currentLife + LIFE_REGEN_PER_MINUTE, maxLife);
             needsUpdate = true;
         }
 
         if (needsUpdate) {
             if (newStamina != null) {
-                avatar.setStamina(newStamina);
+                avatar.setCurrentStamina(newStamina);
             }
             if (newLife != null) {
-                avatar.setLife(newLife);
+                avatar.setCurrentLife(newLife);
             }
             avatarRepository.save(avatar);
-            log.debug("Regenerated avatar {} - Stamina: {} -> {}, Life: {} -> {}", 
-                     avatar.getName(), currentStamina, avatar.getStamina(), currentLife, avatar.getLife());
+            log.debug("Regenerated avatar {} - Stamina: {} -> {}, Life: {} -> {}",
+                     avatar.getName(), currentStamina, avatar.getCurrentStamina(), currentLife, avatar.getCurrentLife());
         }
 
         return needsUpdate;

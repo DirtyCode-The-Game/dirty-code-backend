@@ -30,8 +30,10 @@ public class AvatarResponseDTO {
     private BigInteger totalExperience;
     private BigInteger nextLevelExperience;
 
-    private Integer stamina;
-    private Integer life;
+    private Integer currentStamina;
+    private Integer maxStamina;
+    private Integer currentLife;
+    private Integer maxLife;
     private BigDecimal money;
 
     private Integer availablePoints; // Pontos para distribuir
@@ -67,8 +69,11 @@ public class AvatarResponseDTO {
                 .totalExperience(avatar.getTotalExperience())
                 .nextLevelExperience(avatar.getNextLevelExperience())
                 .drStrangeVisible(avatar.getSpecialAction() != null ? avatar.getSpecialAction().getDrStrangeVisible() : false)
-                .stamina(avatar.getStamina())
-                .life(avatar.getLife())
+
+                .currentStamina(avatar.getCurrentStamina())
+                .maxStamina(avatar.getMaxStamina())
+                .currentLife(avatar.getCurrentLife())
+                .maxLife(avatar.getMaxLife())
                 .money(avatar.getMoney())
 
                 .availablePoints(avatar.getAvailablePoints())

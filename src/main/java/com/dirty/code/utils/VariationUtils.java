@@ -13,8 +13,8 @@ public class VariationUtils {
         Map<String, Object> stats = new HashMap<>();
 
         stats.put("experience", avatar.getExperience());
-        stats.put("life", avatar.getLife());
-        stats.put("stamina", avatar.getStamina());
+        stats.put("life", avatar.getCurrentLife());
+        stats.put("stamina", avatar.getCurrentStamina());
         stats.put("money", avatar.getMoney());
 
         stats.put("temporaryStrength", avatar.getTemporaryStrength() != null ? avatar.getTemporaryStrength() : 0);
@@ -29,8 +29,8 @@ public class VariationUtils {
         Map<String, Object> variations = new HashMap<>();
 
         variations.put("experience", updatedAvatar.getExperience().subtract((BigInteger) initialStats.get("experience")));
-        variations.put("life",updatedAvatar.getLife() - (Integer) initialStats.get("life"));
-        variations.put("stamina", updatedAvatar.getStamina() - (Integer) initialStats.get("stamina"));
+        variations.put("life",updatedAvatar.getCurrentLife() - (Integer) initialStats.get("life"));
+        variations.put("stamina", updatedAvatar.getCurrentStamina() - (Integer) initialStats.get("stamina"));
         variations.put("money", updatedAvatar.getMoney().subtract((BigDecimal) initialStats.get("money")));
 
         int updatedTemporaryStrength = updatedAvatar.getTemporaryStrength() != null ? updatedAvatar.getTemporaryStrength() : 0;

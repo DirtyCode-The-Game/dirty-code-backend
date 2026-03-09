@@ -49,7 +49,7 @@ public class AvatarTimeoutService {
     }
 
     public boolean checkAndHandleHospitalization(Avatar avatar, int multiplier) {
-        if (avatar.getLife() <= 0) {
+        if (avatar.getCurrentLife() <= 0) {
             int multiplierByLevel = avatar.getLevel() == 0 ? 1 : avatar.getLevel();
             avatar.setTimeout(LocalDateTime.now().plusMinutes(5L * multiplierByLevel));
             avatar.setTimeoutType(TimeoutType.HOSPITAL);
@@ -97,11 +97,11 @@ public class AvatarTimeoutService {
         if (avatar.getTimeoutType() == TimeoutType.JAIL) {
             avatar.setWantedLevel(0);
         }
-        
+
         if (avatar.getTimeoutType() == TimeoutType.HOSPITAL) {
-            avatar.setLife(1);
+            avatar.setCurrentLife(1);
         }
-        
+
         avatar.setActive(true);
         avatar.setTimeout(null);
         avatar.setTimeoutType(null);

@@ -57,9 +57,17 @@ public class Avatar extends BaseModel {
     private BigInteger nextLevelExperience = BigInteger.valueOf(1000);
 
     @Builder.Default
-    private Integer stamina = 100;
+    private Integer currentStamina = 100;
+
     @Builder.Default
-    private Integer life = 100;
+    private Integer maxStamina = 100;
+
+    @Builder.Default
+    private Integer currentLife = 100;
+
+    @Builder.Default
+    private Integer maxLife = 100;
+
     @Builder.Default
     private BigDecimal money = BigDecimal.ZERO;
 
@@ -175,5 +183,10 @@ public class Avatar extends BaseModel {
             this.availablePoints++;
             this.nextLevelExperience = GameFormulas.requiredExperienceForLevel(this.level + 1);
         }
+    }
+
+    public void increaseMaxLifeAndStamina() {
+        this.maxLife += 10;
+        this.maxStamina += 10;
     }
 }

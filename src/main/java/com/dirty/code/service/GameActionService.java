@@ -127,7 +127,7 @@ public class GameActionService implements GameActionController {
             }
         }
 
-        if (action.getStamina() < 0 && avatar.getStamina() < Math.abs(action.getStamina())) {
+        if (action.getStamina() < 0 && avatar.getCurrentStamina() < Math.abs(action.getStamina())) {
             if (firstExecution) {
                 throw new BusinessException("Not enough stamina to perform this action.");
             }
