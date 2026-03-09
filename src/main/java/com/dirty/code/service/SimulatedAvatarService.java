@@ -4,7 +4,8 @@ import com.dirty.code.dto.ChatMessageDTO;
 import com.dirty.code.repository.AvatarRepository;
 import com.dirty.code.repository.UserRepository;
 import com.dirty.code.repository.model.Avatar;
-import com.dirty.code.repository.model.User;
+import com.dirty.code.repository.model.DirtyUser;
+import com.dirty.code.utils.GameFormulas;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
@@ -64,23 +66,23 @@ public class SimulatedAvatarService {
                 "/avatars/avatar_10.webp");
         String randomAvatarPicture = avatares.get(ThreadLocalRandom.current().nextInt(avatares.size()));
 
-        User botUser = userRepository.findByFirebaseUid(firebaseUid)
-                .orElseGet(() -> userRepository.save(User.builder()
+        DirtyUser botUser = userRepository.findByFirebaseUid(firebaseUid)
+                .orElseGet(() -> userRepository.save(DirtyUser.builder()
                         .firebaseUid(firebaseUid)
                         .name(name + " (Bot)")
                         .email(name.toLowerCase() + "@dirtycode.bot")
                         .build()));
 
         int level = difficultyMultiplier * 5;
-        int exp = 0;
-        int nextLevelExp = com.dirty.code.utils.GameFormulas.requiredExperienceForLevel(level + 1);
+        BigInteger exp = BigInteger.ZERO;
+        BigInteger nextLevelExp = GameFormulas.requiredExperienceForLevel(level + 1);
 
         avatarRepository.save(Avatar.builder()
                 .name(name)
                 .userId(botUser.getId())
                 .level(level)
                 .experience(exp)
-                .totalExperience(level * 1000)
+                .totalExperience(BigInteger.valueOf(level * 1000L))
                 .nextLevelExperience(nextLevelExp)
                 .currentStamina(100)
                 .maxStamina(100)
@@ -142,7 +144,7 @@ public class SimulatedAvatarService {
         if (!firebaseEnabled) {
             List<Avatar> simulatedAvatars = avatarRepository.findByActiveTrue().stream()
                     .filter(a -> {
-                        User user = userRepository.findById(a.getUserId()).orElse(null);
+                        DirtyUser user = userRepository.findById(a.getUserId()).orElse(null);
                         return user != null && user.getFirebaseUid().startsWith("bot-uid-");
                     })
                     .toList();

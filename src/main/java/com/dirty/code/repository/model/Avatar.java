@@ -1,18 +1,26 @@
 package com.dirty.code.repository.model;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import com.dirty.code.utils.GameFormulas;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,7 +29,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "avatars")
+@Table(name = "avatar")
 @Data
 @Builder
 @NoArgsConstructor
@@ -36,42 +44,70 @@ public class Avatar extends BaseModel {
     private String picture;
     private String story;
 
-    private Integer level;
-    private Integer experience;
+    @Builder.Default
+    private Integer level = 0;
+    @Builder.Default
+    private BigInteger experience = BigInteger.ZERO;
     @Column(name = "total_experience")
-    private Integer totalExperience;
+    @Builder.Default
+    private BigInteger totalExperience = BigInteger.ZERO;
 
     @Column(name = "next_level_experience")
-    private Integer nextLevelExperience;
+    @Builder.Default
+    private BigInteger nextLevelExperience = BigInteger.valueOf(1000);
 
-    private Integer currentStamina;
-    private Integer maxStamina;
-    private Integer currentLife;
-    private Integer maxLife;
-    private BigDecimal money;
+    @Builder.Default
+    private Integer currentStamina = 100;
+
+    @Builder.Default
+    private Integer maxStamina = 100;
+
+    @Builder.Default
+    private Integer currentLife = 100;
+
+    @Builder.Default
+    private Integer maxLife = 100;
+
+    @Builder.Default
+    private BigDecimal money = BigDecimal.ZERO;
 
     @Column(name = "available_points")
-    private Integer availablePoints; // Pontos para distribuir
+    @Builder.Default
+    private Integer availablePoints = 0; // Pontos para distribuir
 
-    private Integer intelligence; // Inteligência
-    private Integer charisma; // Carisma
-    private Integer strength; // Força
-    private Integer stealth; // Discrição
+    @Builder.Default
+    private Integer intelligence = 0; // Inteligência
+    @Builder.Default
+    private Integer charisma = 0; // Carisma
+    @Builder.Default
+    private Integer strength = 0; // Força
+    @Builder.Default
+    private Integer stealth = 0; // Discrição
+    @Column(name = "wanted_level")
+    @Builder.Default
+    private Integer wantedLevel = 0;
     
     @Column(name = "temporary_strength")
-    private Integer temporaryStrength;
+    @Builder.Default
+    private Integer temporaryStrength = 0;
 
     @Column(name = "temporary_intelligence")
-    private Integer temporaryIntelligence;
+    @Builder.Default
+    private Integer temporaryIntelligence = 0;
 
     @Column(name = "temporary_charisma")
-    private Integer temporaryCharisma;
+    @Builder.Default
+    private Integer temporaryCharisma = 0;
 
     @Column(name = "temporary_stealth")
-    private Integer temporaryStealth;
+    @Builder.Default
+    private Integer temporaryStealth = 0;
 
     @Column(name = "status_cooldown")
     private LocalDateTime statusCooldown;
+
+    @OneToOne(mappedBy = "avatar", cascade = CascadeType.ALL)
+    private AvatarSpecialAction specialAction;
 
     public void checkAndResetTemporaryStats() {
         if (statusCooldown != null && LocalDateTime.now().isAfter(statusCooldown)) {
@@ -82,6 +118,7 @@ public class Avatar extends BaseModel {
             this.statusCooldown = null;
         }
     }
+
 
     public int getEffectiveStrength() {
         checkAndResetTemporaryStats();
@@ -103,36 +140,45 @@ public class Avatar extends BaseModel {
         return (stealth != null ? stealth : 0) + (temporaryStealth != null ? temporaryStealth : 0);
     }
 
-    private Integer hacking; // Hacking
-    private Integer work; // Work
+    @Builder.Default
+    private Integer hacking = 0; // Hacking
+    @Builder.Default
+    private Integer work = 0; // Work
     
-    private Boolean active;
+    @Builder.Default
+    private Boolean active = true;
     private LocalDateTime timeout; // When the timeout expires (null if not timed out)
 
     @Enumerated(EnumType.STRING)
     @Column(name = "timeout_type")
     private TimeoutType timeoutType; // Type of timeout: "HOSPITAL" or "JAIL"
 
+    @Builder.Default
+    @Column(name = "timeout_cost")
+    private BigDecimal timeoutCost = BigDecimal.ZERO;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    private DirtyUser user;
+
     @Column(name = "user_id", nullable = false)
     private UUID userId;
 
-    public void increaseExperience(int experienceToAdd) {
-        if (experienceToAdd <= 0) {
+
+    public void increaseExperience(BigInteger experienceToAdd) {
+        if (experienceToAdd == null || experienceToAdd.compareTo(BigInteger.ZERO) <= 0) {
             return;
         }
 
         if (this.totalExperience == null) {
-            this.totalExperience = 0;
+            this.totalExperience = BigInteger.ZERO;
         }
 
-        long updatedTotalExperience = (long) this.totalExperience + (long) experienceToAdd;
-        this.totalExperience = (updatedTotalExperience > Integer.MAX_VALUE) ? Integer.MAX_VALUE : (int) updatedTotalExperience;
+        this.totalExperience = this.totalExperience.add(experienceToAdd);
+        this.experience = this.experience.add(experienceToAdd);
 
-        long updatedExperience = (long) this.experience + (long) experienceToAdd;
-        this.experience = (updatedExperience > Integer.MAX_VALUE) ? Integer.MAX_VALUE : (int) updatedExperience;
-
-        while (this.experience >= this.nextLevelExperience) {
-            this.experience -= this.nextLevelExperience;
+        while (this.experience.compareTo(this.nextLevelExperience) >= 0) {
+            this.experience = this.experience.subtract(this.nextLevelExperience);
             this.level++;
             this.availablePoints++;
             this.nextLevelExperience = GameFormulas.requiredExperienceForLevel(this.level + 1);

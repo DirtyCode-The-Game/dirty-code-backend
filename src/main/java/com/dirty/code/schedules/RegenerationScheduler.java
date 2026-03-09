@@ -74,19 +74,15 @@ public class RegenerationScheduler {
         }
 
         if (needsUpdate) {
-            if (newStamina != null && newLife != null) {
-                avatarRepository.updateCurrentStaminaAndLife(avatar.getId(), newStamina, newLife);
-                log.debug("Regenerated avatar {} - Stamina: {} -> {}, Life: {} -> {}", 
-                         avatar.getName(), currentStamina, newStamina, currentLife, newLife);
-            } else if (newStamina != null) {
-                avatarRepository.updateCurrentStamina(avatar.getId(), newStamina);
-                log.debug("Regenerated avatar {} - Stamina: {} -> {}", 
-                         avatar.getName(), currentStamina, newStamina);
-            } else {
-                avatarRepository.updateCurrentLife(avatar.getId(), newLife);
-                log.debug("Regenerated avatar {} - Life: {} -> {}", 
-                         avatar.getName(), currentLife, newLife);
+            if (newStamina != null) {
+                avatar.setCurrentStamina(newStamina);
             }
+            if (newLife != null) {
+                avatar.setCurrentLife(newLife);
+            }
+            avatarRepository.save(avatar);
+            log.debug("Regenerated avatar {} - Stamina: {} -> {}, Life: {} -> {}",
+                     avatar.getName(), currentStamina, avatar.getCurrentStamina(), currentLife, avatar.getCurrentLife());
         }
 
         return needsUpdate;

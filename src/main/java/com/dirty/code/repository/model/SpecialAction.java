@@ -4,7 +4,12 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum SpecialAction {
-    CLEAR_TEMPORARY_STATUS("CLEAR_TEMPORARY_STATUS");
+    CLEAR_TEMPORARY_STATUS("CLEAR_TEMPORARY_STATUS"),
+    ADD_STRENGTH("ADD_STRENGTH"),
+    ADD_INTELLIGENCE("ADD_INTELLIGENCE"),
+    ADD_CHARISMA("ADD_CHARISMA"),
+    ADD_STEALTH("ADD_STEALTH"),
+    VOLUNTARY_WORK("VOLUNTARY_WORK");
 
     private final String value;
 

@@ -1,11 +1,14 @@
 package com.dirty.code.service;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import com.dirty.code.utils.GameFormulas;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,7 +22,7 @@ import com.dirty.code.repository.AvatarRepository;
 import com.dirty.code.repository.UserRepository;
 import com.dirty.code.repository.model.Attribute;
 import com.dirty.code.repository.model.Avatar;
-import com.dirty.code.repository.model.User;
+import com.dirty.code.repository.model.DirtyUser;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,18 +50,27 @@ public class AvatarService implements AvatarController {
     public AvatarResponseDTO createAvatar(String uid, AvatarCreateRequestDTO request) {
         log.info("Creating avatar for user UID: {}", uid);
 
+        DirtyUser user = userRepository.findByFirebaseUid(uid)
+                .orElseThrow(() -> new ResourceNotFoundException("DirtyUser not found with UID: " + uid));
+
+        Optional<Avatar> existingAvatar = avatarRepository.findByUserAndActiveTrue(user);
+        if (existingAvatar.isPresent()) {
+            log.info("User already has an active avatar. Returning existing one.");
+            return AvatarResponseDTO.fromAvatar(existingAvatar.get());
+        }
+
         if (avatarRepository.existsByNameAndActiveTrue(request.getName())) {
             throw new BusinessException("Avatar name already exists and is active: " + request.getName());
         }
-
-        User user = userRepository.findByFirebaseUid(uid)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with UID: " + uid));
 
         Avatar avatar = Avatar.builder()
                 .name(request.getName())
                 .picture(request.getPicture())
                 .story(request.getStory())
                 .level(0)
+                .experience(BigInteger.ZERO)
+                .totalExperience(BigInteger.ZERO)
+                .nextLevelExperience(GameFormulas.requiredExperienceForLevel(1))
                 .experience(0)
                 .totalExperience(0)
                 .nextLevelExperience(com.dirty.code.utils.GameFormulas.getBaseExperience())
@@ -89,7 +101,10 @@ public class AvatarService implements AvatarController {
     public AvatarResponseDTO updateAvatar(String uid, AvatarUpdateRequestDTO request) {
         log.info("Updating avatar for user UID: {}", uid);
 
-        Avatar avatar = avatarRepository.findByFirebaseUidAndActiveTrue(uid)
+        DirtyUser user = userRepository.findByFirebaseUid(uid)
+                .orElseThrow(() -> new ResourceNotFoundException("DirtyUser not found with UID: " + uid));
+
+        Avatar avatar = avatarRepository.findByUserAndActiveTrue(user)
                 .orElseThrow(() -> new ResourceNotFoundException("Active avatar not found for user UID: " + uid));
 
         // Use current values if request values are null
@@ -154,7 +169,10 @@ public class AvatarService implements AvatarController {
     public AvatarResponseDTO increaseAttribute(String uid, Attribute attribute) {
         log.info("Increasing attribute {} for user UID: {}", attribute, uid);
 
-        Avatar avatar = avatarRepository.findByFirebaseUidAndActiveTrue(uid)
+        DirtyUser user = userRepository.findByFirebaseUid(uid)
+                .orElseThrow(() -> new ResourceNotFoundException("DirtyUser not found with UID: " + uid));
+
+        Avatar avatar = avatarRepository.findByUserAndActiveTrue(user)
                 .orElseThrow(() -> new ResourceNotFoundException("Active avatar not found for user UID: " + uid));
 
         if (avatar.getAvailablePoints() <= 0) {

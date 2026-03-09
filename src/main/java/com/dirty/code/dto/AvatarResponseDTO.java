@@ -1,6 +1,7 @@
 package com.dirty.code.dto;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -25,9 +26,9 @@ public class AvatarResponseDTO {
     private String story;
 
     private Integer level;
-    private Integer experience;
-    private Integer totalExperience;
-    private Integer nextLevelExperience;
+    private BigInteger experience;
+    private BigInteger totalExperience;
+    private BigInteger nextLevelExperience;
 
     private Integer currentStamina;
     private Integer maxStamina;
@@ -40,6 +41,7 @@ public class AvatarResponseDTO {
     private Integer charisma; // Carisma
     private Integer strength; // Força
     private Integer stealth; // Discrição
+    private Integer wantedLevel;
     private Integer temporaryStrength;
     private Integer temporaryIntelligence;
     private Integer temporaryCharisma;
@@ -53,6 +55,8 @@ public class AvatarResponseDTO {
 
     private LocalDateTime timeout; // When the timeout expires
     private TimeoutType timeoutType; // "HOSPITAL" or "JAIL"
+    private BigDecimal timeoutCost;
+    private Boolean drStrangeVisible;
 
     public static AvatarResponseDTO fromAvatar(Avatar avatar) {
         return AvatarResponseDTO.builder()
@@ -64,6 +68,7 @@ public class AvatarResponseDTO {
                 .experience(avatar.getExperience())
                 .totalExperience(avatar.getTotalExperience())
                 .nextLevelExperience(avatar.getNextLevelExperience())
+                .drStrangeVisible(avatar.getSpecialAction() != null ? avatar.getSpecialAction().getDrStrangeVisible() : false)
 
                 .currentStamina(avatar.getCurrentStamina())
                 .maxStamina(avatar.getMaxStamina())
@@ -76,6 +81,7 @@ public class AvatarResponseDTO {
                 .charisma(avatar.getCharisma())
                 .strength(avatar.getStrength())
                 .stealth(avatar.getStealth())
+                .wantedLevel(avatar.getWantedLevel())
                 .temporaryStrength(avatar.getTemporaryStrength())
                 .temporaryIntelligence(avatar.getTemporaryIntelligence())
                 .temporaryCharisma(avatar.getTemporaryCharisma())
@@ -88,6 +94,7 @@ public class AvatarResponseDTO {
                 .active(avatar.getActive())
                 .timeout(avatar.getTimeout())
                 .timeoutType(avatar.getTimeoutType())
+                .timeoutCost(avatar.getTimeoutCost())
                 .build();
     }
 
